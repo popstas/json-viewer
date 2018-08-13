@@ -1,4 +1,19 @@
 module.exports = {
+  mode: 'spa',
+
+  modules: [
+    'semantic-ui-vue/nuxt',
+    '@nuxtjs/axios'
+  ],
+
+  plugins: [
+    { src: '@/plugins/vuetable', ssr: false },
+  ],
+
+  router: {
+    base: '/viasite-projects/'
+  },
+
   /*
   ** Headers of the page
   */

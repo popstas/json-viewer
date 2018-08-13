@@ -19,5 +19,6 @@ $ npm start
 $ npm run generate
 ```
 
-For detailed explanation on how things work, checkout the [Nuxt.js docs](https://github.com/nuxt/nuxt.js).
+Проект собран, чтобы запускаться на https://dev.viasite.ru/viasite-projects/
+
 
