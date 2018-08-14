@@ -48,6 +48,7 @@ export default {
         { name: 'host', sortField: 'host' },
         { name: 'site_root', sortField: 'site_root', title: 'Root path' },
         { name: 'site_info.engine', sortField: 'site_info.engine', title: 'Engine' },
+        { name: 'meta.year', sortField: 'meta.year', title: 'Year' },
         { name: 'prod', sortField: 'prod' }
         // { name: 'site_info', title: 'site-info' }
       ];
