@@ -1,21 +1,75 @@
 <template>
   <section class="container">
     <div>
-        <!-- :api-mode="false"
-        :data="sitesData" -->
       <div>total: {{ sites.length }}</div>
-      <vuetable ref="vuetable"
-        :api-mode="false"
+      <v-client-table
+        :columns="columns"
         :data="sitesData"
-        :fields="columns"
-        :data-manager="dataManager"
-        pagination-path=""
+        :options="tableOptions"
       >
-
-      </vuetable>
+        <template slot="child_row" slot-scope="props">
+          <ul class="site-details">
+            <li v-for="(value, key, index) in props.row.site_info" :key="index">
+              <b>{{ key }}:</b> {{ value }}
+            </li>
+          </ul>
+        </template>
+      </v-client-table>
     </div>
   </section>
 </template>
+
+<style>
+#app {
+  width: 95%;
+  margin: 0 auto;
+}
+
+.VuePagination {
+  text-align: center;
+}
+
+.vue-title {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.vue-pagination-ad {
+  text-align: center;
+}
+
+.glyphicon.glyphicon-eye-open {
+  width: 16px;
+  display: block;
+  margin: 0 auto;
+}
+
+th:nth-child(3) {
+  text-align: center;
+}
+
+.VueTables__child-row {
+  text-align: left;
+}
+
+.VueTables__child-row-toggler {
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  display: block;
+  margin: auto;
+  text-align: center;
+  cursor: pointer;
+}
+
+.VueTables__child-row-toggler--closed::before {
+  content: "+";
+}
+
+.VueTables__child-row-toggler--open::before {
+  content: "-";
+}
+</style>
 
 <script>
 import _ from 'lodash';
@@ -29,7 +83,11 @@ export default {
   },
   computed: {
     sitesData() {
-      return { data: this.sites };
+      return this.sites.map(site => {
+        site.prod = site.prod ? 1 : 0;
+        site.id = site.domain;
+        return site;
+      });
       /* const data = this.sites.map(site => {
         return {
           ...site,
@@ -42,15 +100,33 @@ export default {
       return { data }; */
     },
 
+    tableOptions() {
+      return {
+        headings: this.headings,
+        filterable: ['domain_idn'],
+        perPage: this.sitesData.length
+      }
+    },
+
     columns() {
+      return this._fields.map(field => field.name);
+    },
+
+    headings() {
+      let h = {};
+      this._fields.forEach(field => {
+        h[field.name] = field.title || field.name
+      });
+      return h;
+    },
+
+    _fields() {
       return [
-        { name: 'domain_idn', sortField: 'domain_idn', title: 'Domain' },
-        { name: 'host', sortField: 'host' },
-        { name: 'site_root', sortField: 'site_root', title: 'Root path' },
-        { name: 'site_info.engine', sortField: 'site_info.engine', title: 'Engine' },
-        { name: 'meta.year', sortField: 'meta.year', title: 'Year' },
-        { name: 'prod', sortField: 'prod' }
-        // { name: 'site_info', title: 'site-info' }
+        { name: 'domain_idn', title: 'Domain' },
+        { name: 'host' },
+        { name: 'site_info.engine', title: 'Engine' },
+        { name: 'meta.year', title: 'Year' },
+        { name: 'prod' }
       ];
     }
   },

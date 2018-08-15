@@ -7,7 +7,7 @@ module.exports = {
   ],
 
   plugins: [
-    { src: '@/plugins/vuetable', ssr: false },
+    { src: '@/plugins/vue-tables', ssr: false },
   ],
 
   router: {
@@ -25,7 +25,8 @@ module.exports = {
       { hid: 'description', name: 'description', content: 'Display sites.json as table' }
     ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' }
+      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' }
     ]
   },
   /*

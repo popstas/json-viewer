@@ -20,5 +20,3 @@ $ npm run generate
 ```
 
 Проект собран, чтобы запускаться на https://dev.viasite.ru/viasite-projects/
-
-
