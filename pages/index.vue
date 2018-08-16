@@ -85,11 +85,13 @@ export default {
     sitesData() {
       return this.sites.map(site => {
         site.prod = site.prod ? 1 : 0;
+        site.error = site.site_info && site.site_info.error ? 1 : 0;
         site.id = site.domain;
         if (
           site.engine != 'default' &&
           (!site.site_info || (site.site_info && !site.site_info.engine))
         ) {
+          if(!site.site_info) site.site_info = {};
           site.site_info.engine = site.engine;
         }
         return site;
@@ -138,7 +140,8 @@ export default {
         { name: 'site_info.engine', title: 'Engine' },
         { name: 'meta.year', title: 'Year' },
         { name: 'meta.visitors', title: 'Visitors' },
-        { name: 'prod' }
+        { name: 'prod' },
+        { name: 'error' }
       ];
     }
   },
