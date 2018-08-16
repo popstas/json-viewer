@@ -86,6 +86,12 @@ export default {
       return this.sites.map(site => {
         site.prod = site.prod ? 1 : 0;
         site.id = site.domain;
+        if (
+          site.engine != 'default' &&
+          (!site.site_info || (site.site_info && !site.site_info.engine))
+        ) {
+          site.site_info.engine = site.engine;
+        }
         return site;
       });
       /* const data = this.sites.map(site => {
