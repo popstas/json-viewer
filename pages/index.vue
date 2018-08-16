@@ -106,7 +106,6 @@ export default {
         filterable: ['domain_idn'],
         perPage: this.sitesData.length,
         rowClassCallback(row) {
-          console.log('row: ', row);
           if (!row.site_info) return 'warning';
           if (row.site_info && row.site_info.error) return 'danger';
           // return 'success';
