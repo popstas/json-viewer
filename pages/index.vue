@@ -63,11 +63,11 @@ th:nth-child(3) {
 }
 
 .VueTables__child-row-toggler--closed::before {
-  content: "+";
+  content: '+';
 }
 
 .VueTables__child-row-toggler--open::before {
-  content: "-";
+  content: '-';
 }
 </style>
 
@@ -107,10 +107,11 @@ export default {
         perPage: this.sitesData.length,
         rowClassCallback(row) {
           console.log('row: ', row);
-          if(!row.site_info || row.site_info.error) return 'danger';
+          if (!row.site_info) return 'warning';
+          if (row.site_info && row.site_info.error) return 'danger';
           // return 'success';
         }
-      }
+      };
     },
 
     columns() {
@@ -120,7 +121,7 @@ export default {
     headings() {
       let h = {};
       this._fields.forEach(field => {
-        h[field.name] = field.title || field.name
+        h[field.name] = field.title || field.name;
       });
       return h;
     },
