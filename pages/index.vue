@@ -131,6 +131,7 @@ export default {
         { name: 'host' },
         { name: 'site_info.engine', title: 'Engine' },
         { name: 'meta.year', title: 'Year' },
+        { name: 'meta.visitors', title: 'Visitors' },
         { name: 'prod' }
       ];
     }
