@@ -140,6 +140,7 @@ export default {
         { name: 'site_info.engine', title: 'Engine' },
         { name: 'meta.year', title: 'Year' },
         { name: 'meta.visitors', title: 'Visitors' },
+        { name: 'site_info.yandex_tcy', title: 'ТИЦ' },
         { name: 'prod' },
         { name: 'error' }
       ];
