@@ -117,6 +117,12 @@ export default {
           if (!row.site_info) return 'warning';
           if (row.site_info && row.site_info.error) return 'danger';
           // return 'success';
+        },
+        templates: {
+          'site_info.files_size'(h, row, index){
+            if(row.domain == 'aywengo.ru') console.log('row: ', row);
+            return Math.round(row.site_info.files_size / 1024) || '';
+          }
         }
       };
     },
@@ -141,6 +147,7 @@ export default {
         { name: 'meta.year', title: 'Year' },
         { name: 'meta.visitors', title: 'Visitors' },
         { name: 'site_info.yandex_tcy', title: 'ТИЦ' },
+        { name: 'site_info.files_size', title: 'Size' },
         { name: 'prod' },
         { name: 'error' }
       ];
