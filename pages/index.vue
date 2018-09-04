@@ -2,6 +2,15 @@
   <section class="container">
     <div>
       <div>total: {{ sites.length }}</div>
+
+      <div class="available-fields">
+        <div :title="field.name" @click="toggleField(field)" :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }" v-for="field in availableFields" :key="field.name">
+          <input type="checkbox" :checked="fieldIndex(field) != -1">
+          <label>{{ field.title }}
+          </label>
+        </div>
+      </div>
+
       <v-client-table
         :columns="columns"
         :data="sitesData"
@@ -44,8 +53,31 @@
   margin: 0 auto;
 }
 
+.available-fields {
+  margin: 0 auto;
+  text-align: left;
+  columns: 4;
+  max-width: 1140px;
+}
+.available-fields__field {
+  opacity: 0.7;
+}
+.available-fields__field.active {
+  opacity: 1;
+}
+.available-fields__field label {
+  font-weight: normal;
+  margin-left: 5px;
+}
+
 th:nth-child(3) {
   text-align: center;
+}
+th.VueTables__sortable {
+  cursor: pointer;
+  user-select: none;
+}
+.VueTables__sort-icon {
 }
 
 .VueTables__child-row {
@@ -78,12 +110,24 @@ export default {
   components: {},
   data() {
     return {
-      q: ''
+      q: '',
+      sites: [],
+      fields: [
+        { name: 'domain_idn', title: 'Domain' },
+        { name: 'host' },
+        { name: 'site_info.engine', title: 'Engine' },
+        { name: 'meta.year', title: 'Year' },
+        { name: 'meta.visitors', title: 'Visitors' },
+        { name: 'site_info.yandex_tcy', title: 'ТИЦ' },
+        { name: 'site_info.files_size', title: 'Size' },
+        { name: 'prod' },
+        { name: 'error' }
+      ]
     };
   },
   computed: {
     sitesData() {
-      if(this.sites.length == 0) return [];
+      if (this.sites.length == 0) return [];
       return this.sites.map(site => {
         site.prod = site.prod ? 1 : 0;
         site.error = site.site_info && site.site_info.error ? 1 : 0;
@@ -92,11 +136,12 @@ export default {
           site.engine != 'default' &&
           (!site.site_info || (site.site_info && !site.site_info.engine))
         ) {
-          if(!site.site_info) site.site_info = {};
+          if (!site.site_info) site.site_info = {};
           site.site_info.engine = site.engine;
         }
-        if(site.site_info){
-          if(site.site_info.files_size) site.site_info.files_size = parseInt(site.site_info.files_size);
+        if (site.site_info) {
+          if (site.site_info.files_size)
+            site.site_info.files_size = parseInt(site.site_info.files_size);
         }
         return site;
       });
@@ -123,9 +168,8 @@ export default {
           // return 'success';
         },
         templates: {
-          'site_info.files_size'(h, row, index){
-            if(row.domain == 'aywengo.ru') console.log('row: ', row);
-            if(!row.site_info || !row.site_info.files_size) return '';
+          'site_info.files_size'(h, row, index) {
+            if (!row.site_info || !row.site_info.files_size) return '';
             return Math.round(row.site_info.files_size / 1024) || '';
           }
         }
@@ -133,29 +177,66 @@ export default {
     },
 
     columns() {
-      return this._fields.map(field => field.name);
+      return this.fields.map(field => field.name);
     },
 
     headings() {
       let h = {};
-      this._fields.forEach(field => {
+      this.fields.forEach(field => {
         h[field.name] = field.title || field.name;
       });
       return h;
     },
 
-    _fields() {
-      return [
-        { name: 'domain_idn', title: 'Domain' },
-        { name: 'host' },
-        { name: 'site_info.engine', title: 'Engine' },
-        { name: 'meta.year', title: 'Year' },
-        { name: 'meta.visitors', title: 'Visitors' },
-        { name: 'site_info.yandex_tcy', title: 'ТИЦ' },
-        { name: 'site_info.files_size', title: 'Size' },
-        { name: 'prod' },
-        { name: 'error' }
+    availableFields() {
+      const site = this.sites[0];
+      let excludedFields = [
+        // objects
+        'site_info',
+        'tests',
+        'meta',
+        // duplicates
+        'engine',
+        'meta.engine',
+        'site_root',
+        'server',
+        'site_info.user',
+        'site_info.domain',
+        // not working
+        'site_info.total_pages_load_time'
       ];
+      let fields = [];
+
+      for (let fieldName in site) {
+        if (excludedFields.includes(fieldName)) continue;
+        fields.push({
+          name: fieldName,
+          title: fieldName
+        });
+      }
+
+      // site_info
+      for (let fieldName in site.site_info) {
+        let fieldPath = `site_info.${fieldName}`;
+        if (excludedFields.includes(fieldPath)) continue;
+        fields.push({
+          name: fieldPath,
+          title: fieldName
+        });
+      }
+
+      // meta
+      for (let fieldName in site.meta) {
+        let fieldPath = `meta.${fieldName}`;
+        console.log('fieldPath: ', fieldPath);
+        if (excludedFields.includes(fieldPath)) continue;
+        fields.push({
+          name: fieldPath,
+          title: fieldName
+        });
+      }
+
+      return fields;
     }
   },
 
@@ -167,45 +248,16 @@ export default {
   },
 
   methods: {
-    dataManager(sortOrder, pagination) {
-      console.log('dataManager: ', sortOrder, pagination);
+    fieldIndex(field) {
+      return this.fields.findIndex(column => {
+        return column.name == field.name;
+      });
+    },
 
-      let data = this.sites;
-
-      // account for search filter
-      if (this.q) {
-        // the text should be case insensitive
-        let txt = new RegExp(this.q, 'i');
-
-        // search on name, email, and nickname
-        data = _.filter(data, function(item) {
-          return (
-            item.domain_idn.search(txt) >= 0 ||
-            item.host.search(txt) >= 0 ||
-            item.site_root.search(txt) >= 0
-          );
-        });
-      }
-
-      // sortOrder can be empty, so we have to check for that as well
-      if (sortOrder.length > 0) {
-        console.log('orderBy:', sortOrder[0].sortField, sortOrder[0].direction);
-        data = _.orderBy(data, sortOrder[0].sortField, sortOrder[0].direction);
-      }
-
-      // since the filter might affect the total number of records
-      // we can ask Vuetable to recalculate the pagination for us
-      // by calling makePagination(). this will make VuetablePagination
-      // work just like in API mode
-      // pagination = this.$refs.vuetable.makePagination(data.length);
-
-      // if you don't want to use pagination component, you can just
-      // return the data array
-      return {
-        // pagination: pagination,
-        // data: _.slice(data, pagination.from - 1, pagination.to)
-        data
-      };
+    toggleField(field) {
+      let index = this.fieldIndex(field);
+      if (index != -1) this.fields.splice(index, 1);
+      else this.fields.push(field);
     }
   }
 };
