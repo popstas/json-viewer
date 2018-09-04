@@ -83,6 +83,7 @@ export default {
   },
   computed: {
     sitesData() {
+      if(this.sites.length == 0) return [];
       return this.sites.map(site => {
         site.prod = site.prod ? 1 : 0;
         site.error = site.site_info && site.site_info.error ? 1 : 0;
@@ -93,6 +94,9 @@ export default {
         ) {
           if(!site.site_info) site.site_info = {};
           site.site_info.engine = site.engine;
+        }
+        if(site.site_info){
+          if(site.site_info.files_size) site.site_info.files_size = parseInt(site.site_info.files_size);
         }
         return site;
       });
@@ -121,6 +125,7 @@ export default {
         templates: {
           'site_info.files_size'(h, row, index){
             if(row.domain == 'aywengo.ru') console.log('row: ', row);
+            if(!row.site_info || !row.site_info.files_size) return '';
             return Math.round(row.site_info.files_size / 1024) || '';
           }
         }
