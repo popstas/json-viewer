@@ -189,7 +189,6 @@ export default {
     },
 
     availableFields() {
-      const site = this.sites[0];
       let excludedFields = [
         // objects
         'site_info',
@@ -205,35 +204,32 @@ export default {
         // not working
         'site_info.total_pages_load_time'
       ];
+
       let fields = [];
+      let fieldPaths = [];
 
-      for (let fieldName in site) {
-        if (excludedFields.includes(fieldName)) continue;
-        fields.push({
-          name: fieldName,
-          title: fieldName
-        });
-      }
+      for (let siteInd in this.sites) {
+        let site = this.sites[siteInd];
 
-      // site_info
-      for (let fieldName in site.site_info) {
-        let fieldPath = `site_info.${fieldName}`;
-        if (excludedFields.includes(fieldPath)) continue;
-        fields.push({
-          name: fieldPath,
-          title: fieldName
-        });
-      }
+        let objs = {
+          '': site,
+          'site_info.': site.site_info,
+          'meta.': site.meta
+        };
 
-      // meta
-      for (let fieldName in site.meta) {
-        let fieldPath = `meta.${fieldName}`;
-        console.log('fieldPath: ', fieldPath);
-        if (excludedFields.includes(fieldPath)) continue;
-        fields.push({
-          name: fieldPath,
-          title: fieldName
-        });
+        for (let prefix in objs) {
+          const obj = objs[prefix];
+          for (let fieldName in obj) {
+            let fieldPath = prefix + fieldName;
+            if (excludedFields.includes(fieldPath)) continue;
+            if (fieldPaths.includes(fieldPath)) continue;
+            fields.push({
+              name: fieldPath,
+              title: fieldName
+            });
+            fieldPaths.push(fieldPath);
+          }
+        }
       }
 
       return fields;
