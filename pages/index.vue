@@ -1,7 +1,7 @@
 <template>
   <section class="container">
     <div>
-      <div>total: {{ sites.length }}</div>
+      <div>total: {{ filteredSites.length }}</div>
 
       <div class="available-fields">
         <div :title="field.name" @click="toggleField(field)" :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }" v-for="field in availableFields" :key="field.name">
@@ -10,6 +10,9 @@
           </label>
         </div>
       </div>
+
+      <input placeholder="query" v-model="q" title="Например:
+      site_info.engine:bitrix prod:1"/>
 
       <v-client-table
         :columns="columns"
@@ -112,6 +115,7 @@ export default {
     return {
       q: '',
       sites: [],
+      filteredSites: [],
       fields: [
         { name: 'domain_idn', title: 'Domain' },
         { name: 'host' },
@@ -125,10 +129,11 @@ export default {
       ]
     };
   },
+
   computed: {
     sitesData() {
-      if (this.sites.length == 0) return [];
-      return this.sites.map(site => {
+      if (this.filteredSites.length == 0) return [];
+      return this.filteredSites.map(site => {
         site.prod = site.prod ? 1 : 0;
         site.error = site.site_info && site.site_info.error ? 1 : 0;
         site.id = site.domain;
@@ -145,7 +150,7 @@ export default {
         }
         return site;
       });
-      /* const data = this.sites.map(site => {
+      /* const data = this.filteredSites.map(site => {
         return {
           ...site,
           ...{
@@ -236,11 +241,18 @@ export default {
     }
   },
 
+  watch: {
+    q(q) {
+      this.filterQuery(q);
+    }
+  },
+
   async asyncData({ app }) {
     const sites = await app.$axios.$get(
       'https://dev.viasite.ru/viasite-projects/site-info/sites.json'
     );
-    return { sites };
+    const filteredSites = sites;
+    return { sites, filteredSites };
   },
 
   methods: {
@@ -254,7 +266,25 @@ export default {
       let index = this.fieldIndex(field);
       if (index != -1) this.fields.splice(index, 1);
       else this.fields.push(field);
+    },
+
+    // site_info.engine:bitrix cron:0
+    filterQuery(q) {
+      let filters = q.split(' ');
+      for (let fid in filters) {
+        const [name, value] = filters[fid].split(':');
+        this.filteredSites = this.sites.filter(site => {
+          const [parent, child] = name.split('.');
+          if (child) return site[parent] && site[parent][child] == value;
+          else return site[name] == value;
+          // console.log('site: ', site.domain, site[name], site[name] == value);
+        });
+      }
     }
+  },
+
+  mounted() {
+    if (this.$route.query['q']) this.q = this.$route.query['q'];
   }
 };
 </script>
@@ -268,4 +298,3 @@ export default {
   text-align: center;
 }
 </style>
-
