@@ -213,8 +213,8 @@ export default {
       let fields = [];
       let fieldPaths = [];
 
-      for (let siteInd in this.sites) {
-        let site = this.sites[siteInd];
+      for (let siteInd in this.filteredSites) {
+        let site = this.filteredSites[siteInd];
 
         let objs = {
           '': site,
