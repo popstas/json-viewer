@@ -14,9 +14,9 @@
       <input placeholder="query" v-model="q" title="Например:
       site_info.engine:bitrix prod:1"/>
 
-      <v-client-table
+      <v-client-table v-if="filteredSites.length > 0"
         :columns="columns"
-        :data="sitesData"
+        :data="filteredSites"
         :options="tableOptions"
       >
         <template slot="child_row" slot-scope="props">
@@ -114,8 +114,6 @@ export default {
   data() {
     return {
       q: '',
-      sites: [],
-      filteredSites: [],
       fields: [
         { name: 'domain_idn', title: 'Domain' },
         { name: 'host' },
@@ -131,42 +129,19 @@ export default {
   },
 
   computed: {
-    sitesData() {
-      if (this.filteredSites.length == 0) return [];
-      return this.filteredSites.map(site => {
-        site.prod = site.prod ? 1 : 0;
-        site.error = site.site_info && site.site_info.error ? 1 : 0;
-        site.id = site.domain;
-        if (
-          site.engine != 'default' &&
-          (!site.site_info || (site.site_info && !site.site_info.engine))
-        ) {
-          if (!site.site_info) site.site_info = {};
-          site.site_info.engine = site.engine;
-        }
-        if (site.site_info) {
-          if (site.site_info.files_size)
-            site.site_info.files_size = parseInt(site.site_info.files_size);
-        }
-        return site;
-      });
-      /* const data = this.filteredSites.map(site => {
-        return {
-          ...site,
-          ...{
-            id: site.domain
-          }
-        };
-      });
+    filteredSites(){
+      return this.$store.state.filteredSites;
+    },
 
-      return { data }; */
+    filter() {
+      return this.$store.state.filter;
     },
 
     tableOptions() {
       return {
         headings: this.headings,
         filterable: ['domain_idn'],
-        perPage: this.sitesData.length,
+        perPage: this.filteredSites.length,
         rowClassCallback(row) {
           if (!row.site_info) return 'warning';
           if (row.site_info && row.site_info.error) return 'danger';
@@ -242,20 +217,18 @@ export default {
   },
 
   watch: {
-    q(q) {
-      this.filterQuery(q);
+    q(val) {
+      this.changeFilter('q', val);
+      this.$store.dispatch('filterSites');
     }
   },
 
-  async asyncData({ app }) {
-    const sites = await app.$axios.$get(
-      'https://dev.viasite.ru/viasite-projects/site-info/sites.json'
-    );
-    const filteredSites = sites;
-    return { sites, filteredSites };
-  },
-
   methods: {
+    changeFilter(name, value) {
+      this.$store.commit('changeFilter', { name, value });
+      // this.$emit('changeFilter', { name, value });
+    },
+
     fieldIndex(field) {
       return this.fields.findIndex(column => {
         return column.name == field.name;
@@ -268,34 +241,33 @@ export default {
       else this.fields.push(field);
     },
 
-    // site_info.engine:bitrix cron:0
-    filterQuery(q) {
-      let filters = q.split(' ');
-      this.filteredSites = this.sites;
-      for (let fid in filters) {
-        const [name, value] = filters[fid].split(':');
-        this.filteredSites = this.filteredSites.filter(site => {
-          const [parent, child] = name.split('.');
-          if (child) return site[parent] && site[parent][child] == value;
-          else return site[name] == value;
-          // console.log('site: ', site.domain, site[name], site[name] == value);
-        });
-      }
+    // дополняет колонки sites.json
+    sitesProcessing(sites) {
+      if (!sites) return [];
+      const sitesData = sites.map(site => {
+        site.prod = site.prod ? 1 : 0;
+        site.error = site.site_info && site.site_info.error ? 1 : 0;
+        site.id = site.domain;
+        if (
+          site.engine != 'default' &&
+          (!site.site_info || (site.site_info && !site.site_info.engine))
+        ) {
+          if (!site.site_info) site.site_info = {};
+          site.site_info.engine = site.engine;
+        }
+        return site;
+      });
+      return sitesData;
     }
   },
 
-  mounted() {
+  async mounted() {
     if (this.$route.query['q']) this.q = this.$route.query['q'];
+
+    const sites = await this.$axios.$get(this.$store.state.sitesJsonUrl);
+    const sitesData = this.sitesProcessing(sites);
+    this.$store.commit('sites', sitesData);
+    this.$store.dispatch('filterSites');
   }
 };
 </script>
-
-<style>
-.container {
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-}
-</style>
