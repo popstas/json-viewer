@@ -271,9 +271,10 @@ export default {
     // site_info.engine:bitrix cron:0
     filterQuery(q) {
       let filters = q.split(' ');
+      this.filteredSites = this.sites;
       for (let fid in filters) {
         const [name, value] = filters[fid].split(':');
-        this.filteredSites = this.sites.filter(site => {
+        this.filteredSites = this.filteredSites.filter(site => {
           const [parent, child] = name.split('.');
           if (child) return site[parent] && site[parent][child] == value;
           else return site[name] == value;
