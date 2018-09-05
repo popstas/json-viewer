@@ -4,7 +4,10 @@
       <div>total: {{ filteredSites.length }}</div>
 
       <div class="available-fields">
-        <div :title="field.name" @click="toggleField(field)" :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }" v-for="field in availableFields" :key="field.name">
+        <div :title="field.name" @click="toggleField(field)"
+          :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
+          v-for="field in availableFields" :key="field.name"
+        >
           <input type="checkbox" :checked="fieldIndex(field) != -1">
           <label>{{ field.title }}
           </label>
@@ -32,9 +35,12 @@
 </template>
 
 <style>
-#app {
-  width: 95%;
-  margin: 0 auto;
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
 }
 
 .VuePagination {
@@ -114,22 +120,32 @@ export default {
   data() {
     return {
       q: '',
-      fields: [
-        { name: 'domain_idn', title: 'Domain' },
-        { name: 'host' },
-        { name: 'site_info.engine', title: 'Engine' },
-        { name: 'meta.year', title: 'Year' },
-        { name: 'meta.visitors', title: 'Visitors' },
-        { name: 'site_info.yandex_tcy', title: 'ТИЦ' },
-        { name: 'site_info.files_size', title: 'Size' },
-        { name: 'prod' },
-        { name: 'error' }
-      ]
+      fields: [],
+      columnPresets: {
+        default: {
+          name: 'default',
+          columns: [
+            'domain_idn',
+            'host',
+            'prod',
+            'site_info.engine',
+            'meta.year',
+            'meta.visitors',
+            'site_info.yandex_tcy',
+            'site_info.files_size',
+            'error'
+          ]
+        },
+        cron: {
+          name: 'cron',
+          columns: ['domain_idn', 'host', 'prod', 'site_info.cron']
+        }
+      }
     };
   },
 
   computed: {
-    filteredSites(){
+    filteredSites() {
       return this.$store.state.filteredSites;
     },
 
@@ -140,6 +156,7 @@ export default {
     tableOptions() {
       return {
         headings: this.headings,
+        headingsTooltips: this.headingsTooltips,
         filterable: ['domain_idn'],
         perPage: this.filteredSites.length,
         rowClassCallback(row) {
@@ -164,6 +181,14 @@ export default {
       let h = {};
       this.fields.forEach(field => {
         h[field.name] = field.title || field.name;
+      });
+      return h;
+    },
+
+    headingsTooltips() {
+      let h = {};
+      this.fields.forEach(field => {
+        h[field.name] = field.name;
       });
       return h;
     },
@@ -224,6 +249,32 @@ export default {
   },
 
   methods: {
+    // переключает поле в таблице
+    toggleField(field) {
+      let index = this.fieldIndex(field);
+      if (index != -1) this.fields.splice(index, 1);
+      else this.fields.push(field);
+    },
+
+    // переключить поле по имени
+    toggleFieldByName(name) {
+      const field = this.availableFields.find(field => field.name == name);
+      this.toggleField(field);
+    },
+
+    // устанавливает поля по массиву имен
+    setFields(columnNames) {
+      this.fields = [];
+      columnNames.forEach(name => {
+        this.toggleFieldByName(name);
+      });
+    },
+
+    // поставить из пресета полей
+    setPreset(preset) {
+      this.setFields(preset.columns);
+    },
+
     changeFilter(name, value) {
       this.$store.commit('changeFilter', { name, value });
       // this.$emit('changeFilter', { name, value });
@@ -233,12 +284,6 @@ export default {
       return this.fields.findIndex(column => {
         return column.name == field.name;
       });
-    },
-
-    toggleField(field) {
-      let index = this.fieldIndex(field);
-      if (index != -1) this.fields.splice(index, 1);
-      else this.fields.push(field);
     },
 
     // дополняет колонки sites.json
@@ -268,6 +313,7 @@ export default {
     const sitesData = this.sitesProcessing(sites);
     this.$store.commit('sites', sitesData);
     this.$store.dispatch('filterSites');
+    this.setPreset(this.columnPresets.default);
   }
 };
 </script>
