@@ -1,5 +1,15 @@
+<a name="0.2.0"></a>
+# [0.2.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.1.0...v0.2.0) (2018-09-06)
+
+
+### Features
+
+* подсветка результатов валидации site-info (каждая колонка) ([3d69478](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/3d69478))
+
+
+
 <a name="0.1.0"></a>
-# 0.1.0 (2018-09-05)
+# [0.1.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/16863d0...v0.1.0) (2018-09-05)
 
 
 ### Bug Fixes
