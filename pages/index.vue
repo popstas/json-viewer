@@ -37,6 +37,8 @@
           v-html="getColumnValue(props.row, colName)"
         ></div>
       </v-client-table>
+
+      <div>{{ $store.state.name }} {{ $store.state.version }}</div>
     </div>
   </section>
 </template>
