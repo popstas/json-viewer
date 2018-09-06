@@ -14,8 +14,15 @@
         </div>
       </div>
 
-      <input placeholder="query" v-model="q" title="Например:
+      <input class="filter__query" placeholder="query" v-model="q" title="Например:
       site_info.engine:bitrix prod:1"/>
+
+      <div class="column-presets">
+        columns:
+        <button
+          v-for="preset in columnPresets" :key="preset.name"
+          @click="setPreset(preset);" v-html="preset.name"></button>
+      </div>
 
       <v-client-table v-if="filteredSites.length > 0"
         :columns="columns"
