@@ -1,3 +1,17 @@
+<a name="0.3.0"></a>
+# [0.3.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.2.0...v0.3.0) (2018-09-06)
+
+
+### Features
+
+* add version number to footer ([6cd9d91](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/6cd9d91))
+* **columns:** шаблон полей для Битрикса ([cd580c3](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/cd580c3))
+* **filter:** пресеты полей ([74bcf16](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/74bcf16))
+* **filter:** пресеты фильтров ([66020ed](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/66020ed))
+* вывод доп. инфы по колонкам из sites.info.yml ([c8663f6](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/c8663f6))
+
+
+
 <a name="0.2.0"></a>
 # [0.2.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.1.0...v0.2.0) (2018-09-06)
 
