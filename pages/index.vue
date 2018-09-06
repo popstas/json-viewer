@@ -15,7 +15,7 @@
       </div>
 
       <input class="filter__query" placeholder="query" v-model="q" autofocus title="Например:
-      site_info.engine:bitrix prod:1"/>
+      engine:bitrix prod:1"/>
 
       <div class="filter-presets">
         filters:
@@ -38,7 +38,7 @@
       >
         <template slot="child_row" slot-scope="props">
           <ul class="site-details">
-            <li v-for="(value, key, index) in props.row.site_info" :key="index">
+            <li v-for="(value, key, index) in props.row" :key="index">
               <b>{{ key }}:</b> {{ value }}
             </li>
           </ul>
@@ -175,17 +175,17 @@ export default {
             'domain_idn',
             'host',
             'prod',
-            'site_info.engine',
-            'meta.year',
-            'meta.visitors',
-            'site_info.yandex_tcy',
-            'site_info.files_size',
+            'engine',
+            'meta_year',
+            'meta_visitors',
+            'yandex_tcy',
+            'files_size',
             'error'
           ]
         },
         cron: {
           name: 'cron',
-          columns: ['domain_idn', 'host', 'prod', 'site_info.cron']
+          columns: ['domain_idn', 'host', 'prod', 'cron']
         },
         bitrix: {
           name: 'bitrix',
@@ -193,30 +193,34 @@ export default {
             'domain_idn',
             'host',
             'prod',
-            'site_info.email',
-            'site_info.engine_version',
-            'site_info.bitrix_image_quality',
-            'site_info.bitrix_total_mark_value',
-            'site_info.files_count',
-            'site_info.files_size',
-            'site_info.git_clean',
-            'site_info.yandex_tcy',
-            'site_info.h1_count'
+            'email',
+            'engine_version',
+            'bitrix_image_quality',
+            'bitrix_total_mark_value',
+            'files_count',
+            'files_size',
+            'git_clean',
+            'yandex_tcy',
+            'h1_count'
           ]
         }
       },
       filterPresets: [
         {
           name: 'bitrix',
-          q: 'site_info.engine:bitrix prod:1'
+          q: 'engine:bitrix prod:1'
         },
         {
           name: 'without cron',
-          q: 'site_info.engine:drupal prod:1 site_info.cron:0'
+          q: 'engine:drupal prod:1 cron:0'
         },
         {
           name: 'without git',
-          q: 'prod:1 site_info.git:0'
+          q: 'prod:1 git:0'
+        },
+        {
+          name: 'h1 > 1',
+          q: 'h1_count>1'
         }
       ]
     };
@@ -238,15 +242,15 @@ export default {
         filterable: ['domain_idn'],
         perPage: this.filteredSites.length,
         rowClassCallback(row) {
-          if (!row.site_info) return 'warning';
-          if (row.site_info && row.site_info.error) return 'danger';
+          if (row.error) return 'danger';
           // return 'success';
         },
         templates: {
-          'site_info.files_size'(h, row, index) {
-            if (!row.site_info || !row.site_info.files_size) return '';
-            return Math.round(row.site_info.files_size / 1024) || '';
-          }
+          /* 'files_size'(h, row, index) { // работал, но перестал вызываться после убирания site.site_info
+            console.log('row: ', row);
+            if (!row.files_size) return '';
+            return Math.round(row.files_size / 1024) || '';
+          } */
         }
       };
     },
@@ -276,19 +280,17 @@ export default {
       let excludedFields = [
         // objects
         'id',
-        'site_info',
         'tests',
-        'meta',
         // duplicates
-        'engine',
-        'meta.engine',
-        'meta.screenshots',
+        'meta_engine',
+        'meta_screenshots',
+        'meta_prod',
         'site_root',
-        'server',
-        'site_info.user',
-        'site_info.domain',
         // not working
-        'site_info.total_pages_load_time'
+        'total_pages_load_time',
+        'result',
+        'max_result',
+        'result_percent',
       ];
 
       let fields = [];
@@ -297,10 +299,12 @@ export default {
       for (let siteInd in this.filteredSites) {
         let site = this.filteredSites[siteInd];
 
+        // раньше из некоторых вложенных объектов доставались поля,
+        // теперь они прессуются в одномерный объект
         let objs = {
           '': site,
-          'site_info.': site.site_info,
-          'meta.': site.meta
+          // 'site_info.': site.site_info,
+          // 'meta.': site.meta
         };
 
         for (let prefix in objs) {
@@ -386,9 +390,7 @@ export default {
     sitesProcessing(sites) {
       if (!sites) return [];
       const sitesData = sites.map(site => {
-        site.prod = site.prod ? 1 : 0;
-        site.error = site.site_info && site.site_info.error ? 1 : 0;
-        site.id = site.domain;
+        // should be before site_info flatten
         if (
           site.engine != 'default' &&
           (!site.site_info || (site.site_info && !site.site_info.engine))
@@ -396,6 +398,23 @@ export default {
           if (!site.site_info) site.site_info = {};
           site.site_info.engine = site.engine;
         }
+
+        // flatten site_info
+        for(let i in site.site_info){
+          site[i] = site.site_info[i];
+          if(i == 'files_size') site[i] = Math.round(site[i] / 1024);
+        }
+        delete(site.site_info);
+
+        // flatten meta
+        for(let i in site.meta){
+          site['meta_' + i] = site.meta[i];
+        }
+        delete(site.meta);
+
+        site.prod = site.prod ? 1 : 0;
+        site.errors = site.error ? 1 : 0;
+        site.id = site.domain;
         return site;
       });
       return sitesData;
@@ -403,8 +422,6 @@ export default {
 
     // выдает класс валидации по домену сайта и имени колонки
     getColumnValidateClass(props, domain, column) {
-      if (!column.match(/site_info\./)) return '';
-      column = column.replace('site_info.', '');
       const site = this.filteredSites.find(site => site.domain == domain);
       if (!site || !site.tests) return '';
 
