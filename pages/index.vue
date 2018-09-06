@@ -14,7 +14,7 @@
         </div>
       </div>
 
-      <input class="filter__query" placeholder="query" v-model="q" title="Например:
+      <input class="filter__query" placeholder="query" v-model="q" autofocus title="Например:
       site_info.engine:bitrix prod:1"/>
 
       <div class="filter-presets">
@@ -334,14 +334,18 @@ export default {
 
   watch: {
     q(val) {
-      this.changeFilter('q', val);
-      this.$store.dispatch('filterSites');
+      this.debouncedQueryChangeAction();
     }
   },
 
   methods: {
+    queryChangeAction() {
+      this.changeFilter('q', this.q);
+    },
+
     // переключает поле в таблице
     toggleField(field) {
+      if (!field) return;
       let index = this.fieldIndex(field);
       if (index != -1) this.fields.splice(index, 1);
       else this.fields.push(field);
@@ -353,7 +357,7 @@ export default {
       this.toggleField(field);
     },
 
-    // устанавливает поля по массиву имен
+    // устанавливает поля по массиву имен, сбрасывает предыдущие выбранные поля
     setFields(columnNames) {
       this.fields = [];
       columnNames.forEach(name => {
@@ -368,12 +372,13 @@ export default {
 
     changeFilter(name, value) {
       this.$store.commit('changeFilter', { name, value });
+      this.$store.dispatch('filterSites');
       // this.$emit('changeFilter', { name, value });
     },
 
     fieldIndex(field) {
       return this.fields.findIndex(column => {
-        return column.name == field.name;
+        return field && column.name == field.name;
       });
     },
 
@@ -424,6 +429,10 @@ export default {
     getColumnValue(row, colName) {
       return colName.split('.').reduce((o, i) => (o ? o[i] : ''), row);
     }
+  },
+
+  created() {
+    this.debouncedQueryChangeAction = _.debounce(this.queryChangeAction, 500);
   },
 
   async mounted() {
