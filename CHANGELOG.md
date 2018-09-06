@@ -1,3 +1,14 @@
+<a name="0.4.0"></a>
+# [0.4.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.3.0...v0.4.0) (2018-09-06)
+
+
+### Features
+
+* задержка перед поиском (debounce) ([de6b99c](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/de6b99c))
+* формат запросов json-query ([1ca7db3](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/1ca7db3))
+
+
+
 <a name="0.3.0"></a>
 # [0.3.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.2.0...v0.3.0) (2018-09-06)
 
