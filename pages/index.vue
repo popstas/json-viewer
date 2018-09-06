@@ -4,7 +4,7 @@
       <div>total: {{ filteredSites.length }}</div>
 
       <div class="available-fields">
-        <div :title="field.name" @click="toggleField(field)"
+        <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
           :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
           v-for="field in availableFields" :key="field.name"
         >
@@ -201,7 +201,7 @@ export default {
             'site_info.files_size',
             'site_info.git_clean',
             'site_info.yandex_tcy',
-            'site_info.h1_count',
+            'site_info.h1_count'
           ]
         }
       },
@@ -267,6 +267,7 @@ export default {
       let h = {};
       this.fields.forEach(field => {
         h[field.name] = field.name;
+        if (field.comment) h[field.name] = `${field.name} (${field.comment})`;
       });
       return h;
     },
@@ -308,10 +309,20 @@ export default {
             let fieldPath = prefix + fieldName;
             if (excludedFields.includes(fieldPath)) continue;
             if (fieldPaths.includes(fieldPath)) continue;
-            fields.push({
+
+            let field = {
               name: fieldPath,
               title: fieldName
-            });
+            };
+
+            // info from /etc/site-info.yml
+            const info = this.$store.state.tests.find(test => test.name == fieldName);
+            if (info) {
+              if (info.comment) field.comment = info.comment;
+              field.command = info.command;
+            }
+
+            fields.push(field);
             fieldPaths.push(fieldPath);
           }
         }
@@ -418,8 +429,9 @@ export default {
   async mounted() {
     if (this.$route.query['q']) this.q = this.$route.query['q'];
 
-    const sites = await this.$axios.$get(this.$store.state.sitesJsonUrl);
-    const sitesData = this.sitesProcessing(sites);
+    const sitesJson = await this.$axios.$get(this.$store.state.sitesJsonUrl);
+    const sitesData = this.sitesProcessing(sitesJson.sites);
+    this.$store.commit('tests', sitesJson.tests);
     this.$store.commit('sites', sitesData);
     this.$store.dispatch('filterSites');
     this.setPreset(this.columnPresets.default);

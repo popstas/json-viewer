@@ -4,6 +4,7 @@ import dateformat from 'dateformat';
 export const state = () => ({
   // data
   sites: [],
+  tests: [], // объявления тестов
   filteredSites: [],
 
   // constants
@@ -32,6 +33,9 @@ export const mutations = {
   sites(state, newValue) {
     state.sites = newValue;
     state.filteredSites = newValue;
+  },
+  tests(state, newValue) {
+    state.tests = newValue;
   },
   filteredSites(state, newValue) {
     state.filteredSites = newValue;
