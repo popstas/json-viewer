@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.1",
+    "json-query": "^2.2.2",
     "lodash": "^4.17.10",
     "node-sass": "^4.9.3",
     "nuxt": "^1.0.0",
