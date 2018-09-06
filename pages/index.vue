@@ -17,6 +17,13 @@
       <input class="filter__query" placeholder="query" v-model="q" title="Например:
       site_info.engine:bitrix prod:1"/>
 
+      <div class="filter-presets">
+        filters:
+        <button
+          v-for="preset in filterPresets" :key="preset.name"
+          @click="q = preset.q" v-html="preset.name"></button>
+      </div>
+
       <div class="column-presets">
         columns:
         <button
@@ -59,6 +66,12 @@
   text-align: center;
 }
 
+.filter {
+  &__query {
+    padding: 5px;
+    width: 600px;
+  }
+}
 .VuePagination {
   text-align: center;
 }
@@ -174,7 +187,21 @@ export default {
           name: 'cron',
           columns: ['domain_idn', 'host', 'prod', 'site_info.cron']
         }
-      }
+      },
+      filterPresets: [
+        {
+          name: 'bitrix',
+          q: 'site_info.engine:bitrix prod:1'
+        },
+        {
+          name: 'without cron',
+          q: 'site_info.engine:drupal prod:1 site_info.cron:0'
+        },
+        {
+          name: 'without git',
+          q: 'prod:1 site_info.git:0'
+        }
+      ]
     };
   },
 
