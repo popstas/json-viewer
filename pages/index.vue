@@ -29,12 +29,19 @@
             </li>
           </ul>
         </template>
+
+        <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
+        <div v-for="colName in columns" :key="colName"
+          :slot="colName" slot-scope="props"
+          :class="[ 'cell', getColumnValidateClass(props, props.row.domain, colName) ]"
+          v-html="getColumnValue(props.row, colName)"
+        ></div>
       </v-client-table>
     </div>
   </section>
 </template>
 
-<style>
+<style lang="scss">
 .container {
   min-height: 100vh;
   display: flex;
@@ -109,6 +116,24 @@ th.VueTables__sortable {
 
 .VueTables__child-row-toggler--open::before {
   content: '-';
+}
+
+.VueTables__table td {
+  padding: 0 !important;
+
+  .cell {
+    padding: 8px;
+
+    &.success {
+      background: #aaffaa;
+    }
+    &.warning {
+      background: #ffffaa;
+    }
+    &.danger {
+      background: #ffaaaa;
+    }
+  }
 }
 </style>
 
@@ -303,6 +328,35 @@ export default {
         return site;
       });
       return sitesData;
+    },
+
+    // выдает класс валидации по домену сайта и имени колонки
+    getColumnValidateClass(props, domain, column) {
+      if (!column.match(/site_info\./)) return '';
+      column = column.replace('site_info.', '');
+      const site = this.filteredSites.find(site => site.domain == domain);
+      if (!site || !site.tests) return '';
+
+      const test = site.tests.find(test => test.name == column);
+      if (!test) return '';
+
+      // console.log('props: ', props);
+      // console.log('domain: ', domain);
+      // console.log('column: ', column);
+
+      const validClassesMap = {
+        pass: 'success',
+        warn: 'warning',
+        fail: 'danger'
+      };
+      return validClassesMap[test.valid] || 'noclass-' + test.valid;
+      return 'success';
+    },
+
+    // достает значение colName из row, со вложенностью
+    // https://stackoverflow.com/a/6394168/1716010
+    getColumnValue(row, colName) {
+      return colName.split('.').reduce((o, i) => (o ? o[i] : ''), row);
     }
   },
 
