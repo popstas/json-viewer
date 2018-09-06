@@ -186,6 +186,23 @@ export default {
         cron: {
           name: 'cron',
           columns: ['domain_idn', 'host', 'prod', 'site_info.cron']
+        },
+        bitrix: {
+          name: 'bitrix',
+          columns: [
+            'domain_idn',
+            'host',
+            'prod',
+            'site_info.email',
+            'site_info.engine_version',
+            'site_info.bitrix_image_quality',
+            'site_info.bitrix_total_mark_value',
+            'site_info.files_count',
+            'site_info.files_size',
+            'site_info.git_clean',
+            'site_info.yandex_tcy',
+            'site_info.h1_count',
+          ]
         }
       },
       filterPresets: [
@@ -257,12 +274,14 @@ export default {
     availableFields() {
       let excludedFields = [
         // objects
+        'id',
         'site_info',
         'tests',
         'meta',
         // duplicates
         'engine',
         'meta.engine',
+        'meta.screenshots',
         'site_root',
         'server',
         'site_info.user',
