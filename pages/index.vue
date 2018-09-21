@@ -38,7 +38,7 @@
       >
         <template slot="child_row" slot-scope="props">
           <ul class="site-details">
-            <li v-for="(value, key, index) in props.row" :key="index">
+            <li v-if="typeof value != 'object'" v-for="(value, key, index) in props.row" :key="index">
               <b>{{ key }}:</b> {{ value }}
             </li>
           </ul>
@@ -180,7 +180,7 @@ export default {
             'meta_visitors',
             'yandex_tcy',
             'files_size',
-            'error'
+            'errors'
           ]
         },
         cron: {
@@ -413,6 +413,7 @@ export default {
         delete(site.meta);
 
         site.prod = site.prod ? 1 : 0;
+        site.https = site.https ? 1 : 0;
         site.errors = site.error ? 1 : 0;
         site.id = site.domain;
         return site;
@@ -437,7 +438,7 @@ export default {
         warn: 'warning',
         fail: 'danger'
       };
-      return validClassesMap[test.valid] || 'noclass-' + test.valid;
+      return validClassesMap[test.valid] + ' '+test.valid || 'noclass-' + test.valid;
       return 'success';
     },
 
