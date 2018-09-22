@@ -203,24 +203,32 @@ export default {
             'yandex_tcy',
             'h1_count'
           ]
+        },
+        https: {
+          name: 'https',
+          columns: ['domain_idn', 'https', 'email']
         }
       },
       filterPresets: [
         {
           name: 'bitrix',
-          q: 'engine:bitrix prod:1'
+          q: 'engine=bitrix&prod=1'
         },
         {
           name: 'without cron',
-          q: 'engine:drupal prod:1 cron:0'
+          q: 'engine=drupal&prod=1&cron=0'
         },
         {
           name: 'without git',
-          q: 'prod:1 git:0'
+          q: 'prod=1&git=0'
         },
         {
           name: 'h1 > 1',
-          q: 'h1_count>1'
+          q: 'h1_count>1&prod=1'
+        },
+        {
+          name: 'without https',
+          q: 'https=0&prod=1'
         }
       ],
       routerProcess: false
