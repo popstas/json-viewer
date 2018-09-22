@@ -222,7 +222,8 @@ export default {
           name: 'h1 > 1',
           q: 'h1_count>1'
         }
-      ]
+      ],
+      routerProcess: false
     };
   },
 
@@ -333,6 +334,13 @@ export default {
       }
 
       return fields;
+    },
+
+    pageTitle() {
+      let title = ['viasite-projects'];
+      if (this.q) title.push('q: ' + this.q);
+      if (this.fields.length > 0) title.push('fields: ' + this.columns);
+      return title.join(', ');
     }
   },
 
@@ -349,16 +357,27 @@ export default {
     },
 
     // переключает поле в таблице, через нее проходят все изменения полей
-    toggleField(field) {
+    _toggleField(field) {
       if (!field) return;
       let index = this.fieldIndex(field);
       if (index != -1) this.fields.splice(index, 1);
       else this.fields.push(field);
+    },
+
+    // переключает поле в таблице по клику
+    toggleField(field) {
+      this._toggleField(field);
       this.updateUrlQuery();
     },
 
     // обновляет выбранные фильтры и колонки в урле
     updateUrlQuery() {
+      if (this.routerProcess) return;
+      this.routerProcess = true;
+      setTimeout(() => {
+        this.routerProcess = false;
+      }, 100);
+
       let query = {};
       if (this.q) query.q = this.q;
       query.fields = this.columns.join(',');
@@ -368,7 +387,7 @@ export default {
     // переключить поле по имени
     toggleFieldByName(name) {
       const field = this.availableFields.find(field => field.name == name);
-      this.toggleField(field);
+      this._toggleField(field);
     },
 
     // устанавливает поля по массиву имен, сбрасывает предыдущие выбранные поля
@@ -377,6 +396,7 @@ export default {
       columnNames.forEach(name => {
         this.toggleFieldByName(name);
       });
+      this.updateUrlQuery();
     },
 
     // поставить из пресета полей
@@ -464,18 +484,42 @@ export default {
   },
 
   async mounted() {
+    // filter init
     if (this.$route.query['q']) this.q = this.$route.query['q'];
 
+    // data init
     const sitesJson = await this.$axios.$get(this.$store.state.sitesJsonUrl);
     const sitesData = this.sitesProcessing(sitesJson.sites);
     this.$store.commit('tests', sitesJson.tests);
     this.$store.commit('sites', sitesData);
     this.$store.dispatch('filterSites');
+
+    // fields init
     if (this.$route.query['fields']) {
       this.setFields(this.$route.query['fields'].split(','));
     } else {
       this.setPreset(this.columnPresets.default);
     }
+
+    // router change event
+    this.$router.afterEach((to, from) => {
+      if (!this.routerProcess) {
+        if (this.$route.query['q']) this.q = this.$route.query['q'];
+        else this.q = '';
+
+        if (this.$route.query['fields']) {
+          this.setFields(this.$route.query['fields'].split(','));
+        } else {
+          this.setPreset(this.columnPresets.default);
+        }
+      }
+    });
+  },
+
+  head() {
+    return {
+      title: this.pageTitle
+    };
   }
 };
 </script>
