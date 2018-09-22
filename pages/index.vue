@@ -290,7 +290,7 @@ export default {
         'total_pages_load_time',
         'result',
         'max_result',
-        'result_percent',
+        'result_percent'
       ];
 
       let fields = [];
@@ -302,7 +302,7 @@ export default {
         // раньше из некоторых вложенных объектов доставались поля,
         // теперь они прессуются в одномерный объект
         let objs = {
-          '': site,
+          '': site
           // 'site_info.': site.site_info,
           // 'meta.': site.meta
         };
@@ -344,6 +344,7 @@ export default {
 
   methods: {
     queryChangeAction() {
+      this.$router.push({ query: { q: this.q } });
       this.changeFilter('q', this.q);
     },
 
@@ -400,17 +401,17 @@ export default {
         }
 
         // flatten site_info
-        for(let i in site.site_info){
+        for (let i in site.site_info) {
           site[i] = site.site_info[i];
-          if(i == 'files_size') site[i] = Math.round(site[i] / 1024);
+          if (i == 'files_size') site[i] = Math.round(site[i] / 1024);
         }
-        delete(site.site_info);
+        delete site.site_info;
 
         // flatten meta
-        for(let i in site.meta){
+        for (let i in site.meta) {
           site['meta_' + i] = site.meta[i];
         }
-        delete(site.meta);
+        delete site.meta;
 
         site.prod = site.prod ? 1 : 0;
         site.https = site.https ? 1 : 0;
@@ -438,7 +439,7 @@ export default {
         warn: 'warning',
         fail: 'danger'
       };
-      return validClassesMap[test.valid] + ' '+test.valid || 'noclass-' + test.valid;
+      return validClassesMap[test.valid] + ' ' + test.valid || 'noclass-' + test.valid;
       return 'success';
     },
 
