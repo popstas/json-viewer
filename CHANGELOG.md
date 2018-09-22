@@ -1,3 +1,20 @@
+<a name="0.5.0"></a>
+# [0.5.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.4.0...v0.5.0) (2018-09-22)
+
+
+### Bug Fixes
+
+* ошибка при неправильном фильтре, https, ([167d179](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/167d179))
+
+
+### Features
+
+* поддержка Назад в браузере, фильтры в title ([acd676b](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/acd676b))
+* сохранение q в url ([3d3329d](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/3d3329d))
+* сохранение набора колонок в url ([58dc751](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/58dc751))
+
+
+
 <a name="0.4.0"></a>
 # [0.4.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.3.0...v0.4.0) (2018-09-06)
 
