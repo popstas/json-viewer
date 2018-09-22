@@ -344,16 +344,25 @@ export default {
 
   methods: {
     queryChangeAction() {
-      this.$router.push({ query: { q: this.q } });
+      this.updateUrlQuery();
       this.changeFilter('q', this.q);
     },
 
-    // переключает поле в таблице
+    // переключает поле в таблице, через нее проходят все изменения полей
     toggleField(field) {
       if (!field) return;
       let index = this.fieldIndex(field);
       if (index != -1) this.fields.splice(index, 1);
       else this.fields.push(field);
+      this.updateUrlQuery();
+    },
+
+    // обновляет выбранные фильтры и колонки в урле
+    updateUrlQuery() {
+      let query = {};
+      if (this.q) query.q = this.q;
+      query.fields = this.columns.join(',');
+      this.$router.push({ query });
     },
 
     // переключить поле по имени
@@ -462,7 +471,11 @@ export default {
     this.$store.commit('tests', sitesJson.tests);
     this.$store.commit('sites', sitesData);
     this.$store.dispatch('filterSites');
-    this.setPreset(this.columnPresets.default);
+    if (this.$route.query['fields']) {
+      this.setFields(this.$route.query['fields'].split(','));
+    } else {
+      this.setPreset(this.columnPresets.default);
+    }
   }
 };
 </script>
