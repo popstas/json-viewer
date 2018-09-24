@@ -237,6 +237,14 @@ export default {
         {
           name: 'without https',
           q: 'https=0&prod=1'
+        },
+        {
+          name: 'drupal without cache',
+          q: 'engine=drupal&prod=1&cache=0&boost=0'
+        },
+        {
+          name: 'drupal without js min',
+          q: 'engine=drupal&prod=1&preprocess_js=0'
         }
       ],
       routerProcess: false
