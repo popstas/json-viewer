@@ -215,12 +215,20 @@ export default {
           q: 'engine=bitrix&prod=1'
         },
         {
+          name: 'drupal',
+          q: 'engine=drupal&prod=1'
+        },
+        {
           name: 'without cron',
           q: 'engine=drupal&prod=1&cron=0'
         },
         {
           name: 'without git',
           q: 'prod=1&git=0'
+        },
+        {
+          name: 'dirty git',
+          q: 'prod=1&git=1&git_clean=0'
         },
         {
           name: 'h1 > 1',
