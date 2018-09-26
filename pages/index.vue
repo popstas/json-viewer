@@ -142,18 +142,27 @@ th.VueTables__sortable {
 
 .VueTables__table td {
   padding: 0 !important;
+  position: relative;
 
   .cell {
     padding: 8px;
 
-    &.success {
-      background: #aaffaa;
-    }
-    &.warning {
-      background: #ffffaa;
-    }
-    &.danger {
-      background: #ffaaaa;
+    &.colored {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      &.success {
+        background: #aaffaa;
+      }
+      &.warning {
+        background: #ffffaa;
+      }
+      &.danger {
+        background: #ffaaaa;
+      }
     }
   }
 }
@@ -481,7 +490,7 @@ export default {
       if (!site || !site.tests) return '';
 
       const test = site.tests.find(test => test.name == column);
-      if (!test) return '';
+      if (!test || !test.valid) return '';
 
       // console.log('props: ', props);
       // console.log('domain: ', domain);
@@ -492,7 +501,7 @@ export default {
         warn: 'warning',
         fail: 'danger'
       };
-      return validClassesMap[test.valid] + ' ' + test.valid || 'noclass-' + test.valid;
+      return 'colored ' + validClassesMap[test.valid] + ' ' + test.valid || 'noclass-' + test.valid;
       return 'success';
     },
 
