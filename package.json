@@ -16,21 +16,21 @@
     "precommit": "npm run lint"
   },
   "dependencies": {
-    "@nuxtjs/axios": "^5.3.1",
+    "@nuxtjs/axios": "^5.3.6",
     "json-query": "^2.2.2",
-    "lodash": "^4.17.10",
-    "node-sass": "^4.9.3",
-    "nuxt": "^1.0.0",
+    "lodash": "^4.17.11",
+    "node-sass": "^4.10.0",
+    "nuxt": "^1.4.4",
     "sass-loader": "^7.1.0",
-    "semantic-ui-css": "^2.3.3",
+    "semantic-ui-css": "^2.4.1",
     "semantic-ui-vue": "^0.3.3",
-    "style-loader": "^0.23.0",
+    "style-loader": "^0.23.1",
     "vue-style-loader": "^4.1.2",
-    "vue-tables-2": "^1.4.64"
+    "vue-tables-2": "^1.4.70"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",
-    "conventional-changelog-cli": "^2.0.5",
+    "conventional-changelog-cli": "^2.0.11",
     "eslint": "^4.15.0",
     "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^1.7.1",

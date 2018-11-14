@@ -213,6 +213,23 @@ export default {
             'h1_count'
           ]
         },
+        pagespeed: {
+          name: 'pagespeed',
+          columns: [
+            'domain_idn',
+            'host',
+            'prod',
+            'engine',
+            'meta_visitors',
+            'errors',
+            'lighthouse_interactive',
+            'lighthouse_speed_index',
+            'lighthouse_first_contentful_paint',
+            'lighthouse_first_cpu_idle',
+            'lighthouse_first_meaningful_paint',
+            'lighthouse_input_latency'
+          ]
+        },
         https: {
           name: 'https',
           columns: ['domain_idn', 'https', 'email']
@@ -452,7 +469,9 @@ export default {
     // дополняет колонки sites.json
     sitesProcessing(sites) {
       if (!sites) return [];
-      const sitesData = sites.map(site => {
+
+      const sitesData = sites.map(s => {
+        let site = { ...s };
         // should be before site_info flatten
         if (
           site.engine != 'default' &&
@@ -475,6 +494,16 @@ export default {
         }
         delete site.meta;
 
+        // flatten lighthouse
+        if (site.lighthouse) {
+          // console.log(site.lighthouse);
+          for (let i in site.lighthouse) {
+            const ln = 'lighthouse_' + i.split('-').join('_');
+            site[ln] = site.lighthouse[i];
+          }
+          delete site.lighthouse;
+        }
+
         site.prod = site.prod ? 1 : 0;
         site.https = site.https ? 1 : 0;
         site.errors = site.error ? 1 : 0;
@@ -487,10 +516,59 @@ export default {
     // выдает класс валидации по домену сайта и имени колонки
     getColumnValidateClass(props, domain, column) {
       const site = this.filteredSites.find(site => site.domain == domain);
+      let result;
       if (!site || !site.tests) return '';
 
-      const test = site.tests.find(test => test.name == column);
-      if (!test || !test.valid) return '';
+      // проверяет, попадает ли значение под лимиты
+      const isFits = (value, rules) => {
+        let valid = true;
+        if('max' in rules && value > rules.max) return false;
+        if('min' in rules && value < rules.min) return false;
+        return true;
+      };
+
+      // validate map
+      const validateMap = {
+        lighthouse_interactive: {
+          warn: { min: 3000, max: 5000 },
+          error: { min: 5001 }
+        },
+        lighthouse_speed_index: {
+          warn: { min: 1500, max: 5000 },
+          error: { min: 5001 }
+        },
+        lighthouse_first_contentful_paint: {
+          warn: { min: 1000, max: 1500 },
+          error: { min: 1501 }
+        },
+        lighthouse_first_cpu_idle: {
+          warn: { min: 3000, max: 5000 },
+          error: { min: 5001 }
+        },
+        lighthouse_first_meaningful_paint: {
+          warn: { min: 2000, max: 3500 },
+          error: { min: 3501 }
+        },
+        lighthouse_input_latency: {
+          warn: { min: 50, max: 100 },
+          error: { min: 101 }
+        },
+      };
+
+      if (column in validateMap) {
+        const r = validateMap[column];
+        if ('error' in r && isFits(site[column], r.error)) result = 'fail';
+        else if ('warn' in r && isFits(site[column], r.warn)) result = 'warn';
+        else result = 'pass';
+      }
+
+      if (!result) {
+        const test = site.tests.find(test => test.name == column);
+        if (!test || !test.valid) return '';
+        result = test.valid;
+      }
+
+      if (!result) return;
 
       // console.log('props: ', props);
       // console.log('domain: ', domain);
@@ -501,7 +579,7 @@ export default {
         warn: 'warning',
         fail: 'danger'
       };
-      return 'colored ' + validClassesMap[test.valid] + ' ' + test.valid || 'noclass-' + test.valid;
+      return 'colored ' + validClassesMap[result] + ' ' + result || 'noclass-' + result;
       return 'success';
     },
 
