@@ -530,24 +530,24 @@ export default {
       // validate map
       const validateMap = {
         lighthouse_interactive: {
-          warn: { min: 3000, max: 5000 },
-          error: { min: 5001 }
+          warn: { min: 3000, max: 8000 }, // ps: 3900 warn
+          error: { min: 8001 }
         },
         lighthouse_speed_index: {
-          warn: { min: 1500, max: 5000 },
-          error: { min: 5001 }
+          warn: { min: 3500, max: 8000 }, // ps: 3200 ok, 3900 warn, 8500 fail
+          error: { min: 8001 }
         },
         lighthouse_first_contentful_paint: {
-          warn: { min: 1000, max: 1500 },
-          error: { min: 1501 }
+          warn: { min: 3000, max: 5000 }, // ps: 2400 warn, lh: 2700 ok
+          error: { min: 5001 }
         },
         lighthouse_first_cpu_idle: {
           warn: { min: 3000, max: 5000 },
           error: { min: 5001 }
         },
         lighthouse_first_meaningful_paint: {
-          warn: { min: 2000, max: 3500 },
-          error: { min: 3501 }
+          warn: { min: 2000, max: 4999 }, // ps: 5000 fail
+          error: { min: 5000 }
         },
         lighthouse_input_latency: {
           warn: { min: 50, max: 100 },
