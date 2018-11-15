@@ -4,13 +4,17 @@
       <div>total: {{ filteredSites.length }}</div>
 
       <div class="available-fields">
-        <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
-          :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
-          v-for="field in availableFields" :key="field.name"
-        >
-          <input type="checkbox" :checked="fieldIndex(field) != -1">
-          <label>{{ field.title }}
-          </label>
+        <div class="field-group" v-for="group in fieldGroups" :key="group.name">
+          <div class="field-group__name">{{ group.name }}</div>
+
+          <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
+            :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
+            v-for="field in group.fields" :key="field.name"
+          >
+            <input type="checkbox" :checked="fieldIndex(field) != -1">
+            <label>{{ field.title }}
+            </label>
+          </div>
         </div>
       </div>
 
@@ -72,7 +76,7 @@ export default {
     return {
       q: '',
       fields: [],
-      columnPresets: columnPresets ,
+      columnPresets: columnPresets,
       filterPresets: filterPresets,
       routerProcess: false
     };
@@ -185,6 +189,29 @@ export default {
       }
 
       return fields;
+    },
+
+    // раскладывает поля по группам, с дублированием
+    fieldGroups() {
+      let groups = { unnamed: { name: '', fields: [] } };
+      for (let i in this.availableFields) {
+        const field = this.availableFields[i];
+        const info = this.$store.state.tests.find(test => test.name == field.name);
+        if (!info || !info.groups) {
+          groups.unnamed.fields.push(field);
+          continue;
+        }
+
+        const groupsList = Array.isArray(info.groups) ? info.groups : [info.groups];
+        for (let g in groupsList) {
+          let groupName = groupsList[g];
+          if (!(groupName in groups)) {
+            groups[groupName] = { name: groupName, fields: [] };
+          }
+          groups[groupName].fields.push(field);
+        }
+      }
+      return groups;
     },
 
     pageTitle() {
@@ -302,8 +329,8 @@ export default {
           // console.log(site.lighthouse);
           for (let i in site.lighthouse) {
             // вложенный объект
-            if(i == 'scores'){
-              for (let s in site.lighthouse.scores){
+            if (i == 'scores') {
+              for (let s in site.lighthouse.scores) {
                 const ln = 'lighthouse_' + s.split('-').join('_');
                 site[ln] = site.lighthouse.scores[s];
               }
@@ -331,13 +358,13 @@ export default {
       if (!site) return '';
 
       // пустые не валидируются
-      if([undefined, ''].indexOf(site[column]) !== -1) return '';
+      if ([undefined, ''].indexOf(site[column]) !== -1) return '';
 
       // проверяет, попадает ли значение под лимиты
       const isFits = (value, rules) => {
         let valid = true;
-        if('max' in rules && value > rules.max) return false;
-        if('min' in rules && value < rules.min) return false;
+        if ('max' in rules && value > rules.max) return false;
+        if ('min' in rules && value < rules.min) return false;
         return true;
       };
 
