@@ -11,6 +11,7 @@ export const state = () => ({
   // constants
   sitesJsonUrl: 'https://dev.viasite.ru/viasite-projects/site-info/sites.json',
   // sitesJsonUrl: 'https://dev.viasite.ru/viasite-projects/sites.json',
+  // sitesJsonUrl: 'https://test.home.popstas.ru/sites.json',
   name: pjson.name,
   version: pjson.version,
   description: pjson.description,

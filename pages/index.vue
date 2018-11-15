@@ -170,6 +170,7 @@ th.VueTables__sortable {
 
 <script>
 import _ from 'lodash';
+import moment from 'moment';
 
 export default {
   components: {},
@@ -469,7 +470,6 @@ export default {
     // дополняет колонки sites.json
     sitesProcessing(sites) {
       if (!sites) return [];
-
       const sitesData = sites.map(s => {
         let site = { ...s };
         // should be before site_info flatten
@@ -485,6 +485,7 @@ export default {
         for (let i in site.site_info) {
           site[i] = site.site_info[i];
           if (i == 'files_size') site[i] = Math.round(site[i] / 1024);
+          if (i == 'updated_time') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
         }
         delete site.site_info;
 
