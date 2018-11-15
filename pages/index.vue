@@ -543,6 +543,9 @@ export default {
       let result;
       if (!site || !site.tests) return '';
 
+      // пустые не валидируются
+      if([undefined, ''].indexOf(site[column]) !== -1) return '';
+
       // проверяет, попадает ли значение под лимиты
       const isFits = (value, rules) => {
         let valid = true;
