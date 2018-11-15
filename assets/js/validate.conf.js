@@ -49,5 +49,11 @@ module.exports = {
   },
   yandex_maps: {
     error: { min: 1 }
+  },
+  envy: {
+    warn: { min: 1 }
+  },
+  jivosite: {
+    warn: { min: 1 }
   }
 };

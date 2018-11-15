@@ -197,7 +197,7 @@ export default {
 
   watch: {
     q(val) {
-      this.debouncedQueryChangeAction();
+      this.debouncedQueryChangeAction(); // задержка после ввода фильтра
     }
   },
 
@@ -255,12 +255,14 @@ export default {
       this.setFields(preset.columns);
     },
 
+    // фильтр всегда меняется через эту функцию
     changeFilter(name, value) {
       this.$store.commit('changeFilter', { name, value });
       this.$store.dispatch('filterSites');
       // this.$emit('changeFilter', { name, value });
     },
 
+    // индекс поля в массиве по объекту
     fieldIndex(field) {
       return this.fields.findIndex(column => {
         return field && column.name == field.name;
