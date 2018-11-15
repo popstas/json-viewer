@@ -214,21 +214,36 @@ export default {
             'h1_count'
           ]
         },
-        pagespeed: {
-          name: 'pagespeed',
+        pagespeed_performance: {
+          name: 'pagespeed_performance',
           columns: [
             'domain_idn',
             'host',
             'prod',
             'engine',
-            'meta_visitors',
             'errors',
+            'lighthouse_performance',
             'lighthouse_interactive',
             'lighthouse_speed_index',
             'lighthouse_first_contentful_paint',
             'lighthouse_first_cpu_idle',
             'lighthouse_first_meaningful_paint',
             'lighthouse_input_latency'
+          ]
+        },
+        pagespeed_score: {
+          name: 'pagespeed_score',
+          columns: [
+            'domain_idn',
+            'host',
+            'prod',
+            'engine',
+            'errors',
+            'lighthouse_performance',
+            'lighthouse_pwa',
+            'lighthouse_accessibility',
+            'lighthouse_best_practices',
+            'lighthouse_seo'
           ]
         },
         https: {
@@ -499,8 +514,16 @@ export default {
         if (site.lighthouse) {
           // console.log(site.lighthouse);
           for (let i in site.lighthouse) {
-            const ln = 'lighthouse_' + i.split('-').join('_');
-            site[ln] = site.lighthouse[i];
+            // вложенный объект
+            if(i == 'scores'){
+              for (let s in site.lighthouse.scores){
+                const ln = 'lighthouse_' + s.split('-').join('_');
+                site[ln] = site.lighthouse.scores[s];
+              }
+            } else {
+              const ln = 'lighthouse_' + i.split('-').join('_');
+              site[ln] = site.lighthouse[i];
+            }
           }
           delete site.lighthouse;
         }
@@ -554,6 +577,26 @@ export default {
           warn: { min: 50, max: 100 },
           error: { min: 101 }
         },
+        lighthouse_performance: {
+          warn: { min: 50, max: 79 },
+          error: { max: 50 }
+        },
+        lighthouse_pwa: {
+          warn: { min: 50, max: 79 },
+          error: { max: 50 }
+        },
+        lighthouse_accessibility: {
+          warn: { min: 50, max: 79 },
+          error: { max: 50 }
+        },
+        lighthouse_best_practices: {
+          warn: { min: 50, max: 79 },
+          error: { max: 50 }
+        },
+        lighthouse_seo: {
+          warn: { min: 50, max: 79 },
+          error: { max: 50 }
+        }
       };
 
       if (column in validateMap) {
