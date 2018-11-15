@@ -239,6 +239,7 @@ export default {
             'prod',
             'engine',
             'errors',
+            'lighthouse_all',
             'lighthouse_performance',
             'lighthouse_pwa',
             'lighthouse_accessibility',
@@ -541,7 +542,7 @@ export default {
     getColumnValidateClass(props, domain, column) {
       const site = this.filteredSites.find(site => site.domain == domain);
       let result;
-      if (!site || !site.tests) return '';
+      if (!site) return '';
 
       // пустые не валидируются
       if([undefined, ''].indexOf(site[column]) !== -1) return '';
@@ -599,9 +600,14 @@ export default {
         lighthouse_seo: {
           warn: { min: 50, max: 79 },
           error: { max: 50 }
+        },
+        lighthouse_all: {
+          warn: { min: 50, max: 79 },
+          error: { max: 50 }
         }
       };
 
+      // проверка на соответствие из массива
       if (column in validateMap) {
         const r = validateMap[column];
         if ('error' in r && isFits(site[column], r.error)) result = 'fail';
@@ -609,7 +615,7 @@ export default {
         else result = 'pass';
       }
 
-      if (!result) {
+      if (!result && site.tests) {
         const test = site.tests.find(test => test.name == column);
         if (!test || !test.valid) return '';
         result = test.valid;
