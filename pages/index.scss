@@ -1,0 +1,108 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.filter {
+  &__query {
+    padding: 5px;
+    width: 600px;
+  }
+}
+.VuePagination {
+  text-align: center;
+}
+
+.vue-title {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.vue-pagination-ad {
+  text-align: center;
+}
+
+.glyphicon.glyphicon-eye-open {
+  width: 16px;
+  display: block;
+  margin: 0 auto;
+}
+
+.available-fields {
+  margin: 0 auto;
+  text-align: left;
+  columns: 4;
+  max-width: 1140px;
+}
+.available-fields__field {
+  opacity: 0.7;
+}
+.available-fields__field.active {
+  opacity: 1;
+}
+.available-fields__field label {
+  font-weight: normal;
+  margin-left: 5px;
+}
+
+th:nth-child(3) {
+  text-align: center;
+}
+th.VueTables__sortable {
+  cursor: pointer;
+  user-select: none;
+}
+.VueTables__sort-icon {
+}
+
+.VueTables__child-row {
+  text-align: left;
+}
+
+.VueTables__child-row-toggler {
+  width: 16px;
+  height: 16px;
+  line-height: 16px;
+  display: block;
+  margin: auto;
+  text-align: center;
+  cursor: pointer;
+}
+
+.VueTables__child-row-toggler--closed::before {
+  content: '+';
+}
+
+.VueTables__child-row-toggler--open::before {
+  content: '-';
+}
+
+.VueTables__table td {
+  padding: 0 !important;
+  position: relative;
+
+  .cell {
+    padding: 8px;
+
+    &.colored {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      left: 0;
+
+      &.success {
+        background: #aaffaa;
+      }
+      &.warning {
+        background: #ffffaa;
+      }
+      &.danger {
+        background: #ffaaaa;
+      }
+    }
+  }
+}
