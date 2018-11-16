@@ -55,5 +55,9 @@ module.exports = {
   },
   jivosite: {
     warn: { min: 1 }
+  },
+  meta_client_priority: {
+    warn: { min: 2 },
+    error: { min: 3 }
   }
 };

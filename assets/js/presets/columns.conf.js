@@ -64,5 +64,9 @@ module.exports = {
   https: {
     name: 'https',
     columns: ['domain_idn', 'https', 'email']
+  },
+  clients: {
+    name: 'клиенты',
+    columns: ['domain_idn', 'meta_title', 'meta_category', 'meta_type', 'meta_client_priority']
   }
 };
