@@ -42,5 +42,17 @@ module.exports = [
   {
     name: 'yandex_maps',
     q: 'yandex_maps=1'
+  },
+  {
+    name: 'lighthouse_performance',
+    q: 'prod=1&lighthouse_performance>50'
+  },
+  {
+    name: 'кликабельные телефоны',
+    q: 'prod=1&tel_links>0'
+  },
+  {
+    name: 'продан pagespeed',
+    q: 'prod=1&meta_pagespeed>0'
   }
 ];
