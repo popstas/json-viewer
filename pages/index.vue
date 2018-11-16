@@ -119,7 +119,7 @@ export default {
     headings() {
       let h = {};
       this.fields.forEach(field => {
-        h[field.name] = field.title || field.name;
+        h[field.name] = field.title.split('_').join(' ') || field.name;
       });
       return h;
     },
