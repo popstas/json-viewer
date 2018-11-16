@@ -38,10 +38,7 @@ module.exports = {
     name: 'pagespeed_performance',
     columns: [
       'domain_idn',
-      'host',
-      'prod',
       'engine',
-      'errors',
       'lighthouse_performance',
       'lighthouse_interactive',
       'lighthouse_speed_index',
@@ -55,10 +52,7 @@ module.exports = {
     name: 'pagespeed_score',
     columns: [
       'domain_idn',
-      'host',
-      'prod',
       'engine',
-      'errors',
       'lighthouse_all',
       'lighthouse_performance',
       'lighthouse_pwa',

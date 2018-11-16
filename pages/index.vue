@@ -78,7 +78,8 @@ export default {
       fields: [],
       columnPresets: columnPresets,
       filterPresets: filterPresets,
-      routerProcess: false
+      routerProcess: false,
+      tests: this.$store.state.tests
     };
   },
 
@@ -176,7 +177,7 @@ export default {
             };
 
             // info from /etc/site-info.yml
-            const info = this.$store.state.tests.find(test => test.name == fieldName);
+            const info = this.tests.find(test => test.name == fieldName);
             if (info) {
               if (info.comment) field.comment = info.comment;
               field.command = info.command;
@@ -196,7 +197,7 @@ export default {
       let groups = { unnamed: { name: '', fields: [] } };
       for (let i in this.availableFields) {
         const field = this.availableFields[i];
-        const info = this.$store.state.tests.find(test => test.name == field.name);
+        const info = this.tests.find(test => test.name == field.name);
         if (!info || !info.groups) {
           groups.unnamed.fields.push(field);
           continue;
@@ -299,6 +300,8 @@ export default {
     // дополняет колонки sites.json
     sitesProcessing(sites) {
       if (!sites) return [];
+      let tests = {};
+
       const sitesData = sites.map(s => {
         let site = { ...s };
         // should be before site_info flatten
@@ -314,15 +317,25 @@ export default {
         for (let i in site.site_info) {
           site[i] = site.site_info[i];
           if (i == 'files_size') site[i] = Math.round(site[i] / 1024);
+          if (i == 'git_size') site[i] = Math.round(site[i] / 1024);
           if (i == 'updated_time') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
         }
         delete site.site_info;
 
         // flatten meta
-        for (let i in site.meta) {
-          site['meta_' + i] = site.meta[i];
+        if(site.meta){
+          for (let i in site.meta) {
+            const ln = 'meta_' + i;
+            site[ln] = site.meta[i];
+            if (!(ln in tests)) {
+              tests[ln] = {
+                name: ln,
+                groups: ['meta']
+              };
+            }
+          }
+          delete site.meta;
         }
-        delete site.meta;
 
         // flatten lighthouse
         if (site.lighthouse) {
@@ -333,10 +346,24 @@ export default {
               for (let s in site.lighthouse.scores) {
                 const ln = 'lighthouse_' + s.split('-').join('_');
                 site[ln] = site.lighthouse.scores[s];
+                if (!(ln in tests)) {
+                  tests[ln] = {
+                    name: ln,
+                    comment: 'Lighthouse ' + s,
+                    groups: ['lighthouse']
+                  };
+                }
               }
             } else {
               const ln = 'lighthouse_' + i.split('-').join('_');
               site[ln] = site.lighthouse[i];
+              if (!(ln in tests)) {
+                tests[ln] = {
+                  name: ln,
+                  comment: 'Lighthouse ' + i,
+                  groups: ['lighthouse']
+                };
+              }
             }
           }
           delete site.lighthouse;
@@ -346,8 +373,10 @@ export default {
         site.https = site.https ? 1 : 0;
         site.errors = site.error ? 1 : 0;
         site.id = site.domain;
+        site.time = parseInt(site.time);
         return site;
       });
+      this.tests = [...Object.values(tests), ...this.$store.state.tests];
       return sitesData;
     },
 
@@ -415,8 +444,8 @@ export default {
 
     // data init
     const sitesJson = await this.$axios.$get(this.$store.state.sitesJsonUrl);
-    const sitesData = this.sitesProcessing(sitesJson.sites);
     this.$store.commit('tests', sitesJson.tests);
+    const sitesData = this.sitesProcessing(sitesJson.sites);
     this.$store.commit('sites', sitesData);
     this.$store.dispatch('filterSites');
 
