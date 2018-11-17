@@ -59,5 +59,25 @@ module.exports = {
   meta_client_priority: {
     warn: { min: 2 },
     error: { min: 3 }
+  },
+  https: {
+    warn: { max: 0 }
+  },
+  meta_visitors: {
+    warn: { max: 499 },
+    error: { max: 99 }
+  },
+  meta_year: {
+    warn: {
+      min: new Date().getFullYear() - 4,
+      max: new Date().getFullYear() - 2
+    },
+    error: {
+      max: new Date().getFullYear() - 5
+    }
+  },
+  meta_yandex_sqi: {
+    warn: { max: 100 },
+    error: { max: 50 }
   }
 };

@@ -12,7 +12,7 @@
             v-for="field in group.fields" :key="field.name"
           >
             <input type="checkbox" :checked="fieldIndex(field) != -1">
-            <label>{{ field.title }}
+            <label>{{ field.comment || field.title }}
             </label>
           </div>
         </div>
@@ -327,12 +327,6 @@ export default {
           for (let i in site.meta) {
             const ln = 'meta_' + i;
             site[ln] = site.meta[i];
-            if (!(ln in tests)) {
-              tests[ln] = {
-                name: ln,
-                groups: ['meta']
-              };
-            }
           }
           delete site.meta;
         }
@@ -346,24 +340,10 @@ export default {
               for (let s in site.lighthouse.scores) {
                 const ln = 'lighthouse_' + s.split('-').join('_');
                 site[ln] = site.lighthouse.scores[s];
-                if (!(ln in tests)) {
-                  tests[ln] = {
-                    name: ln,
-                    comment: 'Lighthouse ' + s,
-                    groups: ['lighthouse']
-                  };
-                }
               }
             } else {
               const ln = 'lighthouse_' + i.split('-').join('_');
               site[ln] = site.lighthouse[i];
-              if (!(ln in tests)) {
-                tests[ln] = {
-                  name: ln,
-                  comment: 'Lighthouse ' + i,
-                  groups: ['lighthouse']
-                };
-              }
             }
           }
           delete site.lighthouse;
