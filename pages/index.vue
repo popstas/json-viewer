@@ -5,6 +5,9 @@
 
       <div class="available-fields">
         <a href="#" @click="changeGroupOpenedAll">Развернуть / свернуть все</a>
+        <br />
+        <button class="column-presets__button" @click="setPreset({name: 'none', columns: ['domain_idn']});" v-html="'убрать все колонки'">
+        </button>
 
         <div class="field-group" v-for="group in fieldGroups" :key="group.name" v-if="group.fields.length > 0">
           <!-- group header -->
