@@ -8,9 +8,7 @@ module.exports = {
       'engine',
       'meta_year',
       'meta_visitors',
-      'yandex_tcy',
       'files_size',
-      'errors'
     ]
   },
   cron: {
@@ -30,7 +28,6 @@ module.exports = {
       'files_count',
       'files_size',
       'git_clean',
-      'yandex_tcy',
       'h1_count'
     ]
   },

@@ -5,7 +5,10 @@
 
       <div class="available-fields">
         <div class="field-group" v-for="group in fieldGroups" :key="group.name">
-          <div class="field-group__name">{{ group.name }}</div>
+          <div class="field-group__name">
+            {{ group.name }}
+            <button class="field-group__all-button" @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});" :title="group.fields.map(f => f.comment).join('\n')">all</button>
+          </div>
 
           <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
             :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
@@ -19,20 +22,20 @@
       </div>
 
       <input class="filter__query" placeholder="query" v-model="q" autofocus title="Например:
-      engine:bitrix prod:1"/>
+      engine:bitrix prod:1" v-bind:style="{width: filterWidth + 'px'}"/>
 
       <div class="filter-presets">
         filters:
-        <button
+        <button class="filter-presets__button"
           v-for="preset in filterPresets" :key="preset.name"
-          @click="q = preset.q" v-html="preset.name"></button>
+          @click="q = preset.q" v-html="preset.name" :title="preset.q"></button>
       </div>
 
       <div class="column-presets">
         columns:
-        <button
+        <button class="column-presets__button"
           v-for="preset in columnPresets" :key="preset.name"
-          @click="setPreset(preset);" v-html="preset.name"></button>
+          @click="setPreset(preset);" v-html="preset.name" :title="preset.columns.join('\n')"></button>
       </div>
 
       <v-client-table v-if="filteredSites.length > 0"
@@ -92,12 +95,19 @@ export default {
       return this.$store.state.filter;
     },
 
+    filterWidth() {
+      const padding = 15;
+      return (this.q.length + 1) * 10 + padding;
+    },
+
     tableOptions() {
       return {
         headings: this.headings,
         headingsTooltips: this.headingsTooltips,
         filterable: ['domain_idn'],
         perPage: this.filteredSites.length,
+        perPageValues: [100, 250, 500],
+        columnsDropdown: true,
         rowClassCallback(row) {
           if (row.error) return 'danger';
           // return 'success';
@@ -116,10 +126,12 @@ export default {
       return this.fields.map(field => field.name);
     },
 
+    // заголовки колонок таблиц
     headings() {
       let h = {};
       this.fields.forEach(field => {
-        h[field.name] = field.title.split('_').join(' ') || field.name;
+        h[field.name] =
+        field.title.split('_').join(' ') || field.name;
       });
       return h;
     },
@@ -323,7 +335,7 @@ export default {
         delete site.site_info;
 
         // flatten meta
-        if(site.meta){
+        if (site.meta) {
           for (let i in site.meta) {
             const ln = 'meta_' + i;
             site[ln] = site.meta[i];

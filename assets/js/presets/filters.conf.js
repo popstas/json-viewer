@@ -4,6 +4,10 @@ module.exports = [
     q: 'prod=1'
   },
   {
+    name: 'приоритетные клиенты',
+    q: 'prod=1&meta_client_priority<3'
+  },
+  {
     name: 'bitrix',
     q: 'engine=bitrix&prod=1'
   },
