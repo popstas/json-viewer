@@ -4,9 +4,12 @@
       <div>total: {{ filteredSites.length }}</div>
 
       <div class="available-fields">
-        <div class="field-group" v-for="group in fieldGroups" :key="group.name">
-          <div class="field-group__name">
-            {{ group.name }}
+        <a href="#" @click="changeGroupOpenedAll">Развернуть / свернуть все</a>
+
+        <div class="field-group" v-for="group in fieldGroups" :key="group.name" v-if="group.fields.length > 0">
+          <!-- group header -->
+          <div class="field-group__header">
+            <a class="field-group__name" v-html="group.name" @click="changeGroupOpened(group)"></a>
 
             <button class="column-presets__button field-group__all-button" @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});"
               :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')">all
@@ -19,23 +22,26 @@
                 @click="setPreset(preset);" v-html="preset.name" :title="'Вывести колонки:\n' + preset.columns.join('\n')">
               </button>
             </div>
+
+            <div class="field-group__filters">
+              <button class="filter-presets__button"
+                  v-for="preset in filterPresets" :key="preset.name" v-if="preset.groups.indexOf(group.name) !== -1"
+                  @click="q = preset.q" v-html="preset.name" :title="'Отфильтровать:\n' + preset.q">
+              </button>
+            </div>
           </div>
 
+          <!-- group content -->
+          <div :id="'filter-' + group.name" :class="{'field-group__content': true, collapse: !fieldGroupsOpened[group.name]}">
 
-          <div class="field-group__filters">
-            <button class="filter-presets__button"
-                v-for="preset in filterPresets" :key="preset.name" v-if="preset.groups.indexOf(group.name) !== -1"
-                @click="q = preset.q" v-html="preset.name" :title="'Отфильтровать:\n' + preset.q">
-            </button>
-          </div>
-
-          <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
-            :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
-            v-for="field in group.fields" :key="field.name"
-          >
-            <input type="checkbox" :checked="fieldIndex(field) != -1">
-            <label>{{ field.comment || field.title }}
-            </label>
+            <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
+              :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
+              v-for="field in group.fields" :key="field.name"
+            >
+              <input type="checkbox" :checked="fieldIndex(field) != -1">
+              <label>{{ field.comment || field.title }}
+              </label>
+            </div>
           </div>
         </div>
       </div>
@@ -101,7 +107,8 @@ export default {
       columnPresets: columnPresets,
       filterPresets: filterPresets,
       routerProcess: false,
-      tests: this.$store.state.tests
+      tests: this.$store.state.tests,
+      fieldGroupsOpened: {}
     };
   },
 
@@ -319,6 +326,24 @@ export default {
       this.$store.commit('changeFilter', { name, value });
       this.$store.dispatch('filterSites');
       // this.$emit('changeFilter', { name, value });
+    },
+
+    // сворачивает/разворачивает одну группу
+    changeGroupOpened(group) {
+      this.fieldGroupsOpened[group.name] =
+        group.name in this.fieldGroupsOpened ? !this.fieldGroupsOpened[group.name] : true;
+      this.$forceUpdate();
+    },
+
+    // сворачивает/разворачивает все группы
+    changeGroupOpenedAll() {
+      let to = true;
+      if ('main' in this.fieldGroupsOpened && this.fieldGroupsOpened.main) to = false;
+
+      Object.keys(this.fieldGroups).forEach(groupName => {
+        this.fieldGroupsOpened[groupName] = to;
+      });
+      this.$forceUpdate();
     },
 
     // индекс поля в массиве по объекту
