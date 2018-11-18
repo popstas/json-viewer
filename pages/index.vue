@@ -10,6 +10,20 @@
             <button class="field-group__all-button" @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});" :title="group.fields.map(f => f.comment).join('\n')">all</button>
           </div>
 
+          <div class="field-group__columns">
+            <button class="column-presets__button"
+              v-for="preset in columnPresets" :key="preset.name" v-if="preset.groups.indexOf(group.name) !== -1"
+              @click="setPreset(preset);" v-html="preset.name" :title="preset.columns.join('\n')">
+            </button>
+          </div>
+
+          <div class="field-group__filters">
+            <button class="filter-presets__button"
+                v-for="preset in filterPresets" :key="preset.name" v-if="preset.groups.indexOf(group.name) !== -1"
+                @click="q = preset.q" v-html="preset.name" :title="preset.q">
+            </button>
+          </div>
+
           <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
             :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
             v-for="field in group.fields" :key="field.name"
@@ -130,12 +144,12 @@ export default {
     headings() {
       let h = {};
       this.fields.forEach(field => {
-        h[field.name] =
-        field.title.split('_').join(' ') || field.name;
+        h[field.name] = field.title.split('_').join(' ') || field.name;
       });
       return h;
     },
 
+    // подсказки к колонкам
     headingsTooltips() {
       let h = {};
       this.fields.forEach(field => {

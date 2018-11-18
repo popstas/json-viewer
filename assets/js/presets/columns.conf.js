@@ -1,6 +1,7 @@
 module.exports = {
   default: {
     name: 'default',
+    groups: ['main'],
     columns: [
       'domain_idn',
       'host',
@@ -13,10 +14,12 @@ module.exports = {
   },
   cron: {
     name: 'cron',
+    groups: ['cron'],
     columns: ['domain_idn', 'host', 'prod', 'cron']
   },
   bitrix: {
     name: 'bitrix',
+    groups: ['bitrix'],
     columns: [
       'domain_idn',
       'host',
@@ -33,6 +36,7 @@ module.exports = {
   },
   pagespeed_performance: {
     name: 'pagespeed_performance',
+    groups: ['lighthouse', 'perf'],
     columns: [
       'domain_idn',
       'engine',
@@ -47,6 +51,7 @@ module.exports = {
   },
   pagespeed_score: {
     name: 'pagespeed_score',
+    groups: ['lighthouse', 'perf'],
     columns: [
       'domain_idn',
       'engine',
@@ -60,10 +65,12 @@ module.exports = {
   },
   https: {
     name: 'https',
+    groups: ['service'],
     columns: ['domain_idn', 'https', 'email']
   },
   clients: {
     name: 'клиенты',
+    groups: ['main'],
     columns: ['domain_idn', 'meta_title', 'meta_category', 'meta_type', 'meta_client_priority']
   }
 };
