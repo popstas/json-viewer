@@ -1,6 +1,6 @@
 <template>
   <section class="container">
-    <div>
+    <div class="table-toolbar">
       <div>total: {{ filteredSites.length }}</div>
 
       <div class="available-fields">
@@ -56,30 +56,30 @@
           v-for="preset in columnPresets" :key="preset.name"
           @click="setPreset(preset);" v-html="preset.name" :title="preset.columns.join('\n')"></button>
       </div>
-
-      <v-client-table v-if="filteredSites.length > 0"
-        :columns="columns"
-        :data="filteredSites"
-        :options="tableOptions"
-      >
-        <template slot="child_row" slot-scope="props">
-          <ul class="site-details">
-            <li v-if="typeof value != 'object'" v-for="(value, key, index) in props.row" :key="index">
-              <b>{{ key }}:</b> {{ value }}
-            </li>
-          </ul>
-        </template>
-
-        <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
-        <div v-for="colName in columns" :key="colName"
-          :slot="colName" slot-scope="props"
-          :class="[ 'cell', getColumnValidateClass(props, props.row.domain, colName) ]"
-          v-html="getColumnValue(props.row, colName)"
-        ></div>
-      </v-client-table>
-
-      <div>{{ $store.state.name }} {{ $store.state.version }}</div>
     </div>
+
+    <v-client-table v-if="filteredSites.length > 0"
+      :columns="columns"
+      :data="filteredSites"
+      :options="tableOptions"
+    >
+      <template slot="child_row" slot-scope="props">
+        <ul class="site-details">
+          <li v-if="typeof value != 'object'" v-for="(value, key, index) in props.row" :key="index">
+            <b>{{ key }}:</b> {{ value }}
+          </li>
+        </ul>
+      </template>
+
+      <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
+      <div v-for="colName in columns" :key="colName"
+        :slot="colName" slot-scope="props"
+        :class="[ 'cell', getColumnValidateClass(props, props.row.domain, colName) ]"
+        v-html="getColumnValue(props.row, colName)"
+      ></div>
+    </v-client-table>
+
+    <div>{{ $store.state.name }} {{ $store.state.version }}</div>
   </section>
 </template>
 

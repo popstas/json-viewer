@@ -1,6 +1,6 @@
 .container {
   min-height: 100vh;
-  display: flex;
+  display: block;
   justify-content: center;
   align-items: center;
   text-align: center;
@@ -39,6 +39,9 @@
   margin: 0 auto;
   text-align: left;
   columns: 4;
+  @media (max-width: 768px){
+    columns: 1;
+  }
   max-width: 1140px;
 
   .field-group {
@@ -46,7 +49,7 @@
       font-weight: bold;
       margin-top: 15px;
     }
-    &__all-button{
+    &__all-button {
       padding: 0;
       margin-left: 0.5em;
       border: none;
@@ -55,12 +58,12 @@
       font-weight: normal;
     }
 
-    &__columns{
+    &__columns {
       display: block;
       margin-left: 18px;
     }
 
-    &__filters{
+    &__filters {
       // display: inline;
       margin-left: 18px;
     }
@@ -88,7 +91,7 @@
     // border-bottom: 1px dashed;
     padding: 0;
     margin-right: 1em;
-    color: rgba(255, 0, 0, 0.87)
+    color: rgba(255, 0, 0, 0.87);
   }
 }
 
@@ -104,18 +107,15 @@
   }
 }
 
-th:nth-child(3) {
-  text-align: center;
-}
-th.VueTables__sortable {
-  cursor: pointer;
-  user-select: none;
-}
-
 .VueTables {
   margin-top: 15px;
 
   &__sort-icon {
+  }
+
+  &__sortable {
+    cursor: pointer;
+    user-select: none;
   }
 
   &__search-field label,
@@ -151,28 +151,45 @@ th.VueTables__sortable {
     content: '-';
   }
 
-  &__table td {
-    padding: 0 !important;
-    position: relative;
+  .table-responsive {
+    @media (max-width: 768px){
+      margin: 0 -15px;
+    }
+    @media (mix-width: 769px){
+      overflow: none;
+    }
+  }
 
-    .cell {
-      padding: 8px;
+  &__table {
+    th {
+      background: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+    td {
+      padding: 0 !important;
+      position: relative;
 
-      &.colored {
-        position: absolute;
-        top: 0;
-        right: 0;
-        bottom: 0;
-        left: 0;
+      .cell {
+        padding: 8px;
 
-        &.success {
-          background: #aaffaa;
-        }
-        &.warning {
-          background: #ffffaa;
-        }
-        &.danger {
-          background: #ffaaaa;
+        &.colored {
+          position: absolute;
+          top: 0;
+          right: 0;
+          bottom: 0;
+          left: 0;
+
+          &.success {
+            background: #aaffaa;
+          }
+          &.warning {
+            background: #ffffaa;
+          }
+          &.danger {
+            background: #ffaaaa;
+          }
         }
       }
     }
