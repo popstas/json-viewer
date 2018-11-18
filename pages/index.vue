@@ -320,6 +320,7 @@ export default {
     // включить поле по имени
     addFieldByName(name) {
       const field = this.availableFields.find(field => field.name == name);
+      if (!field) return;
       let index = this.fieldIndex(field);
       if (index === -1) this.fields.push(field);
     },
