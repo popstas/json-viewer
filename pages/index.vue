@@ -274,6 +274,13 @@ export default {
     queryChangeAction() {
       this.updateUrlQuery();
       this.changeFilter('q', this.q);
+
+      // добавление колонок, которые есть в фильтре
+      const parts = this.q.split('&');
+      parts.forEach(part => {
+        const match = part.match(/^[a-zA-Z0-9_]+/);
+        if(match.length > 0) this.addFieldByName(match[0]);
+      });
     },
 
     // переключает поле в таблице, через нее проходят все изменения полей
@@ -308,6 +315,18 @@ export default {
     toggleFieldByName(name) {
       const field = this.availableFields.find(field => field.name == name);
       this._toggleField(field);
+    },
+
+    // включить поле по имени
+    addFieldByName(name) {
+      console.log('addFieldByName: ', name);
+      const field = this.availableFields.find(field => field.name == name);
+      let index = this.fieldIndex(field);
+      if (index === -1){
+        console.log('field: ', field);
+        console.log('add field '+field.name);
+        this.fields.push(field);
+      }
     },
 
     // устанавливает поля по массиву имен, сбрасывает предыдущие выбранные поля

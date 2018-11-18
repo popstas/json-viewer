@@ -157,6 +157,7 @@
   .table-responsive {
     @media (max-width: 768px) {
       margin: 0 -15px;
+      width: auto;
     }
     @media (mix-width: 769px) {
       overflow: none;
