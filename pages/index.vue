@@ -7,20 +7,25 @@
         <div class="field-group" v-for="group in fieldGroups" :key="group.name">
           <div class="field-group__name">
             {{ group.name }}
-            <button class="field-group__all-button" @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});" :title="group.fields.map(f => f.comment).join('\n')">all</button>
+
+            <button class="column-presets__button field-group__all-button" @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});"
+              :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')">all
+            </button>
+
+            <div class="field-group__columns">
+
+              <button class="column-presets__button"
+                v-for="preset in columnPresets" :key="preset.name" v-if="preset.groups.indexOf(group.name) !== -1"
+                @click="setPreset(preset);" v-html="preset.name" :title="'Вывести колонки:\n' + preset.columns.join('\n')">
+              </button>
+            </div>
           </div>
 
-          <div class="field-group__columns">
-            <button class="column-presets__button"
-              v-for="preset in columnPresets" :key="preset.name" v-if="preset.groups.indexOf(group.name) !== -1"
-              @click="setPreset(preset);" v-html="preset.name" :title="preset.columns.join('\n')">
-            </button>
-          </div>
 
           <div class="field-group__filters">
             <button class="filter-presets__button"
                 v-for="preset in filterPresets" :key="preset.name" v-if="preset.groups.indexOf(group.name) !== -1"
-                @click="q = preset.q" v-html="preset.name" :title="preset.q">
+                @click="q = preset.q" v-html="preset.name" :title="'Отфильтровать:\n' + preset.q">
             </button>
           </div>
 
@@ -121,7 +126,7 @@ export default {
         filterable: ['domain_idn'],
         perPage: this.filteredSites.length,
         perPageValues: [100, 250, 500],
-        columnsDropdown: true,
+        // columnsDropdown: true,
         rowClassCallback(row) {
           if (row.error) return 'danger';
           // return 'success';
