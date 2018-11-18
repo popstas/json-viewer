@@ -279,7 +279,7 @@ export default {
       const parts = this.q.split('&');
       parts.forEach(part => {
         const match = part.match(/^[a-zA-Z0-9_]+/);
-        if(match.length > 0) this.addFieldByName(match[0]);
+        if (match.length > 0) this.addFieldByName(match[0]);
       });
     },
 
@@ -319,14 +319,9 @@ export default {
 
     // включить поле по имени
     addFieldByName(name) {
-      console.log('addFieldByName: ', name);
       const field = this.availableFields.find(field => field.name == name);
       let index = this.fieldIndex(field);
-      if (index === -1){
-        console.log('field: ', field);
-        console.log('add field '+field.name);
-        this.fields.push(field);
-      }
+      if (index === -1) this.fields.push(field);
     },
 
     // устанавливает поля по массиву имен, сбрасывает предыдущие выбранные поля
