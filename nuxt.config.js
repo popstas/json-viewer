@@ -6,7 +6,12 @@ module.exports = {
     '@nuxtjs/axios'
   ],
 
+  css: [
+    'element-ui/lib/theme-chalk/index.css'
+  ],
+
   plugins: [
+    '@/plugins/element-ui',
     { src: '@/plugins/vue-tables', ssr: false },
   ],
 
@@ -18,7 +23,7 @@ module.exports = {
   ** Headers of the page
   */
   head: {
-    title: 'viasite-projects-list',
+    title: 'projects-list',
     meta: [
       { charset: 'utf-8' },
       { name: 'viewport', content: 'width=device-width, initial-scale=1' },

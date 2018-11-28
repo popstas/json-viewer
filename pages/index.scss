@@ -48,28 +48,6 @@
     &__header {
       margin-top: 15px;
     }
-    &__name {
-      font-weight: bold;
-      cursor: pointer;
-    }
-    &__all-button {
-      padding: 0;
-      margin-left: 0.5em;
-      border: none;
-      border-bottom: 1px dashed;
-      background: none;
-      font-weight: normal;
-    }
-
-    &__columns {
-      display: block;
-      margin-left: 18px;
-    }
-
-    &__filters {
-      // display: inline;
-      margin-left: 18px;
-    }
   }
 
   &__field {

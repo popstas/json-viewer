@@ -3,34 +3,70 @@
     <div class="table-toolbar">
       <div>total: {{ filteredSites.length }}</div>
 
+      <!-- columns by tag -->
       <div class="available-fields">
         <a href="#" @click="changeGroupOpenedAll">Развернуть / свернуть все</a>
         <br />
         <button class="column-presets__button" @click="setPreset({name: 'none', columns: ['domain_idn']});" v-html="'убрать все колонки'">
         </button>
 
+        <!-- one tag -->
         <div class="field-group" v-for="group in fieldGroups" :key="group.name" v-if="group.fields.length > 0">
+
           <!-- group header -->
           <div class="field-group__header">
-            <a class="field-group__name" v-html="group.name" @click="changeGroupOpened(group)"></a>
+            <el-dropdown>
+              <span class="el-dropdown-link" @click="changeGroupOpened(group)">
+                <input type="checkbox"
+                  @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});"
+                  :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')"
+                />
+                {{ group.name }}<i class="el-icon-arrow-down el-icon--right"></i>
+              </span>
+              <el-dropdown-menu slot="dropdown">
 
-            <button class="column-presets__button field-group__all-button" @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});"
-              :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')">all
-            </button>
+                <el-dropdown-item v-for="preset in columnPresets" :key="preset.name"
+                  v-if="preset.groups.indexOf(group.name) !== -1"
+                >
+                  <button class="column-presets__button"
+                    @click="setPreset(preset);" v-html="preset.name"
+                    :title="'Вывести колонки:\n' + preset.columns.join('\n')">
+                  </button>
+                </el-dropdown-item>
 
-            <div class="field-group__columns">
+                <el-dropdown-item v-for="preset in filterPresets" :key="preset.name"
+                  v-if="preset.groups.indexOf(group.name) !== -1"
+                >
+                  <button class="filter-presets__button"
+                      @click="q = preset.q" v-html="preset.name" :title="'Отфильтровать:\n' + preset.q">
+                  </button>
+                </el-dropdown-item>
 
-              <button class="column-presets__button"
-                v-for="preset in columnPresets" :key="preset.name" v-if="preset.groups.indexOf(group.name) !== -1"
-                @click="setPreset(preset);" v-html="preset.name" :title="'Вывести колонки:\n' + preset.columns.join('\n')">
-              </button>
-            </div>
+                <el-dropdown-item v-for="field in group.fields" :key="field.name">
+                  <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
+                    :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
 
-            <div class="field-group__filters">
-              <button class="filter-presets__button"
-                  v-for="preset in filterPresets" :key="preset.name" v-if="preset.groups.indexOf(group.name) !== -1"
-                  @click="q = preset.q" v-html="preset.name" :title="'Отфильтровать:\n' + preset.q">
-              </button>
+                  >
+                    <input type="checkbox" :checked="fieldIndex(field) != -1">
+                    <label>{{ field.comment || field.title }}
+                    </label>
+                  </div>
+                </el-dropdown-item>
+
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
+
+          <!-- selected-fields -->
+          <div class="field-group__selected-fields">
+            <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
+              :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
+              v-for="field in group.fields" :key="field.name"
+              v-if="fieldIndex(field) != -1 && !fieldGroupsOpened[group.name]"
+            >
+              <input type="checkbox" :checked="fieldIndex(field) != -1">
+              <label>{{ field.comment || field.title }}
+              </label>
             </div>
           </div>
 
