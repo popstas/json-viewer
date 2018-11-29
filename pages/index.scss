@@ -35,18 +35,40 @@
   margin: 0 auto;
 }
 
+// group dropdown on mobile
+@media (max-width: 1000px) {
+  .el-dropdown-menu.el-popper {
+    display: none;
+  }
+}
+
 .available-fields {
   margin: 0 auto;
   text-align: left;
   columns: 4;
+  @media (max-width: 1000px) {
+    columns: 3;
+  }
   @media (max-width: 768px) {
     columns: 1;
   }
   max-width: 1140px;
 
   .field-group {
+    padding: 0 3px;
+
+    &:hover {
+      background: #fbfbfb;
+    }
+
     &__header {
       margin-top: 15px;
+      margin-bottom: 5px;
+    }
+
+    &__name {
+      margin-left: 5px;
+      font-size: 1.5rem;
     }
   }
 
@@ -73,6 +95,9 @@
     padding: 0;
     margin-right: 1em;
     color: rgba(255, 0, 0, 0.87);
+    @media (max-width: 1000px) {
+      padding: 5px;
+    }
   }
 }
 
@@ -85,6 +110,9 @@
     padding: 0;
     margin-right: 1em;
     font-weight: normal;
+    @media (max-width: 1000px) {
+      padding: 5px;
+    }
   }
 }
 

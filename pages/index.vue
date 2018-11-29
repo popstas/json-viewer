@@ -5,105 +5,148 @@
 
       <!-- columns by tag -->
       <div class="available-fields">
-        <a href="#" @click="changeGroupOpenedAll">Развернуть / свернуть все</a>
-        <br />
-        <button class="column-presets__button" @click="setPreset({name: 'none', columns: ['domain_idn']});" v-html="'убрать все колонки'">
+        <button class="column-presets__button" @click="changeGroupOpenedAll">
+          <span v-if="'main' in this.fieldGroupsOpened && this.fieldGroupsOpened.main">свернуть все</span>
+          <span v-else>развернуть все</span>
         </button>
+        <br>
+        <button
+          class="column-presets__button"
+          @click="setPreset({name: 'none', columns: ['domain_idn']});"
+          v-html="'убрать все колонки'"
+        ></button>
 
         <!-- one tag -->
-        <div class="field-group" v-for="group in fieldGroups" :key="group.name" v-if="group.fields.length > 0">
-
+        <div
+          class="field-group"
+          v-for="group in fieldGroups"
+          :key="group.name"
+          v-if="group.fields.length > 0"
+        >
           <!-- group header -->
           <div class="field-group__header">
             <el-dropdown>
               <span class="el-dropdown-link" @click="changeGroupOpened(group)">
-                <input type="checkbox"
+                <input
+                  type="checkbox"
                   @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});"
                   :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')"
-                />
-                {{ group.name }}<i class="el-icon-arrow-down el-icon--right"></i>
+                >
+                <span class="field-group__name">{{ group.name }}</span>
+                <i class="el-icon-arrow-down el-icon--right"></i>
               </span>
               <el-dropdown-menu slot="dropdown">
-
-                <el-dropdown-item v-for="preset in columnPresets" :key="preset.name"
+                <el-dropdown-item
+                  v-for="preset in columnPresets"
+                  :key="preset.name"
                   v-if="preset.groups.indexOf(group.name) !== -1"
                 >
-                  <button class="column-presets__button"
-                    @click="setPreset(preset);" v-html="preset.name"
-                    :title="'Вывести колонки:\n' + preset.columns.join('\n')">
-                  </button>
+                  <button
+                    class="column-presets__button"
+                    @click="setPreset(preset);"
+                    v-html="preset.name"
+                    :title="'Вывести колонки:\n' + preset.columns.join('\n')"
+                  ></button>
                 </el-dropdown-item>
 
-                <el-dropdown-item v-for="preset in filterPresets" :key="preset.name"
+                <el-dropdown-item
+                  v-for="preset in filterPresets"
+                  :key="preset.name"
                   v-if="preset.groups.indexOf(group.name) !== -1"
                 >
-                  <button class="filter-presets__button"
-                      @click="q = preset.q" v-html="preset.name" :title="'Отфильтровать:\n' + preset.q">
-                  </button>
+                  <button
+                    class="filter-presets__button"
+                    @click="q = preset.q"
+                    v-html="preset.name"
+                    :title="'Отфильтровать:\n' + preset.q"
+                  ></button>
                 </el-dropdown-item>
 
                 <el-dropdown-item v-for="field in group.fields" :key="field.name">
-                  <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
+                  <div
+                    :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')"
+                    @click="toggleField(field)"
                     :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
-
                   >
                     <input type="checkbox" :checked="fieldIndex(field) != -1">
-                    <label>{{ field.comment || field.title }}
-                    </label>
+                    <label>{{ field.comment || field.title }}</label>
                   </div>
                 </el-dropdown-item>
-
               </el-dropdown-menu>
             </el-dropdown>
           </div>
 
           <!-- selected-fields -->
           <div class="field-group__selected-fields">
-            <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
+            <div
+              :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')"
+              @click="toggleField(field)"
               :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
-              v-for="field in group.fields" :key="field.name"
+              v-for="field in group.fields"
+              :key="field.name"
               v-if="fieldIndex(field) != -1 && !fieldGroupsOpened[group.name]"
             >
               <input type="checkbox" :checked="fieldIndex(field) != -1">
-              <label>{{ field.comment || field.title }}
-              </label>
+              <label>{{ field.comment || field.title }}</label>
             </div>
           </div>
 
           <!-- group content -->
-          <div :id="'filter-' + group.name" :class="{'field-group__content': true, collapse: !fieldGroupsOpened[group.name]}">
-
-            <div :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')" @click="toggleField(field)"
+          <div
+            :id="'filter-' + group.name"
+            :class="{'field-group__content': true, collapse: !fieldGroupsOpened[group.name]}"
+          >
+            <div
+              :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')"
+              @click="toggleField(field)"
               :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
-              v-for="field in group.fields" :key="field.name"
+              v-for="field in group.fields"
+              :key="field.name"
             >
               <input type="checkbox" :checked="fieldIndex(field) != -1">
-              <label>{{ field.comment || field.title }}
-              </label>
+              <label>{{ field.comment || field.title }}</label>
             </div>
           </div>
         </div>
       </div>
 
-      <input class="filter__query" placeholder="query" v-model="q" autofocus title="Например:
-      engine:bitrix prod:1" v-bind:style="{width: filterWidth + 'px'}"/>
+      <input
+        class="filter__query"
+        placeholder="query"
+        v-model="q"
+        autofocus
+        title="Например:
+      engine:bitrix prod:1"
+        v-bind:style="{width: filterWidth + 'px'}"
+      >
 
       <div class="filter-presets">
         filters:
-        <button class="filter-presets__button"
-          v-for="preset in filterPresets" :key="preset.name"
-          @click="q = preset.q" v-html="preset.name" :title="preset.q"></button>
+        <button
+          class="filter-presets__button"
+          v-for="preset in filterPresets"
+          :key="preset.name"
+          @click="q = preset.q"
+          v-html="preset.name"
+          :title="preset.q"
+        ></button>
       </div>
 
       <div class="column-presets">
         columns:
-        <button class="column-presets__button"
-          v-for="preset in columnPresets" :key="preset.name"
-          @click="setPreset(preset);" v-html="preset.name" :title="preset.columns.join('\n')"></button>
+        <button
+          class="column-presets__button"
+          v-for="preset in columnPresets"
+          :key="preset.name"
+          @click="setPreset(preset);"
+          v-html="preset.name"
+          :title="preset.columns.join('\n')"
+        ></button>
       </div>
     </div>
 
-    <v-client-table v-if="filteredSites.length > 0"
+    <v-client-table
+      v-if="filteredSites.length > 0"
       :columns="columns"
       :data="filteredSites"
       :options="tableOptions"
@@ -111,14 +154,18 @@
       <template slot="child_row" slot-scope="props">
         <ul class="site-details">
           <li v-if="typeof value != 'object'" v-for="(value, key, index) in props.row" :key="index">
-            <b>{{ key }}:</b> {{ value }}
+            <b>{{ key }}:</b>
+            {{ value }}
           </li>
         </ul>
       </template>
 
       <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
-      <div v-for="colName in columns" :key="colName"
-        :slot="colName" slot-scope="props"
+      <div
+        v-for="colName in columns"
+        :key="colName"
+        :slot="colName"
+        slot-scope="props"
         :class="[ 'cell', getColumnValidateClass(props, props.row.domain, colName) ]"
         v-html="getColumnValue(props.row, colName)"
       ></div>
@@ -131,17 +178,17 @@
 <style lang="scss" src="./index.scss"></style>
 
 <script>
-import _ from 'lodash';
-import moment from 'moment';
-import validateMap from '~/assets/js/validate.conf';
-import columnPresets from '~/assets/js/presets/columns.conf';
-import filterPresets from '~/assets/js/presets/filters.conf';
+import _ from "lodash";
+import moment from "moment";
+import validateMap from "~/assets/js/validate.conf";
+import columnPresets from "~/assets/js/presets/columns.conf";
+import filterPresets from "~/assets/js/presets/filters.conf";
 
 export default {
   components: {},
   data() {
     return {
-      q: '',
+      q: "",
       fields: [],
       columnPresets: columnPresets,
       filterPresets: filterPresets,
@@ -169,12 +216,12 @@ export default {
       return {
         headings: this.headings,
         headingsTooltips: this.headingsTooltips,
-        filterable: ['domain_idn'],
+        filterable: ["domain_idn"],
         perPage: this.filteredSites.length,
         perPageValues: [100, 250, 500],
         // columnsDropdown: true,
         rowClassCallback(row) {
-          if (row.error) return 'danger';
+          if (row.error) return "danger";
           // return 'success';
         },
         templates: {
@@ -195,7 +242,7 @@ export default {
     headings() {
       let h = {};
       this.fields.forEach(field => {
-        h[field.name] = field.title.split('_').join(' ') || field.name;
+        h[field.name] = field.title.split("_").join(" ") || field.name;
       });
       return h;
     },
@@ -213,18 +260,18 @@ export default {
     availableFields() {
       let excludedFields = [
         // objects
-        'id',
-        'tests',
+        "id",
+        "tests",
         // duplicates
-        'meta_engine',
-        'meta_screenshots',
-        'meta_prod',
-        'site_root',
+        "meta_engine",
+        "meta_screenshots",
+        "meta_prod",
+        "site_root",
         // not working
-        'total_pages_load_time',
-        'result',
-        'max_result',
-        'result_percent'
+        "total_pages_load_time",
+        "result",
+        "max_result",
+        "result_percent"
       ];
 
       let fields = [];
@@ -236,7 +283,7 @@ export default {
         // раньше из некоторых вложенных объектов доставались поля,
         // теперь они прессуются в одномерный объект
         let objs = {
-          '': site
+          "": site
           // 'site_info.': site.site_info,
           // 'meta.': site.meta
         };
@@ -271,7 +318,7 @@ export default {
 
     // раскладывает поля по группам, с дублированием
     fieldGroups() {
-      let groups = { unnamed: { name: '', fields: [] } };
+      let groups = { unnamed: { name: "", fields: [] } };
       for (let i in this.availableFields) {
         const field = this.availableFields[i];
         const info = this.tests.find(test => test.name == field.name);
@@ -280,7 +327,9 @@ export default {
           continue;
         }
 
-        const groupsList = Array.isArray(info.groups) ? info.groups : [info.groups];
+        const groupsList = Array.isArray(info.groups)
+          ? info.groups
+          : [info.groups];
         for (let g in groupsList) {
           let groupName = groupsList[g];
           if (!(groupName in groups)) {
@@ -293,10 +342,10 @@ export default {
     },
 
     pageTitle() {
-      let title = ['viasite-projects'];
-      if (this.q) title.push('q: ' + this.q);
-      if (this.fields.length > 0) title.push('fields: ' + this.columns);
-      return title.join(', ');
+      let title = ["viasite-projects"];
+      if (this.q) title.push("q: " + this.q);
+      if (this.fields.length > 0) title.push("fields: " + this.columns);
+      return title.join(", ");
     }
   },
 
@@ -309,10 +358,10 @@ export default {
   methods: {
     queryChangeAction() {
       this.updateUrlQuery();
-      this.changeFilter('q', this.q);
+      this.changeFilter("q", this.q);
 
       // добавление колонок, которые есть в фильтре
-      const parts = this.q.split('&');
+      const parts = this.q.split("&");
       parts.forEach(part => {
         const match = part.match(/^[a-zA-Z0-9_]+/);
         if (match.length > 0) this.addFieldByName(match[0]);
@@ -343,7 +392,7 @@ export default {
 
       let query = {};
       if (this.q) query.q = this.q;
-      query.fields = this.columns.join(',');
+      query.fields = this.columns.join(",");
       this.$router.push({ query });
     },
 
@@ -377,22 +426,25 @@ export default {
 
     // фильтр всегда меняется через эту функцию
     changeFilter(name, value) {
-      this.$store.commit('changeFilter', { name, value });
-      this.$store.dispatch('filterSites');
+      this.$store.commit("changeFilter", { name, value });
+      this.$store.dispatch("filterSites");
       // this.$emit('changeFilter', { name, value });
     },
 
     // сворачивает/разворачивает одну группу
     changeGroupOpened(group) {
       this.fieldGroupsOpened[group.name] =
-        group.name in this.fieldGroupsOpened ? !this.fieldGroupsOpened[group.name] : true;
+        group.name in this.fieldGroupsOpened
+          ? !this.fieldGroupsOpened[group.name]
+          : true;
       this.$forceUpdate();
     },
 
     // сворачивает/разворачивает все группы
     changeGroupOpenedAll() {
       let to = true;
-      if ('main' in this.fieldGroupsOpened && this.fieldGroupsOpened.main) to = false;
+      if ("main" in this.fieldGroupsOpened && this.fieldGroupsOpened.main)
+        to = false;
 
       Object.keys(this.fieldGroups).forEach(groupName => {
         this.fieldGroupsOpened[groupName] = to;
@@ -416,7 +468,7 @@ export default {
         let site = { ...s };
         // should be before site_info flatten
         if (
-          site.engine != 'default' &&
+          site.engine != "default" &&
           (!site.site_info || (site.site_info && !site.site_info.engine))
         ) {
           if (!site.site_info) site.site_info = {};
@@ -426,16 +478,17 @@ export default {
         // flatten site_info
         for (let i in site.site_info) {
           site[i] = site.site_info[i];
-          if (i == 'files_size') site[i] = Math.round(site[i] / 1024);
-          if (i == 'git_size') site[i] = Math.round(site[i] / 1024);
-          if (i == 'updated_time') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
+          if (i == "files_size") site[i] = Math.round(site[i] / 1024);
+          if (i == "git_size") site[i] = Math.round(site[i] / 1024);
+          if (i == "updated_time")
+            site[i] = moment.unix(site[i]).format("YYYY-MM-DD HH:mm:ss");
         }
         delete site.site_info;
 
         // flatten meta
         if (site.meta) {
           for (let i in site.meta) {
-            const ln = 'meta_' + i;
+            const ln = "meta_" + i;
             site[ln] = site.meta[i];
           }
           delete site.meta;
@@ -446,13 +499,13 @@ export default {
           // console.log(site.lighthouse);
           for (let i in site.lighthouse) {
             // вложенный объект
-            if (i == 'scores') {
+            if (i == "scores") {
               for (let s in site.lighthouse.scores) {
-                const ln = 'lighthouse_' + s.split('-').join('_');
+                const ln = "lighthouse_" + s.split("-").join("_");
                 site[ln] = site.lighthouse.scores[s];
               }
             } else {
-              const ln = 'lighthouse_' + i.split('-').join('_');
+              const ln = "lighthouse_" + i.split("-").join("_");
               site[ln] = site.lighthouse[i];
             }
           }
@@ -474,16 +527,16 @@ export default {
     getColumnValidateClass(props, domain, column) {
       const site = this.filteredSites.find(site => site.domain == domain);
       let result;
-      if (!site) return '';
+      if (!site) return "";
 
       // пустые не валидируются
-      if ([undefined, ''].indexOf(site[column]) !== -1) return '';
+      if ([undefined, ""].indexOf(site[column]) !== -1) return "";
 
       // проверяет, попадает ли значение под лимиты
       const isFits = (value, rules) => {
         let valid = true;
-        if ('max' in rules && value > rules.max) return false;
-        if ('min' in rules && value < rules.min) return false;
+        if ("max" in rules && value > rules.max) return false;
+        if ("min" in rules && value < rules.min) return false;
         return true;
       };
 
@@ -491,14 +544,14 @@ export default {
       // проверка на соответствие из массива
       if (column in validateMap) {
         const r = validateMap[column];
-        if ('error' in r && isFits(site[column], r.error)) result = 'fail';
-        else if ('warn' in r && isFits(site[column], r.warn)) result = 'warn';
-        else result = 'pass';
+        if ("error" in r && isFits(site[column], r.error)) result = "fail";
+        else if ("warn" in r && isFits(site[column], r.warn)) result = "warn";
+        else result = "pass";
       }
 
       if (!result && site.tests) {
         const test = site.tests.find(test => test.name == column);
-        if (!test || !test.valid) return '';
+        if (!test || !test.valid) return "";
         result = test.valid;
       }
 
@@ -509,18 +562,21 @@ export default {
       // console.log('column: ', column);
 
       const validClassesMap = {
-        pass: 'success',
-        warn: 'warning',
-        fail: 'danger'
+        pass: "success",
+        warn: "warning",
+        fail: "danger"
       };
-      return 'colored ' + validClassesMap[result] + ' ' + result || 'noclass-' + result;
-      return 'success';
+      return (
+        "colored " + validClassesMap[result] + " " + result ||
+        "noclass-" + result
+      );
+      return "success";
     },
 
     // достает значение colName из row, со вложенностью
     // https://stackoverflow.com/a/6394168/1716010
     getColumnValue(row, colName) {
-      return colName.split('.').reduce((o, i) => (o ? o[i] : ''), row);
+      return colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
     }
   },
 
@@ -530,18 +586,18 @@ export default {
 
   async mounted() {
     // filter init
-    if (this.$route.query['q']) this.q = this.$route.query['q'];
+    if (this.$route.query["q"]) this.q = this.$route.query["q"];
 
     // data init
     const sitesJson = await this.$axios.$get(this.$store.state.sitesJsonUrl);
-    this.$store.commit('tests', sitesJson.tests);
+    this.$store.commit("tests", sitesJson.tests);
     const sitesData = this.sitesProcessing(sitesJson.sites);
-    this.$store.commit('sites', sitesData);
-    this.$store.dispatch('filterSites');
+    this.$store.commit("sites", sitesData);
+    this.$store.dispatch("filterSites");
 
     // fields init
-    if (this.$route.query['fields']) {
-      this.setFields(this.$route.query['fields'].split(','));
+    if (this.$route.query["fields"]) {
+      this.setFields(this.$route.query["fields"].split(","));
     } else {
       this.setPreset(this.columnPresets.default);
     }
@@ -549,11 +605,11 @@ export default {
     // router change event
     this.$router.afterEach((to, from) => {
       if (!this.routerProcess) {
-        if (this.$route.query['q']) this.q = this.$route.query['q'];
-        else this.q = '';
+        if (this.$route.query["q"]) this.q = this.$route.query["q"];
+        else this.q = "";
 
-        if (this.$route.query['fields']) {
-          this.setFields(this.$route.query['fields'].split(','));
+        if (this.$route.query["fields"]) {
+          this.setFields(this.$route.query["fields"].split(","));
         } else {
           this.setPreset(this.columnPresets.default);
         }
