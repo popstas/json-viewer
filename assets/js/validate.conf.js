@@ -47,6 +47,22 @@ module.exports = {
     warn: { min: 50, max: 79 },
     error: { max: 50 }
   },
+  lighthouse_errors_in_console: {
+    warn: { min: 1, max: 2 },
+    error: { min: 3 }
+  },
+  lighthouse_metwork_requests: {
+    warn: { min: 50, max: 100 },
+    error: { min: 100 }
+  },
+  lighthouse_mainthread_work_breakdown: {
+    warn: { min: 2000, max: 4999 },
+    error: { min: 5000 }
+  },
+  lighthouse_total_byte_weight: {
+    warn: { min: 2000, max: 4999 },
+    error: { min: 5000 }
+  },
   yandex_maps: {
     error: { min: 1 }
   },
