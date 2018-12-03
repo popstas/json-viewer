@@ -92,6 +92,33 @@
       <div
         :class="{'field-group__content': true, collapse: !fieldGroupsOpened[group.name]}"
       >
+
+        <span
+          v-for="preset in columnPresets"
+          :key="'columnPreset' + preset.name"
+          v-if="preset.groups.indexOf(group.name) !== -1"
+        >
+          <button
+            class="column-presets__button"
+            @click="setPreset(preset);"
+            v-html="preset.name"
+            :title="'Вывести колонки:\n' + preset.columns.join('\n')"
+          ></button>
+        </span>
+
+        <span
+          v-for="preset in filterPresets"
+          :key="preset.name"
+          v-if="preset.groups.indexOf(group.name) !== -1"
+        >
+          <button
+            class="filter-presets__button"
+            @click="q = preset.q"
+            v-html="preset.name"
+            :title="'Отфильтровать:\n' + preset.q"
+          ></button>
+        </span>
+
         <div
           :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')"
           @click="toggleField(field)"
