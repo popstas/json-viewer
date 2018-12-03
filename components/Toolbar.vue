@@ -38,12 +38,7 @@
               :key="'columnPreset' + preset.name"
               v-if="preset.groups.indexOf(group.name) !== -1"
             >
-              <button
-                class="column-presets__button"
-                @click="setPreset(preset);"
-                v-html="preset.name"
-                :title="'Вывести колонки:\n' + preset.columns.join('\n')"
-              ></button>
+              <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
             </el-dropdown-item>
 
             <el-dropdown-item
@@ -98,12 +93,7 @@
           :key="'columnPreset' + preset.name"
           v-if="preset.groups.indexOf(group.name) !== -1"
         >
-          <button
-            class="column-presets__button"
-            @click="setPreset(preset);"
-            v-html="preset.name"
-            :title="'Вывести колонки:\n' + preset.columns.join('\n')"
-          ></button>
+          <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
         </span>
 
         <span
@@ -111,12 +101,7 @@
           :key="preset.name"
           v-if="preset.groups.indexOf(group.name) !== -1"
         >
-          <button
-            class="filter-presets__button"
-            @click="q = preset.q"
-            v-html="preset.name"
-            :title="'Отфильтровать:\n' + preset.q"
-          ></button>
+          <FilterPresetButton :preset="preset" @click="q = preset.q"></FilterPresetButton>
         </span>
 
         <div
@@ -145,26 +130,17 @@
 
   <div class="filter-presets">
     filters:
-    <button
+    <FilterPresetButton :preset="preset" @click="q = preset.q"
+      v-for="preset in filterPresets" :key="preset.name"
       :class="{'filter-presets__button': true, 'filter-presets__button_active': preset.q == q}"
-      v-for="preset in filterPresets"
-      :key="preset.name"
-      @click="q = preset.q"
-      v-html="preset.name"
-      :title="preset.q"
-    ></button>
+    ></FilterPresetButton>
   </div>
 
   <div class="column-presets">
     columns:
-    <button
-      class="column-presets__button"
-      v-for="preset in columnPresets"
-      :key="preset.name"
-      @click="setPreset(preset);"
-      v-html="preset.name"
-      :title="preset.columns.join('\n')"
-    ></button>
+    <ColumnPresetButton :preset="preset" @click="setPreset(preset);"
+      v-for="preset in columnPresets" :key="preset.name">
+    </ColumnPresetButton>
   </div>
 </div>
 </template>
@@ -173,9 +149,11 @@
 import _ from "lodash";
 import columnPresets from "~/assets/js/presets/columns.conf";
 import filterPresets from "~/assets/js/presets/filters.conf";
+import FilterPresetButton from "~/components/FilterPresetButton";
+import ColumnPresetButton from "~/components/ColumnPresetButton";
 
 export default {
-  components: {},
+  components: { FilterPresetButton, ColumnPresetButton },
   props: ['fields', 'availableFields'],
   data() {
     return {
