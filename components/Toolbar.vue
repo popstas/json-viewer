@@ -14,97 +14,17 @@
       ></button>
 
       <!-- one group -->
-      <div
-        class="field-group"
-        :id="'filter-' + group.name"
+
+      <FieldGroup
+        :group="group"
+        :opened="fieldGroupsOpened[group.name]"
+        @changeGroupOpened="changeGroupOpened(group)"
+        @toggleField="toggleField"
+        @setPreset="setPreset"
         v-for="group in fieldGroups"
         :key="group.name"
         v-if="group.fields.length > 0"
-      >
-        <!-- group header -->
-        <div class="field-group__header">
-          <el-dropdown>
-            <span class="el-dropdown-link" @click="changeGroupOpened(group)">
-              <input
-                type="checkbox"
-                @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});"
-                :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')"
-              >
-              <span class="field-group__name">{{ group.name }}</span>
-              <i class="el-icon-arrow-down el-icon--right"></i>
-            </span>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item
-                v-for="preset in columnPresets"
-                :key="'columnPreset' + preset.name"
-                v-if="preset.groups.indexOf(group.name) !== -1"
-              >
-                <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
-              </el-dropdown-item>
-
-              <el-dropdown-item
-                v-for="preset in filterPresets"
-                :key="preset.name"
-                v-if="preset.groups.indexOf(group.name) !== -1"
-              >
-                <FilterPresetButton :preset="preset" @click="q = preset.q"></FilterPresetButton>
-              </el-dropdown-item>
-
-              <el-dropdown-item v-for="field in group.fields" :key="field.name">
-                <ColumnField
-                  :field="field"
-                  :checked="fieldIndex(field) != -1"
-                  @click="toggleField(field)"
-                  :class="{ active: fieldIndex(field) != -1 }"
-                ></ColumnField>
-              </el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
-        </div>
-
-        <!-- selected-fields -->
-        <div class="field-group__selected-fields">
-          <ColumnField
-            :field="field"
-            :checked="fieldIndex(field) != -1"
-            v-for="field in group.fields"
-            :key="field.name"
-            @click="toggleField(field)"
-            :class="{ active: fieldIndex(field) != -1 }"
-            v-if="fieldIndex(field) != -1 && !fieldGroupsOpened[group.name]"
-          ></ColumnField>
-        </div>
-
-        <!-- group content -->
-        <div :class="{'field-group__content': true, collapse: !fieldGroupsOpened[group.name]}">
-          <span
-            v-for="preset in columnPresets"
-            :key="'columnPreset' + preset.name"
-            v-if="preset.groups.indexOf(group.name) !== -1"
-          >
-            <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
-          </span>
-
-          <span
-            v-for="preset in filterPresets"
-            :key="preset.name"
-            v-if="preset.groups.indexOf(group.name) !== -1"
-          >
-            <FilterPresetButton :preset="preset" @click="q = preset.q"></FilterPresetButton>
-          </span>
-
-          <div
-            :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')"
-            @click="toggleField(field)"
-            :class="{ 'available-fields__field': true, active: fieldIndex(field) != -1 }"
-            v-for="field in group.fields"
-            :key="field.name"
-          >
-            <input type="checkbox" :checked="fieldIndex(field) != -1">
-            <label>{{ field.comment || field.title }}</label>
-          </div>
-        </div>
-      </div>
+      ></FieldGroup>
     </div>
 
     <input
@@ -144,10 +64,10 @@ import columnPresets from "~/assets/js/presets/columns.conf";
 import filterPresets from "~/assets/js/presets/filters.conf";
 import FilterPresetButton from "~/components/FilterPresetButton";
 import ColumnPresetButton from "~/components/ColumnPresetButton";
-import ColumnField from "~/components/ColumnField";
+import FieldGroup from "~/components/FieldGroup";
 
 export default {
-  components: { FilterPresetButton, ColumnPresetButton, ColumnField },
+  components: { FilterPresetButton, ColumnPresetButton, FieldGroup },
   props: ["fields", "availableFields"],
   data() {
     return {

@@ -47,22 +47,22 @@ import moment from "moment";
 import Toolbar from '~/components/Toolbar';
 import validateMap from "~/assets/js/validate.conf";
 import columnPresets from "~/assets/js/presets/columns.conf";
-import filterPresets from "~/assets/js/presets/filters.conf";
 
 export default {
   components: {Toolbar},
   data() {
     return {
       q: "",
-      fields: [],
-      columnPresets: columnPresets,
-      filterPresets: filterPresets,
       routerProcess: false,
       tests: this.$store.state.tests,
     };
   },
 
   computed: {
+    fields() {
+      return this.$store.state.fields;
+    },
+
     filteredSites() {
       return this.$store.state.filteredSites;
     },
@@ -160,7 +160,7 @@ export default {
             };
 
             // info from /etc/site-info.yml
-            const info = this.tests.find(test => test.name == fieldName);
+            const info = this.$store.state.tests.find(test => test.name == fieldName);
             if (info) {
               if (info.comment) field.comment = info.comment;
               field.command = info.command;
@@ -204,17 +204,9 @@ export default {
       // this.$emit('changeFilter', { name, value });
     },
 
-    // переключает поле в таблице, через нее проходят все изменения полей
-    _toggleField(field) {
-      if (!field) return;
-      let index = this.fieldIndex(field);
-      if (index != -1) this.fields.splice(index, 1);
-      else this.fields.push(field);
-    },
-
     // переключает поле в таблице по клику
-    toggleField(field) {
-      this._toggleField(field);
+    toggleField(field, add) {
+      this.$store.dispatch('toggleField', {field, add});
       this.updateUrlQuery();
     },
 
@@ -235,20 +227,19 @@ export default {
     // переключить поле по имени
     toggleFieldByName(name) {
       const field = this.availableFields.find(field => field.name == name);
-      this._toggleField(field);
+      this.toggleField(field);
     },
 
     // включить поле по имени
     addFieldByName(name) {
       const field = this.availableFields.find(field => field.name == name);
       if (!field) return;
-      let index = this.fieldIndex(field);
-      if (index === -1) this.fields.push(field);
+      this.toggleField(field, true);
     },
 
     // устанавливает поля по массиву имен, сбрасывает предыдущие выбранные поля
     setFields(columnNames) {
-      this.fields = [];
+      this.$store.commit('fields', []);
       columnNames.forEach(name => {
         this.toggleFieldByName(name);
       });
@@ -391,7 +382,7 @@ export default {
       if (this.$route.query["fields"]) {
         this.setFields(this.$route.query["fields"].split(","));
       } else {
-        this.setFields(this.columnPresets.default.columns);
+        this.setFields(columnPresets.default.columns);
       }
     }
   },

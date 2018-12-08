@@ -18,6 +18,7 @@ export const state = () => ({
   homepage: pjson.homepage,
 
   // app state
+  fields: [],
 
   // filters
   filter: {
@@ -30,9 +31,26 @@ export const getters = {
     let date = Math.max.apply(Math, state.songs.map(song => new Date(song.created)));
     return dateformat(new Date(date), 'dd.mm.yyyy');
   } */
+  fieldIndex(state) {
+    return field => {
+      return state.fields.findIndex(column => {
+        return field && column.name == field.name;
+      });
+    };
+  },
+  fieldExists(state, getters) {
+    return field => {
+      // return getters.fieldIndex(field) != -1;
+      // console.log('getters.fieldIndex(field): ', getters.fieldIndex(field));
+      return getters.fieldIndex(field) != -1;
+    };
+  }
 };
 
 export const mutations = {
+  fields(state, newValue) {
+    state.fields = newValue;
+  },
   sites(state, newValue) {
     state.sites = newValue;
     state.filteredSites = newValue;
@@ -46,6 +64,14 @@ export const mutations = {
   // q, withChords, withTexts, sortByDate
   changeFilter(state, options) {
     state.filter[options.name] = options.value;
+  },
+
+  addField(state, field) {
+    state.fields.push(field);
+  },
+
+  removeFieldByIndex(state, index) {
+    state.fields.splice(index, 1);
   }
 };
 
@@ -109,6 +135,17 @@ export const actions = {
     }
 
     commit('filteredSites', filteredSites);
+  },
+
+  // переключает поле в таблице, через нее проходят все изменения полей
+  toggleField({ commit, getters }, { field, add }) {
+    if (!field) return;
+    let index = getters.fieldIndex(field);
+    if (index != -1 && !add) {
+      commit('removeFieldByIndex', index);
+    } else {
+      commit('addField', field);
+    }
   }
 };
 
