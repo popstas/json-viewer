@@ -239,10 +239,12 @@ export default {
 
     // устанавливает поля по массиву имен, сбрасывает предыдущие выбранные поля
     setFields(columnNames) {
-      this.$store.commit('fields', []);
+      const fields = [];
       columnNames.forEach(name => {
-        this.toggleFieldByName(name);
+        const field = this.availableFields.find(field => field.name == name);
+        fields.push(field);
       });
+      this.$store.commit('fields', fields);
       this.updateUrlQuery();
     },
 
