@@ -1,4 +1,45 @@
-<a name="0.5.0"></a>
+# [0.6.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.5.0...v0.6.0) (2018-12-09)
+
+
+### Bug Fixes
+
+* check for field exists before add to fields ([8410886](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/8410886))
+* css, прибраны группы полей, верстка под мобильники ([1804410](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/1804410))
+* previous commit was not completed ([924111c](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/924111c))
+* в заголовках таблиц части переменной разделяются пробелами ([6be15b0](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/6be15b0))
+* вернул пресеты в развернутые меню ([9a4ae13](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/9a4ae13))
+* не раскрашивать пустые ячейки ([e6d6534](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/e6d6534))
+* поправлены цвета lighthouse ([f27b601](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/f27b601))
+* растягивание раскраски ячеек на всю высоту ([a537dcf](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/a537dcf))
+* фильтры переведены, прибран css, добавлены подсказки ([3d30dcd](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/3d30dcd))
+
+
+### Features
+
+* client_priority ([ab871be](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/ab871be))
+* envy, jivosite ([b0d8a39](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/b0d8a39))
+* lighthouse ([ff317d9](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/ff317d9))
+* lighthouse итоговые очки по категориям (scores) ([d8900f3](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/d8900f3))
+* lighthouse_all метрика по всем оценкам ([a640a04](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/a640a04))
+* updated_time ([c889d34](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/c889d34))
+* группы полей из tests ([a0987f4](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/a0987f4))
+* группы фильтров, пресетов колонок ([76987cb](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/76987cb))
+* добавлены пресеты drupal, dirty git ([9cd72f1](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/9cd72f1))
+* индикация клика по чекбоксу колонки ([103f1b7](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/103f1b7))
+* категории для meta и lighthouse, правки для git_size, time ([51e5136](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/51e5136))
+* кнопка all у каждой группы колонок, прибрана верстка css ([7cf35b1](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/7cf35b1))
+* названия полей на русском в фильтре ([46f4177](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/46f4177))
+* начальный css под мобильные ([be7c378](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/be7c378))
+* переделана панель управления, добавлен element ui ([cc61840](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/cc61840))
+* пресеты изменены на json query, добавлен https фильтр ([0abf6cd](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/0abf6cd))
+* сворачивание групп колонок ([24d3b57](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/24d3b57))
+* теперь колонки автоматически добавляются, если выбирается фильтр, где они участвуют в условии ([f3150e1](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/f3150e1))
+* убрать все колонки ([7c5c151](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/7c5c151))
+* фильтры drupal without cache, drupal without js min ([7003d7f](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/7003d7f))
+* **filter:** tel_links>0, meta_pagespeed>0 ([a06f328](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/a06f328))
+
+
+
 # [0.5.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.4.0...v0.5.0) (2018-09-22)
 
 
@@ -15,7 +56,6 @@
 
 
 
-<a name="0.4.0"></a>
 # [0.4.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.3.0...v0.4.0) (2018-09-06)
 
 
@@ -26,7 +66,6 @@
 
 
 
-<a name="0.3.0"></a>
 # [0.3.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.2.0...v0.3.0) (2018-09-06)
 
 
@@ -40,7 +79,6 @@
 
 
 
-<a name="0.2.0"></a>
 # [0.2.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.1.0...v0.2.0) (2018-09-06)
 
 
@@ -50,7 +88,6 @@
 
 
 
-<a name="0.1.0"></a>
 # [0.1.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/16863d0...v0.1.0) (2018-09-05)
 
 
