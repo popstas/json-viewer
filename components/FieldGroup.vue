@@ -27,7 +27,7 @@
             :key="preset.name"
             v-if="preset.groups.indexOf(group.name) !== -1"
           >
-            <FilterPresetButton :preset="preset" @click="q = preset.q"></FilterPresetButton>
+            <FilterPresetButton :preset="preset" @click="$emit('changeFilter', preset.q)"></FilterPresetButton>
           </el-dropdown-item>
 
           <el-dropdown-item v-for="field in group.fields" :key="field.name">
@@ -70,7 +70,7 @@
         :key="preset.name"
         v-if="preset.groups.indexOf(group.name) !== -1"
       >
-        <FilterPresetButton :preset="preset" @click="q = preset.q"></FilterPresetButton>
+        <FilterPresetButton :preset="preset" @click="$emit('changeFilter', preset.q)"></FilterPresetButton>
       </span>
 
       <ColumnField
