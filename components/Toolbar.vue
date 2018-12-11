@@ -14,7 +14,6 @@
       ></button>
 
       <!-- one group -->
-
       <FieldGroup
         :group="group"
         :opened="fieldGroupsOpened[group.name]"
@@ -27,40 +26,10 @@
       ></FieldGroup>
     </div>
 
-    <el-autocomplete
-      class="filter__query"
-      placeholder="query"
-      v-model="q"
-      autofocus
-      title="Например:
-  engine:bitrix prod:1"
-      v-bind:style="{width: filterWidth + 'px'}"
-      ref="input"
-
-      :fetch-suggestions="queryComplete"
-      @select="querySelect"
-      @keyup.enter.native="queryChangeAction"
-    ></el-autocomplete>
-
-    <div class="filter__query-tags">
-      <el-tag
-        v-for="tag in queryParts" :key="tag"
-        v-if="tag != ''"
-        closable
-        :disable-transitions="true"
-        @close="handleTagClose(tag)"
-      >{{ tag.replace(/=1$/, '').replace('=', ' = ') }}
-      </el-tag>
-    </div>
+    <QueryInput class="filter__query" :availableFields="availableFields"></QueryInput>
 
     <div class="filter-presets">filters:
-      <FilterPresetButton
-        :preset="preset"
-        @click="q = preset.q; queryChangeAction()"
-        v-for="preset in filterPresets"
-        :key="preset.name"
-        :class="{ 'filter-presets__button_active': preset.q == q }"
-      ></FilterPresetButton>
+      <FilterPresetButton :preset="preset" v-for="preset in filterPresets" :key="preset.name"></FilterPresetButton>
     </div>
 
     <div class="column-presets">columns:
@@ -75,29 +44,32 @@
 </template>
 
 <style lang="scss">
-  .el-autocomplete-suggestion {
-    min-width: 360px;
-  }
-  .el-tag {
-    margin: 0 5px;
-  }
+.el-autocomplete-suggestion {
+  min-width: 360px;
+}
+.el-tag {
+  margin: 0 5px;
+}
 </style>
 
 <script>
-import _ from "lodash";
 import columnPresets from "~/assets/js/presets/columns.conf";
 import filterPresets from "~/assets/js/presets/filters.conf";
 import FilterPresetButton from "~/components/FilterPresetButton";
 import ColumnPresetButton from "~/components/ColumnPresetButton";
 import FieldGroup from "~/components/FieldGroup";
+import QueryInput from "~/components/QueryInput";
 
 export default {
-  components: { FilterPresetButton, ColumnPresetButton, FieldGroup },
+  components: {
+    FilterPresetButton,
+    ColumnPresetButton,
+    FieldGroup,
+    QueryInput
+  },
   props: ["fields", "availableFields"],
   data() {
     return {
-      q: "",
-      lastQ: "",
       columnPresets: columnPresets,
       filterPresets: filterPresets,
       routerProcess: false,
@@ -108,10 +80,6 @@ export default {
   computed: {
     tests() {
       return this.$store.state.tests;
-    },
-
-    queryParts() {
-      return this.q.split('&');
     },
 
     // раскладывает поля по группам, с дублированием
@@ -137,39 +105,10 @@ export default {
         }
       }
       return groups;
-    },
-
-    filterWidth() {
-      const padding = 15;
-      return (this.q.length + 1) * 10 + padding;
     }
-  },
-
-  watch: {
-    q(val) {
-      this.lastQ = this.q;
-      // this.debouncedQueryChangeAction(); // задержка после ввода фильтра
-    }
-  },
-
-  created() {
-    this.debouncedQueryChangeAction = _.debounce(this.queryChangeAction, 500);
   },
 
   methods: {
-    queryChangeAction() {
-      this.q = this.normalizeQuery(this.q);
-      this.$emit("changeFilter", this.q);
-    },
-
-    normalizeQuery(q) {
-      const parts = q.split('&');
-      const normalizedParts = parts.map(part => {
-        return part.replace(/^([a-z_0-9]+)$/, '$1=1'); // prod => prod=1
-      });
-      return normalizedParts.join('&');
-    },
-
     // сворачивает/разворачивает одну группу
     changeGroupOpened(group) {
       this.fieldGroupsOpened[group.name] =
@@ -205,35 +144,7 @@ export default {
       return this.fields.findIndex(column => {
         return field && column.name == field.name;
       });
-    },
-
-    // autocomplete of query
-    queryComplete(q, cb){
-      const parts = q.split('&');
-      const lastPart = parts[parts.length - 1];
-      const matchFields = this.availableFields.filter(filter => filter.name.includes(lastPart));
-      const sortedFields = matchFields.sort((a,b) => (a.name > b.name) ? 1 : ((b.name > a.name) ? -1 : 0));
-      cb(sortedFields.map(field => { return { value: field.name }}));
-    },
-
-    // выбор автодополнения
-    querySelect(q){
-      this.$refs.input.focus();
-      let parts = this.lastQ.split('&');
-      parts[parts.length - 1] = q.value;
-      this.q = parts.join('&');
-      this.queryChangeAction();
-    },
-
-    handleTagClose(tag) {
-      this.q = this.q.replace(tag + '&', '').replace('&' + tag, '').replace(tag, '');
-      this.queryChangeAction();
     }
-  },
-
-  mounted() {
-    // filter init
-    if (this.$route.query["q"]) this.q = this.$route.query["q"];
   }
 };
 </script>

@@ -7,8 +7,7 @@
       :availableFields="availableFields"
       @toggleField="toggleField"
       @setFields="setFields"
-      @changeFilter="queryChangeAction">
-    </Toolbar>
+    ></Toolbar>
 
     <v-client-table
       v-if="filteredSites.length > 0"
@@ -44,31 +43,30 @@
 
 <script>
 import moment from "moment";
-import Toolbar from '~/components/Toolbar';
+import Toolbar from "~/components/Toolbar";
 import validateMap from "~/assets/js/validate.conf";
 import columnPresets from "~/assets/js/presets/columns.conf";
 
 export default {
-  components: {Toolbar},
+  components: { Toolbar },
   data() {
     return {
-      q: "",
       routerProcess: false,
-      tests: this.$store.state.tests,
+      tests: this.$store.state.tests
     };
   },
 
   computed: {
+    q() {
+      return this.$store.state.q;
+    },
+
     fields() {
       return this.$store.state.fields;
     },
 
     filteredSites() {
       return this.$store.state.filteredSites;
-    },
-
-    filter() {
-      return this.$store.state.filter;
     },
 
     tableOptions() {
@@ -160,7 +158,9 @@ export default {
             };
 
             // info from /etc/site-info.yml
-            const info = this.$store.state.tests.find(test => test.name == fieldName);
+            const info = this.$store.state.tests.find(
+              test => test.name == fieldName
+            );
             if (info) {
               if (info.comment) field.comment = info.comment;
               field.command = info.command;
@@ -183,30 +183,23 @@ export default {
     }
   },
 
-  methods: {
-    queryChangeAction(q) {
-      this.q = q;
+  watch: {
+    q() {
       this.updateUrlQuery();
-      this.changeFilter("q", q);
 
       // добавление колонок, которые есть в фильтре
-      const parts = q.split("&");
+      const parts = this.q.split("&");
       parts.forEach(part => {
         const match = part.match(/^[a-zA-Z0-9_]+/);
         if (match) this.addFieldByName(match[0]);
       });
-    },
+    }
+  },
 
-    // фильтр всегда меняется через эту функцию
-    changeFilter(name, value) {
-      this.$store.commit("changeFilter", { name, value });
-      this.$store.dispatch("filterSites");
-      // this.$emit('changeFilter', { name, value });
-    },
-
+  methods: {
     // переключает поле в таблице по клику
     toggleField(field, add) {
-      this.$store.dispatch('toggleField', {field, add});
+      this.$store.dispatch("toggleField", { field, add });
       this.updateUrlQuery();
     },
 
@@ -244,7 +237,7 @@ export default {
         const field = this.availableFields.find(field => field.name == name);
         fields.push(field);
       });
-      this.$store.commit('fields', fields);
+      this.$store.commit("fields", fields);
       this.updateUrlQuery();
     },
 
@@ -306,7 +299,9 @@ export default {
               }
             } else {
               const ln = "lighthouse_" + i.split("-").join("_");
-              if (ln == "lighthouse_total_byte_weight") site.lighthouse[i] = Math.round(site.lighthouse[i] / 1024);
+              if (ln == "lighthouse_total_byte_weight") {
+                site.lighthouse[i] = Math.round(site.lighthouse[i] / 1024);
+              }
               site[ln] = site.lighthouse[i];
             }
           }
@@ -390,21 +385,21 @@ export default {
   },
 
   async mounted() {
-
     // data init
     const sitesJson = await this.$axios.$get(this.$store.state.sitesJsonUrl);
     this.$store.commit("tests", sitesJson.tests);
     const sitesData = this.sitesProcessing(sitesJson.sites);
     this.$store.commit("sites", sitesData);
-    this.$store.dispatch("filterSites");
+    this.$store.dispatch("q", this.$route.query["q"]);
 
     this.fieldsInit();
 
     // router change event
     this.$router.afterEach((to, from) => {
       if (!this.routerProcess) {
-        if (this.$route.query["q"]) this.q = this.$route.query["q"];
-        else this.q = "";
+        if (this.$route.query["q"]) {
+          this.$store.dispatch("q", this.$route.query["q"]);
+        } else this.$store.dispatch("q", "");
 
         this.fieldsInit();
       }

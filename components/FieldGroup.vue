@@ -27,7 +27,7 @@
             :key="preset.name"
             v-if="preset.groups.indexOf(group.name) !== -1"
           >
-            <FilterPresetButton :preset="preset" @click="$emit('changeFilter', preset.q)"></FilterPresetButton>
+            <FilterPresetButton :preset="preset"></FilterPresetButton>
           </el-dropdown-item>
 
           <el-dropdown-item v-for="field in group.fields" :key="field.name">
@@ -70,7 +70,7 @@
         :key="preset.name"
         v-if="preset.groups.indexOf(group.name) !== -1"
       >
-        <FilterPresetButton :preset="preset" @click="$emit('changeFilter', preset.q)"></FilterPresetButton>
+        <FilterPresetButton :preset="preset"></FilterPresetButton>
       </span>
 
       <ColumnField
@@ -81,7 +81,6 @@
         v-for="field in group.fields"
         :key="'content' + field.name"
       ></ColumnField>
-
     </div>
   </div>
 </template>
@@ -107,7 +106,7 @@ export default {
     groupChecked() {
       let checked = true;
       this.group.fields.forEach(field => {
-        if(!this.$store.getters.fieldExists(field)) checked = false;
+        if (!this.$store.getters.fieldExists(field)) checked = false;
       });
       return checked;
     }
@@ -119,7 +118,7 @@ export default {
     },
 
     changeGroupOpened() {
-      this.$emit('changeGroupOpened');
+      this.$emit("changeGroupOpened");
     }
   }
 };

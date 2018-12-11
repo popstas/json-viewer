@@ -19,11 +19,7 @@ export const state = () => ({
 
   // app state
   fields: [],
-
-  // filters
-  filter: {
-    q: ''
-  }
+  q: ''
 });
 
 export const getters = {
@@ -61,9 +57,9 @@ export const mutations = {
   filteredSites(state, newValue) {
     state.filteredSites = newValue;
   },
-  // q, withChords, withTexts, sortByDate
-  changeFilter(state, options) {
-    state.filter[options.name] = options.value;
+  q(state, newValue) {
+    if (!newValue) newValue = '';
+    state.q = newValue;
   },
 
   addField(state, field) {
@@ -76,9 +72,9 @@ export const mutations = {
 };
 
 export const actions = {
-  // фильтрует sites на основе filter
-  filterSites({ commit, state }, payload) {
-    const q = state.filter.q.toLowerCase();
+  // фильтрует sites на основе q
+  filterSites({ commit, state }) {
+    const q = state.q.toLowerCase();
     let filteredSites = [];
 
     // empty query
@@ -135,6 +131,11 @@ export const actions = {
     }
 
     commit('filteredSites', filteredSites);
+  },
+
+  q({ commit, dispatch }, q) {
+    commit('q', q);
+    dispatch('filterSites');
   },
 
   // переключает поле в таблице, через нее проходят все изменения полей
