@@ -193,7 +193,7 @@ export default {
       const parts = q.split("&");
       parts.forEach(part => {
         const match = part.match(/^[a-zA-Z0-9_]+/);
-        if (match.length > 0) this.addFieldByName(match[0]);
+        if (match) this.addFieldByName(match[0]);
       });
     },
 

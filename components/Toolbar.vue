@@ -43,13 +43,14 @@
     ></el-autocomplete>
 
     <div class="filter__query-tags">
-      <el-tag closable
+      <el-tag
         v-for="tag in queryParts" :key="tag"
         v-if="tag != ''"
-        :disable-transitions="false"
+        closable
+        :disable-transitions="true"
         @close="handleTagClose(tag)"
-        v-html="tag.replace(/=1$/, '').replace('=', ' = ')"
-      ></el-tag>
+      >{{ tag.replace(/=1$/, '').replace('=', ' = ') }}
+      </el-tag>
     </div>
 
     <div class="filter-presets">filters:
@@ -222,12 +223,12 @@ export default {
       parts[parts.length - 1] = q.value;
       this.q = parts.join('&');
       this.queryChangeAction();
-    }
-  },
+    },
 
-  handleTagClose(tag) {
-    console.log('remove tag: ', tag);
-    this.q = this.q.replace(tag + '&', '').replace('&' + tag, '').replace(tag, '');
+    handleTagClose(tag) {
+      this.q = this.q.replace(tag + '&', '').replace('&' + tag, '').replace(tag, '');
+      this.queryChangeAction();
+    }
   },
 
   mounted() {
