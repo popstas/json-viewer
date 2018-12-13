@@ -158,7 +158,7 @@ export default {
             };
 
             // info from /etc/site-info.yml
-            const info = this.$store.state.tests.find(
+            const info = this.tests.find(
               test => test.name == fieldName
             );
             if (info) {
