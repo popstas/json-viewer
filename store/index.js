@@ -40,6 +40,12 @@ export const getters = {
       // console.log('getters.fieldIndex(field): ', getters.fieldIndex(field));
       return getters.fieldIndex(field) != -1;
     };
+  },
+
+  getSiteByDomain(state) {
+    return domain => {
+      return state.filteredSites.find(site => site.domain == domain);
+    }
   }
 };
 

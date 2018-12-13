@@ -16,12 +16,7 @@
       :options="tableOptions"
     >
       <template slot="child_row" slot-scope="props">
-        <ul class="site-details">
-          <li v-if="typeof value != 'object'" v-for="(value, key, index) in props.row" :key="index">
-            <b>{{ key }}:</b>
-            {{ value }}
-          </li>
-        </ul>
+        <SiteDetails :site="$store.getters.getSiteByDomain(props.row.domain)"></SiteDetails>
       </template>
 
       <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
@@ -44,11 +39,12 @@
 <script>
 import moment from "moment";
 import Toolbar from "~/components/Toolbar";
+import SiteDetails from "~/components/SiteDetails";
 import validateMap from "~/assets/js/validate.conf";
 import columnPresets from "~/assets/js/presets/columns.conf";
 
 export default {
-  components: { Toolbar },
+  components: { Toolbar, SiteDetails },
   data() {
     return {
       routerProcess: false,
@@ -158,9 +154,7 @@ export default {
             };
 
             // info from /etc/site-info.yml
-            const info = this.tests.find(
-              test => test.name == fieldName
-            );
+            const info = this.tests.find(test => test.name == fieldName);
             if (info) {
               if (info.comment) field.comment = info.comment;
               field.command = info.command;
