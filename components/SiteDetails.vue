@@ -4,9 +4,14 @@
     <div class="site-details__group" v-for="group in groups" :key="group.name">
       <div class="site-details__group-name"></div>
       <ul class="site-details__group-fields">
-        <li v-for="field in group.fields" :key="field.name" :title="field.name">
+        <li
+          v-for="field in group.fields"
+          :key="field.name"
+          :title="field.name"
+          :class="field.validateClass"
+        >
           <span class="site-details__label">{{ field.comment }}</span>
-          <span class="site-details__value">{{ field.value }}</span>
+          <span class="site-details__value">{{ field.valueText || field.value }}</span>
         </li>
       </ul>
     </div>
@@ -16,14 +21,6 @@
 <style lang="scss">
 .VueTables__child-row {
   background: none !important;
-
-  &-toggler {
-    position: absolute;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
-  }
 }
 
 .site-details {
@@ -37,6 +34,30 @@
 
     &:hover {
       background: #fbfbfb;
+    }
+
+    &.colored {
+      &.success .site-details__value {
+        color: #407927;
+      }
+      &.warning .site-details__value {
+        color: #a09600;
+      }
+      &.danger .site-details__value {
+        color: #94070a;
+      }
+
+      &:hover {
+        &.success {
+          background: #aaffaa;
+        }
+        &.warning {
+          background: #ffffaa;
+        }
+        &.danger {
+          background: #ffaaaa;
+        }
+      }
     }
   }
 
@@ -87,7 +108,7 @@ export default {
         const fieldValue = this.site[fieldName];
         if (typeof fieldValue === "object") continue;
         if (fieldValue === "") continue;
-        const info = this.tests.find(test => test.name == fieldName);
+        const info = this.tests[fieldName];
         if (!info || !info.groups) {
           // groups.unnamed.fields.push(fieldValue);
           continue;
@@ -103,6 +124,15 @@ export default {
             groups[groupName] = { name: groupName, fields: [] };
           }
           info.value = fieldValue;
+          info.validateClass = this.$store.getters.getColumnValidateClass(
+            null,
+            this.site.domain,
+            fieldName
+          );
+          // console.log(fieldName + ' validateClass: ', info.validateClass);
+          if (info.type == "boolean") {
+            info.valueText = info.value ? "да" : "нет";
+          }
           groups[groupName].fields.push(info);
         }
       }

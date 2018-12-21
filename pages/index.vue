@@ -40,7 +40,6 @@
 import moment from "moment";
 import Toolbar from "~/components/Toolbar";
 import SiteDetails from "~/components/SiteDetails";
-import validateMap from "~/assets/js/validate.conf";
 import columnPresets from "~/assets/js/presets/columns.conf";
 
 export default {
@@ -154,7 +153,7 @@ export default {
             };
 
             // info from /etc/site-info.yml
-            const info = this.tests.find(test => test.name == fieldName);
+            const info = this.tests[fieldName];
             if (info) {
               if (info.comment) field.comment = info.comment;
               field.command = info.command;
@@ -250,7 +249,6 @@ export default {
     // дополняет колонки sites.json
     sitesProcessing(sites) {
       if (!sites) return [];
-
       const sitesData = sites.map(s => {
         let site = { ...s };
         // should be before site_info flatten
@@ -314,52 +312,7 @@ export default {
 
     // выдает класс валидации по домену сайта и имени колонки
     getColumnValidateClass(props, domain, column) {
-      const site = this.filteredSites.find(site => site.domain == domain);
-      let result;
-      if (!site) return "";
-
-      // пустые не валидируются
-      if ([undefined, ""].indexOf(site[column]) !== -1) return "";
-
-      // проверяет, попадает ли значение под лимиты
-      const isFits = (value, rules) => {
-        let valid = true;
-        if ("max" in rules && value > rules.max) return false;
-        if ("min" in rules && value < rules.min) return false;
-        return true;
-      };
-
-      // validate map
-      // проверка на соответствие из массива
-      if (column in validateMap) {
-        const r = validateMap[column];
-        if ("error" in r && isFits(site[column], r.error)) result = "fail";
-        else if ("warn" in r && isFits(site[column], r.warn)) result = "warn";
-        else result = "pass";
-      }
-
-      if (!result && site.tests) {
-        const test = site.tests.find(test => test.name == column);
-        if (!test || !test.valid) return "";
-        result = test.valid;
-      }
-
-      if (!result) return;
-
-      // console.log('props: ', props);
-      // console.log('domain: ', domain);
-      // console.log('column: ', column);
-
-      const validClassesMap = {
-        pass: "success",
-        warn: "warning",
-        fail: "danger"
-      };
-      return (
-        "colored " + validClassesMap[result] + " " + result ||
-        "noclass-" + result
-      );
-      return "success";
+      return this.$store.getters.getColumnValidateClass(props, domain, column);
     },
 
     // достает значение colName из row, со вложенностью

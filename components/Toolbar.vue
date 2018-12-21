@@ -87,7 +87,7 @@ export default {
       let groups = { unnamed: { name: "", fields: [] } };
       for (let i in this.availableFields) {
         const field = this.availableFields[i];
-        const info = this.tests.find(test => test.name == field.name);
+        const info = this.tests[field.name];
         if (!info || !info.groups) {
           groups.unnamed.fields.push(field);
           continue;

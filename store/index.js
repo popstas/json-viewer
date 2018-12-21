@@ -1,6 +1,7 @@
 import pjson from '~/package.json';
 import jsonQuery from 'json-query';
 import dateformat from 'dateformat';
+import validateMap from '~/assets/js/validate.conf';
 
 export const state = () => ({
   // data
@@ -45,7 +46,57 @@ export const getters = {
   getSiteByDomain(state) {
     return domain => {
       return state.filteredSites.find(site => site.domain == domain);
-    }
+    };
+  },
+
+  // выдает класс валидации по домену сайта и имени колонки
+  getColumnValidateClass(state) {
+    return (props, domain, column) => {
+      const site = state.filteredSites.find(site => site.domain == domain);
+      let result;
+      if (!site) return '';
+
+      // пустые не валидируются
+      if ([undefined, ''].indexOf(site[column]) !== -1) return '';
+
+      // проверяет, попадает ли значение под лимиты
+      const isFits = (value, rules) => {
+        if (Number.isInteger(rules)) return value != rules;
+        if ('max' in rules && value > rules.max) return false;
+        if ('min' in rules && value < rules.min) return false;
+        return true;
+      };
+
+      let r;
+      if (column in validateMap) r = validateMap[column];
+      else if (column in state.tests && state.tests[column].validate)
+        r = state.tests[column].validate;
+      else return;
+
+      // validate map
+      // проверка на соответствие из массива
+      if (Number.isInteger(r)) r = { error: r };
+      if ('error' in r && isFits(site[column], r.error)) result = 'fail';
+      else if ('warn' in r && isFits(site[column], r.warn)) result = 'warn';
+      else result = 'pass';
+
+      if (!result && site.tests) {
+        const test = state.tests[column];
+        if (!test || !test.valid) {
+          return '';
+        }
+        result = test.valid;
+      }
+
+      if (!result) return;
+
+      const validClassesMap = {
+        pass: 'success',
+        warn: 'warning',
+        fail: 'danger'
+      };
+      return 'colored ' + validClassesMap[result] + ' ' + result || 'noclass-' + result;
+    };
   }
 };
 
@@ -58,7 +109,11 @@ export const mutations = {
     state.filteredSites = newValue;
   },
   tests(state, newValue) {
-    state.tests = newValue;
+    const tests = {};
+    newValue.forEach(test => {
+      tests[test.name] = test;
+    });
+    state.tests = tests;
   },
   filteredSites(state, newValue) {
     state.filteredSites = newValue;
