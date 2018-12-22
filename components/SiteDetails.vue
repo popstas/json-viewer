@@ -1,8 +1,18 @@
 <template>
   <div class="site-details">
     <a class="site-details__title" :href="site.url" target="_blank">{{ site.url }}</a>
-    <div class="site-details__group" v-for="group in groups" :key="group.name">
-      <div class="site-details__group-name"></div>
+
+    <div class="site-details__groups">
+      <a
+        class="site-details__groups-link"
+        :href="'#' + site.domain + '-' + group.name"
+        v-for="group in groups" :key="group.name"
+      >
+      {{ group.name }}</a>
+    </div>
+
+    <div class="site-details__group" v-for="group in groups" :key="group.name" :id="site.domain + '-' + group.name">
+      <div class="site-details__group-name">{{ group.name }}</div>
       <ul class="site-details__group-fields">
         <li
           v-for="field in group.fields"
@@ -27,6 +37,10 @@
   padding: 15px;
   max-width: 100vw;
   overflow-x: auto;
+
+  &__groups {
+    padding: 0;
+  }
 
   li {
     list-style: none;
@@ -68,6 +82,11 @@
   &__group {
     margin-bottom: 15px;
 
+    &:target {
+      margin-top: 30px;
+      padding: 15px;
+      background: #fbfbfb;
+    }
     &-name {
       font-size: 1.2rem;
       font-weight: bold;
