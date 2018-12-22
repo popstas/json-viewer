@@ -67,7 +67,6 @@ export default {
     FieldGroup,
     QueryInput
   },
-  props: ["fields", "availableFields"],
   data() {
     return {
       columnPresets: columnPresets,
@@ -80,6 +79,14 @@ export default {
   computed: {
     tests() {
       return this.$store.state.tests;
+    },
+
+    fields() {
+      return this.$store.state.fields;
+    },
+
+    availableFields() {
+      return this.$store.state.availableFields;
     },
 
     // раскладывает поля по группам, с дублированием

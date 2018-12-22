@@ -3,8 +3,6 @@
     <div>total: {{ filteredSites.length }}</div>
 
     <Toolbar
-      :fields="fields"
-      :availableFields="availableFields"
       @toggleField="toggleField"
       @setFields="setFields"
     ></Toolbar>
@@ -59,6 +57,10 @@ export default {
       return this.$store.state.fields;
     },
 
+    availableFields() {
+      return this.$store.state.availableFields;
+    },
+
     filteredSites() {
       return this.$store.state.filteredSites;
     },
@@ -106,65 +108,6 @@ export default {
         if (field.comment) h[field.name] = `${field.name} (${field.comment})`;
       });
       return h;
-    },
-
-    availableFields() {
-      let excludedFields = [
-        // objects
-        "id",
-        "tests",
-        // duplicates
-        "meta_engine",
-        "meta_screenshots",
-        "meta_prod",
-        "site_root",
-        // not working
-        "total_pages_load_time",
-        "result",
-        "max_result",
-        "result_percent"
-      ];
-
-      let fields = [];
-      let fieldPaths = [];
-
-      for (let siteInd in this.filteredSites) {
-        let site = this.filteredSites[siteInd];
-
-        // раньше из некоторых вложенных объектов доставались поля,
-        // теперь они прессуются в одномерный объект
-        let objs = {
-          "": site
-          // 'site_info.': site.site_info,
-          // 'meta.': site.meta
-        };
-
-        for (let prefix in objs) {
-          const obj = objs[prefix];
-          for (let fieldName in obj) {
-            let fieldPath = prefix + fieldName;
-            if (excludedFields.includes(fieldPath)) continue;
-            if (fieldPaths.includes(fieldPath)) continue;
-
-            let field = {
-              name: fieldPath,
-              title: fieldName
-            };
-
-            // info from /etc/site-info.yml
-            const info = this.tests[fieldName];
-            if (info) {
-              if (info.comment) field.comment = info.comment;
-              field.command = info.command;
-            }
-
-            fields.push(field);
-            fieldPaths.push(fieldPath);
-          }
-        }
-      }
-
-      return fields;
     },
 
     pageTitle() {

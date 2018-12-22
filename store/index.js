@@ -2,7 +2,7 @@ import pjson from '~/package.json';
 import jsonQuery from 'json-query';
 import dateformat from 'dateformat';
 import validateMap from '~/assets/js/validate.conf';
-import moment from "moment";
+import moment from 'moment';
 
 export const state = () => ({
   // data
@@ -21,6 +21,7 @@ export const state = () => ({
 
   // app state
   fields: [],
+  availableFields: [],
   q: ''
 });
 
@@ -180,6 +181,67 @@ export const getters = {
       };
       return 'colored ' + validClassesMap[result] + ' ' + result || 'noclass-' + result;
     };
+  },
+
+  availableFields(state) {
+    return () => {
+      let excludedFields = [
+        // objects
+        'id',
+        'tests',
+        // duplicates
+        'meta_engine',
+        'meta_screenshots',
+        'meta_prod',
+        'site_root',
+        // not working
+        'total_pages_load_time',
+        'result',
+        'max_result',
+        'result_percent'
+      ];
+
+      let fields = [];
+      let fieldPaths = [];
+
+      for (let siteInd in state.filteredSites) {
+        let site = state.filteredSites[siteInd];
+
+        // раньше из некоторых вложенных объектов доставались поля,
+        // теперь они прессуются в одномерный объект
+        let objs = {
+          '': site
+          // 'site_info.': site.site_info,
+          // 'meta.': site.meta
+        };
+
+        for (let prefix in objs) {
+          const obj = objs[prefix];
+          for (let fieldName in obj) {
+            let fieldPath = prefix + fieldName;
+            if (excludedFields.includes(fieldPath)) continue;
+            if (fieldPaths.includes(fieldPath)) continue;
+
+            let field = {
+              name: fieldPath,
+              title: fieldName
+            };
+
+            // info from /etc/site-info.yml
+            const info = state.tests[fieldName];
+            if (info) {
+              if (info.comment) field.comment = info.comment;
+              field.command = info.command;
+            }
+
+            fields.push(field);
+            fieldPaths.push(fieldPath);
+          }
+        }
+      }
+
+      return fields;
+    };
   }
 };
 
@@ -200,6 +262,9 @@ export const mutations = {
   },
   filteredSites(state, newValue) {
     state.filteredSites = newValue;
+  },
+  availableFields(state, newValue) {
+    state.availableFields = newValue;
   },
   q(state, newValue) {
     if (!newValue) newValue = '';
@@ -223,7 +288,7 @@ export const actions = {
   },
 
   // фильтрует sites на основе q
-  filterSites({ commit, state }) {
+  filterSites({ commit, state, getters }) {
     const q = state.q.toLowerCase();
     let filteredSites = [];
 
@@ -281,6 +346,7 @@ export const actions = {
     }
 
     commit('filteredSites', filteredSites);
+    commit('availableFields', getters.availableFields());
   },
 
   q({ commit, dispatch }, q) {
