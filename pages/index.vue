@@ -38,6 +38,7 @@
 import Toolbar from "~/components/Toolbar";
 import SiteDetails from "~/components/SiteDetails";
 import columnPresets from "~/assets/js/presets/columns.conf";
+import _ from 'lodash';
 
 export default {
   components: { Toolbar, SiteDetails },
@@ -168,6 +169,7 @@ export default {
     // устанавливает поля по массиву имен, сбрасывает предыдущие выбранные поля
     setFields(columnNames) {
       const fields = [];
+      columnNames = _.uniq(columnNames);
       columnNames.forEach(name => {
         const field = this.availableFields.find(field => field.name == name);
         fields.push(field);

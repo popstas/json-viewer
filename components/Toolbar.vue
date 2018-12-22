@@ -71,7 +71,6 @@ export default {
     return {
       columnPresets: columnPresets,
       filterPresets: filterPresets,
-      routerProcess: false,
       fieldGroupsOpened: {}
     };
   },

@@ -360,7 +360,7 @@ export const actions = {
     let index = getters.fieldIndex(field);
     if (index != -1 && !add) {
       commit('removeFieldByIndex', index);
-    } else {
+    } else if (index == -1) {
       commit('addField', field);
     }
   }
