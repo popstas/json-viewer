@@ -131,7 +131,7 @@ export default {
           );
           // console.log(fieldName + ' validateClass: ', info.validateClass);
           if (info.type == "boolean") {
-            info.valueText = info.value ? "да" : "нет";
+            info.valueText = parseInt(info.value) ? "да" : "нет";
           }
           groups[groupName].fields.push(info);
         }

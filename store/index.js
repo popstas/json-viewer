@@ -2,6 +2,7 @@ import pjson from '~/package.json';
 import jsonQuery from 'json-query';
 import dateformat from 'dateformat';
 import validateMap from '~/assets/js/validate.conf';
+import moment from "moment";
 
 export const state = () => ({
   // data
@@ -24,6 +25,71 @@ export const state = () => ({
 });
 
 export const getters = {
+  // дополняет колонки sites.json
+  sitesProcessing(state) {
+    return sites => {
+      if (!sites) return [];
+      const sitesData = sites.map(s => {
+        let site = { ...s };
+        // should be before site_info flatten
+        if (
+          site.engine != 'default' &&
+          (!site.site_info || (site.site_info && !site.site_info.engine))
+        ) {
+          if (!site.site_info) site.site_info = {};
+          site.site_info.engine = site.engine;
+        }
+
+        // flatten site_info
+        for (let i in site.site_info) {
+          site[i] = site.site_info[i];
+          if (i == 'files_size') site[i] = Math.round(site[i] / 1024);
+          if (i == 'git_size') site[i] = Math.round(site[i] / 1024);
+          if (i == 'updated_time') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
+        }
+        delete site.site_info;
+
+        // flatten meta
+        if (site.meta) {
+          for (let i in site.meta) {
+            const ln = 'meta_' + i;
+            site[ln] = site.meta[i];
+          }
+          delete site.meta;
+        }
+
+        // flatten lighthouse
+        if (site.lighthouse) {
+          // console.log(site.lighthouse);
+          for (let i in site.lighthouse) {
+            // вложенный объект
+            if (i == 'scores') {
+              for (let s in site.lighthouse.scores) {
+                const ln = 'lighthouse_' + s.split('-').join('_');
+                site[ln] = site.lighthouse.scores[s];
+              }
+            } else {
+              const ln = 'lighthouse_' + i.split('-').join('_');
+              if (ln == 'lighthouse_total_byte_weight') {
+                site.lighthouse[i] = Math.round(site.lighthouse[i] / 1024);
+              }
+              site[ln] = site.lighthouse[i];
+            }
+          }
+          delete site.lighthouse;
+        }
+
+        site.prod = site.prod ? 1 : 0;
+        site.https = site.https ? 1 : 0;
+        site.errors = site.error ? 1 : 0;
+        site.id = site.domain;
+        site.time = parseInt(site.time);
+        return site;
+      });
+      return sitesData;
+    };
+  },
+
   /* lastUpdated(state) {
     let date = Math.max.apply(Math, state.songs.map(song => new Date(song.created)));
     return dateformat(new Date(date), 'dd.mm.yyyy');
@@ -49,7 +115,15 @@ export const getters = {
     };
   },
 
-  // выдает класс валидации по домену сайта и имени колонки
+  /** выдает класс валидации по домену сайта и имени колонки
+   * сначала проверяется на условия pass, если не проходит по условиям,
+   * то смотрится warn, если не подходит, засчитывается fail
+   * В условиях могут быть объекты: validate = { min: 1, max: 1 }
+   * или значения: validate = 1
+   * или условие warn: validate = { min: 80, warning: { max: 50 } }
+   * Можно делать валидацию без fail, только pass и warn:
+   * validate = { min: 1, warning: { max: 0} }
+   */
   getColumnValidateClass(state) {
     return (props, domain, column) => {
       const site = state.filteredSites.find(site => site.domain == domain);
@@ -61,10 +135,16 @@ export const getters = {
 
       // проверяет, попадает ли значение под лимиты
       const isFits = (value, rules) => {
-        if (Number.isInteger(rules)) return value != rules;
-        if ('max' in rules && value > rules.max) return false;
-        if ('min' in rules && value < rules.min) return false;
-        return true;
+        let valid = true;
+        if (Number.isInteger(rules)) {
+          return value == rules;
+        }
+        if ('max' in rules && value > rules.max) valid = false;
+        if ('min' in rules && value < rules.min) valid = false;
+        if (!('min' in rules) && !('max' in rules)) {
+          valid = false;
+        }
+        return valid;
       };
 
       let r;
@@ -75,10 +155,13 @@ export const getters = {
 
       // validate map
       // проверка на соответствие из массива
-      if (Number.isInteger(r)) r = { error: r };
-      if ('error' in r && isFits(site[column], r.error)) result = 'fail';
-      else if ('warn' in r && isFits(site[column], r.warn)) result = 'warn';
-      else result = 'pass';
+      // if (Number.isInteger(r)) r = { pass: r };
+      result = 'fail';
+      if (isFits(site[column], r)) result = 'pass';
+      else if (typeof r == 'object') {
+        // if ('error' in r && isFits(site[column], r.error)) result = 'fail';
+        if ('warning' in r && isFits(site[column], r.warning)) result = 'warn';
+      }
 
       if (!result && site.tests) {
         const test = state.tests[column];
@@ -133,6 +216,12 @@ export const mutations = {
 };
 
 export const actions = {
+  // дополняет sites и сохраняет
+  sites({ commit, state, getters }, sites) {
+    const sitesData = getters.sitesProcessing(sites);
+    commit('sites', sitesData);
+  },
+
   // фильтрует sites на основе q
   filterSites({ commit, state }) {
     const q = state.q.toLowerCase();

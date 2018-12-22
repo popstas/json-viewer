@@ -37,7 +37,6 @@
 <style lang="scss" src="./index.scss"></style>
 
 <script>
-import moment from "moment";
 import Toolbar from "~/components/Toolbar";
 import SiteDetails from "~/components/SiteDetails";
 import columnPresets from "~/assets/js/presets/columns.conf";
@@ -246,70 +245,6 @@ export default {
       });
     },
 
-    // дополняет колонки sites.json
-    sitesProcessing(sites) {
-      if (!sites) return [];
-      const sitesData = sites.map(s => {
-        let site = { ...s };
-        // should be before site_info flatten
-        if (
-          site.engine != "default" &&
-          (!site.site_info || (site.site_info && !site.site_info.engine))
-        ) {
-          if (!site.site_info) site.site_info = {};
-          site.site_info.engine = site.engine;
-        }
-
-        // flatten site_info
-        for (let i in site.site_info) {
-          site[i] = site.site_info[i];
-          if (i == "files_size") site[i] = Math.round(site[i] / 1024);
-          if (i == "git_size") site[i] = Math.round(site[i] / 1024);
-          if (i == "updated_time")
-            site[i] = moment.unix(site[i]).format("YYYY-MM-DD HH:mm:ss");
-        }
-        delete site.site_info;
-
-        // flatten meta
-        if (site.meta) {
-          for (let i in site.meta) {
-            const ln = "meta_" + i;
-            site[ln] = site.meta[i];
-          }
-          delete site.meta;
-        }
-
-        // flatten lighthouse
-        if (site.lighthouse) {
-          // console.log(site.lighthouse);
-          for (let i in site.lighthouse) {
-            // вложенный объект
-            if (i == "scores") {
-              for (let s in site.lighthouse.scores) {
-                const ln = "lighthouse_" + s.split("-").join("_");
-                site[ln] = site.lighthouse.scores[s];
-              }
-            } else {
-              const ln = "lighthouse_" + i.split("-").join("_");
-              if (ln == "lighthouse_total_byte_weight") {
-                site.lighthouse[i] = Math.round(site.lighthouse[i] / 1024);
-              }
-              site[ln] = site.lighthouse[i];
-            }
-          }
-          delete site.lighthouse;
-        }
-
-        site.prod = site.prod ? 1 : 0;
-        site.https = site.https ? 1 : 0;
-        site.errors = site.error ? 1 : 0;
-        site.id = site.domain;
-        site.time = parseInt(site.time);
-        return site;
-      });
-      return sitesData;
-    },
-
     // выдает класс валидации по домену сайта и имени колонки
     getColumnValidateClass(props, domain, column) {
       return this.$store.getters.getColumnValidateClass(props, domain, column);
@@ -335,8 +270,7 @@ export default {
     // data init
     const sitesJson = await this.$axios.$get(this.$store.state.sitesJsonUrl);
     this.$store.commit("tests", sitesJson.tests);
-    const sitesData = this.sitesProcessing(sitesJson.sites);
-    this.$store.commit("sites", sitesData);
+    this.$store.dispatch("sites", sitesJson.sites);
     this.$store.dispatch("q", this.$route.query["q"]);
 
     this.fieldsInit();

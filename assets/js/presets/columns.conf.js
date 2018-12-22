@@ -9,7 +9,7 @@ module.exports = {
       'engine',
       'meta_year',
       'meta_visitors',
-      'files_size',
+      'meta_client_priority',
     ]
   },
   cron: {
