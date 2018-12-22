@@ -12,6 +12,7 @@ module.exports = {
 
   plugins: [
     '@/plugins/element-ui',
+    '@/plugins/vue-awesome',
     { src: '@/plugins/vue-tables', ssr: false },
   ],
 

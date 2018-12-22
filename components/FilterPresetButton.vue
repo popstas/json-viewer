@@ -1,22 +1,33 @@
 <template>
   <button
-    @click="$store.dispatch('q', preset.q)"
+    @click="setPreset(preset.q)"
     class="filter-presets__button"
-    v-html="preset.name"
     :title="'Отфильтровать:\n' + preset.q"
     :class="{
       'filter-presets__button': true,
       'filter-presets__button_active': isActive(preset.q)
     }"
-  ></button>
+  ><slot name="default">{{ preset.name }}</slot>
+  </button>
 </template>
 
 <script>
 export default {
-  props: ["preset"],
+  props: ["preset", "append"],
   methods: {
     isActive(q) {
       return this.$store.state.q.includes(q);
+    },
+
+    setPreset(q){
+      if(!this.append){
+        this.$store.dispatch('q', q);
+        return;
+      }
+
+      let parts = this.$store.state.q ? this.$store.state.q.split('&') : [];
+      parts.push(q);
+      this.$store.dispatch('q', parts.join('&'));
     }
   }
 };
