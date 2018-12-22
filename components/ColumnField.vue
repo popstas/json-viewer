@@ -6,7 +6,7 @@
   >
     <input type="checkbox" :checked="checked" @click="click">
     <label @click="click">{{ field.comment || field.title }}</label>
-    <FilterPresetButton class="field-preset" :preset="{ q: field.name + '=' }" :append="true">
+    <FilterPresetButton class="field-preset" :preset="{ q: field.name + '=' }" append>
       <icon name="filter" scale="0.6"></icon>
     </FilterPresetButton>
   </div>

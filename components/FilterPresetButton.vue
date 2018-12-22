@@ -7,27 +7,34 @@
       'filter-presets__button': true,
       'filter-presets__button_active': isActive(preset.q)
     }"
-  ><slot name="default">{{ preset.name }}</slot>
+  >
+    <slot name="default">{{ preset.name }}</slot>
   </button>
 </template>
 
 <script>
 export default {
-  props: ["preset", "append"],
+  props: {
+    preset: Object,
+    append: {
+      type: Boolean,
+      default: false
+    }
+  },
   methods: {
     isActive(q) {
       return this.$store.state.q.includes(q);
     },
 
-    setPreset(q){
-      if(!this.append){
-        this.$store.dispatch('q', q);
+    setPreset(q) {
+      if (!this.append) {
+        this.$store.dispatch("q", q);
         return;
       }
 
-      let parts = this.$store.state.q ? this.$store.state.q.split('&') : [];
+      let parts = this.$store.state.q ? this.$store.state.q.split("&") : [];
       parts.push(q);
-      this.$store.dispatch('q', parts.join('&'));
+      this.$store.dispatch("q", parts.join("&"));
     }
   }
 };

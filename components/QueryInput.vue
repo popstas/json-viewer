@@ -29,7 +29,7 @@
         closable
         :disable-transitions="true"
         @close="handleTagClose(tag)"
-      >{{ tag.replace(/=1$/, '').replace('=', ' = ') }}</el-tag>
+      >{{ tagName(tag) }}</el-tag>
     </div>
   </div>
 </template>
@@ -85,6 +85,10 @@ export default {
   },
 
   computed: {
+    tests() {
+      return this.$store.state.tests;
+    },
+
     globalQ() {
       return this.$store.state.q;
     },
@@ -190,18 +194,21 @@ export default {
           filter => filter.name == fieldName
         );
         const valueMatch = lastPart.match(/=(.*)/);
-        const qValue = valueMatch ? valueMatch[1] : '';
-        const qRegex = new RegExp(qValue, 'i');
+        const qValue = valueMatch ? valueMatch[1] : "";
+        const qRegex = new RegExp(qValue, "i");
 
         const filteredSites = this.$store.state.filteredSites;
         const values = filteredSites.map(site => {
-          console.log('site: ', site);
-          console.log('fieldName: ', fieldName);
-          if(!qValue || site[fieldName] && site[fieldName].includes(qValue)){
+          console.log("site: ", site);
+          console.log("fieldName: ", fieldName);
+          if (
+            !qValue ||
+            (site[fieldName] && site[fieldName].includes(qValue))
+          ) {
             return site[fieldName];
           }
         });
-        console.log('values: ', values);
+        console.log("values: ", values);
         const uniqueValues = values.filter((v, i, a) => a.indexOf(v) === i);
         const sortedValues = uniqueValues.sort();
         cb(
@@ -233,7 +240,8 @@ export default {
       }
 
       if (this.currentPart == "value") {
-        parts[parts.length - 1] = parts[parts.length - 1].replace(/=.*/, '') + '=' + q.name;
+        parts[parts.length - 1] =
+          parts[parts.length - 1].replace(/=.*/, "") + "=" + q.name;
       }
 
       this.q = parts.join("&");
@@ -252,6 +260,28 @@ export default {
         .replace("&" + tag, "")
         .replace(tag, "");
       this.queryChangeAction();
+    },
+
+    // название тега в выбранных фильтрах
+    tagName(tag) {
+      let tagName = tag.replace(/=1$/, "").replace(/([<>=])/, " $1 ");
+      const match = tag.match(/^([a-z0-9_]+)(.*)/);
+      if (match) {
+        let fieldName = match[1];
+        let fieldValue = match[2].replace(/([<>=])/, " $1 ");
+        const info = this.tests[fieldName];
+        if (info) {
+          if (info.comment) fieldName = info.comment;
+          if (info.type == "boolean") {
+            fieldValue = fieldValue
+              .replace("0", "нет")
+              .replace("1", "да")
+              .replace(" = ", ": ");
+          }
+          tagName = fieldName + fieldValue;
+        }
+      }
+      return tagName;
     }
   },
 
