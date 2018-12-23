@@ -13,6 +13,7 @@
       valueKey="name"
       :clearable="true"
       @select="querySelect"
+      @clear="queryChangeAction"
       @keyup.enter.native="queryChangeAction"
     >
       <template slot-scope="slotProps">
@@ -111,6 +112,7 @@ export default {
     globalQ() {
       // update local data when store value changes
       this.q = this.globalQ;
+      this.$refs.input.focus();
     }
   },
 
@@ -176,8 +178,9 @@ export default {
 
     // autocomplete of query
     queryComplete(q, cb) {
-      if (!q || this.completionProcess) return cb([]);
-      const parts = q.split("&");
+      // в q старое значение, надо брать this.q
+      if (!this.q || this.completionProcess) return cb([]);
+      const parts = this.q.split("&");
       const lastPart = parts[parts.length - 1];
 
       this.completionProcess = true;

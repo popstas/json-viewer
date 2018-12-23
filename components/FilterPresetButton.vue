@@ -34,7 +34,8 @@ export default {
 
       let parts = this.$store.state.q ? this.$store.state.q.split("&") : [];
       parts.push(q);
-      this.$store.dispatch("q", parts.join("&"));
+      const result = parts.join("&");
+      this.$store.dispatch("q", { q: result });
     }
   }
 };

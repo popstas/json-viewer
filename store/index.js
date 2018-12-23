@@ -350,8 +350,12 @@ export const actions = {
   },
 
   q({ commit, dispatch }, q) {
-    commit('q', q);
-    dispatch('filterSites');
+    if (typeof q == 'object') {
+      commit('q', q.q);
+    } else {
+      commit('q', q);
+      dispatch('filterSites');
+    }
   },
 
   // переключает поле в таблице, через нее проходят все изменения полей
