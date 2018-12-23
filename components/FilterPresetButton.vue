@@ -19,6 +19,10 @@ export default {
     append: {
       type: Boolean,
       default: false
+    },
+    toggle: {
+      type: Boolean,
+      default: false
     }
   },
   methods: {
@@ -26,8 +30,43 @@ export default {
       return this.$store.state.q.includes(q);
     },
 
+    parseQuery(q) {
+      let qParts = q.split("&");
+      qParts = qParts
+        .map(part => {
+          const match = part.match(/(.*?)\s*([<=>~]+)\s*(.*)/);
+          if (match) {
+            return {
+              name: match[1],
+              op: match[2],
+              value: match[3]
+            };
+          }
+        })
+        .filter(part => part !== undefined);
+      return qParts;
+    },
+
+    togglePreset(q) {
+      let qParts = this.parseQuery(q);
+      let sParts = this.parseQuery(this.$store.state.q);
+      let result = sParts;
+      qParts.forEach(qPart => {
+        let found = result.findIndex(sPart => sPart.name == qPart.name);
+        if (found == -1) {
+          result.push(qPart);
+        } else {
+          result.splice(found, 1);
+        }
+      });
+      return result.map(part => part.name + part.op + part.value).join("&");
+    },
+
     setPreset(q) {
       if (!this.append) {
+        if (this.toggle) {
+          q = this.togglePreset(q);
+        }
         this.$store.dispatch("q", q);
         return;
       }

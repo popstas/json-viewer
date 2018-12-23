@@ -29,7 +29,12 @@
     <QueryInput class="filter__query"></QueryInput>
 
     <div class="filter-presets">filters:
-      <FilterPresetButton :preset="preset" v-for="preset in filterPresets" :key="preset.name"></FilterPresetButton>
+      <FilterPresetButton
+        :preset="preset"
+        v-for="preset in filterPresets"
+        :key="preset.name"
+        toggle
+      ></FilterPresetButton>
     </div>
 
     <div class="column-presets">columns:
@@ -46,6 +51,10 @@
 <style lang="scss">
 .el-autocomplete-suggestion {
   min-width: 360px;
+
+  .el-scrollbar__bar.is-horizontal {
+    display: none;
+  }
 }
 .el-tag {
   margin: 0 5px;
