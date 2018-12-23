@@ -5,7 +5,6 @@
       ref="input"
       placeholder="query"
       v-model="q"
-      autofocus
       title="Например:
   engine=bitrix&prod=1"
       v-bind:style="{width: filterWidth + 'px'}"
@@ -75,7 +74,6 @@
 <script>
 import _ from "lodash";
 export default {
-  props: ["availableFields"],
   data() {
     return {
       q: "",
@@ -88,6 +86,10 @@ export default {
   computed: {
     tests() {
       return this.$store.state.tests;
+    },
+
+    allFields() {
+      return this.$store.state.allFields;
     },
 
     globalQ() {
@@ -111,6 +113,8 @@ export default {
     },
     globalQ() {
       // update local data when store value changes
+      // console.log('this.q: ', this.q);
+      // console.log('this.globalQ: ', this.globalQ);
       this.q = this.globalQ;
       this.$refs.input.focus();
     }
@@ -177,6 +181,9 @@ export default {
     },
 
     // autocomplete of query
+    // подсказывает из доступных полей и значений
+    // если кол-во полей или значений равно нулю, тогда подсказки берутся из всех полей и сайтов,
+    // это нужно, чтобы выбраться из сломанного запроса
     queryComplete(q, cb) {
       // в q старое значение, надо брать this.q
       if (!this.q || this.completionProcess) return cb([]);
@@ -188,30 +195,30 @@ export default {
         this.completionProcess = false;
       }, 500);
 
-      if (lastPart.match(/=/)) {
+      if (lastPart.match(/[<=>]/)) {
         // field value completion
         this.currentPart = "value";
-        const fieldMatch = lastPart.match(/(.*?)=/);
+        const fieldMatch = lastPart.match(/(.*?)[<=>]/);
         const fieldName = fieldMatch[1];
-        const matchFields = this.availableFields.filter(
+        const matchFields = this.allFields.filter(
           filter => filter.name == fieldName
         );
         const valueMatch = lastPart.match(/=(.*)/);
-        const qValue = valueMatch ? valueMatch[1] : "";
-        const qRegex = new RegExp(qValue, "i");
+        const fieldValue = valueMatch ? valueMatch[1] : "";
+        const qRegex = new RegExp(fieldValue, "i");
 
-        const filteredSites = this.$store.state.filteredSites;
-        const values = filteredSites.map(site => {
-          console.log("site: ", site);
-          console.log("fieldName: ", fieldName);
+        const sites =
+          this.$store.state.filteredSites.length > 0
+            ? this.$store.state.filteredSites
+            : this.$store.state.sites;
+        const values = sites.map(site => {
           if (
-            !qValue ||
-            (site[fieldName] && site[fieldName].includes(qValue))
+            !fieldValue ||
+            (site[fieldName] && site[fieldName].toString().includes(fieldValue))
           ) {
             return site[fieldName];
           }
         });
-        console.log("values: ", values);
         const uniqueValues = values.filter((v, i, a) => a.indexOf(v) === i);
         const sortedValues = uniqueValues.sort();
         cb(
@@ -222,7 +229,11 @@ export default {
       } else {
         // field name completion
         this.currentPart = "name";
-        const matchFields = this.availableFields.filter(filter =>
+        const fields =
+          this.$store.state.availableFields.length > 0
+            ? this.$store.state.availableFields
+            : this.allFields;
+        const matchFields = fields.filter(filter =>
           filter.name.includes(lastPart)
         );
         const sortedFields = matchFields.sort((a, b) =>
@@ -267,11 +278,11 @@ export default {
 
     // название тега в выбранных фильтрах
     tagName(tag) {
-      let tagName = tag.replace(/=1$/, "").replace(/([<>=])/, " $1 ");
+      let tagName = tag.replace(/=1$/, "").replace(/([<=>])/, " $1 ");
       const match = tag.match(/^([a-z0-9_]+)(.*)/);
       if (match) {
         let fieldName = match[1];
-        let fieldValue = match[2].replace(/([<>=])/, " $1 ");
+        let fieldValue = match[2].replace(/([<=>])/, " $1 ");
         const info = this.tests[fieldName];
         if (info) {
           if (info.comment) fieldName = info.comment;

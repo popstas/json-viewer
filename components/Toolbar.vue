@@ -26,7 +26,7 @@
       ></FieldGroup>
     </div>
 
-    <QueryInput class="filter__query" :availableFields="availableFields"></QueryInput>
+    <QueryInput class="filter__query"></QueryInput>
 
     <div class="filter-presets">filters:
       <FilterPresetButton :preset="preset" v-for="preset in filterPresets" :key="preset.name"></FilterPresetButton>

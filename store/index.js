@@ -4,6 +4,65 @@ import dateformat from 'dateformat';
 import validateMap from '~/assets/js/validate.conf';
 import moment from 'moment';
 
+const fieldsBySites = (sites, tests) => {
+  let excludedFields = [
+    // objects
+    'id',
+    'tests',
+    // duplicates
+    'meta_engine',
+    'meta_screenshots',
+    'meta_prod',
+    'site_root',
+    // not working
+    'total_pages_load_time',
+    'result',
+    'max_result',
+    'result_percent'
+  ];
+
+  let fields = [];
+  let fieldPaths = [];
+
+  for (let siteInd in sites) {
+    let site = sites[siteInd];
+
+    // раньше из некоторых вложенных объектов доставались поля,
+    // теперь они прессуются в одномерный объект
+    let objs = {
+      '': site
+      // 'site_info.': site.site_info,
+      // 'meta.': site.meta
+    };
+
+    for (let prefix in objs) {
+      const obj = objs[prefix];
+      for (let fieldName in obj) {
+        let fieldPath = prefix + fieldName;
+        if (excludedFields.includes(fieldPath)) continue;
+        if (fieldPaths.includes(fieldPath)) continue;
+
+        let field = {
+          name: fieldPath,
+          title: fieldName
+        };
+
+        // info from /etc/site-info.yml
+        const info = tests[fieldName];
+        if (info) {
+          if (info.comment) field.comment = info.comment;
+          field.command = info.command;
+        }
+
+        fields.push(field);
+        fieldPaths.push(fieldPath);
+      }
+    }
+  }
+
+  return fields;
+};
+
 export const state = () => ({
   // data
   sites: [],
@@ -22,6 +81,7 @@ export const state = () => ({
   // app state
   fields: [],
   availableFields: [],
+  allFields: [],
   q: ''
 });
 
@@ -181,67 +241,6 @@ export const getters = {
       };
       return 'colored ' + validClassesMap[result] + ' ' + result || 'noclass-' + result;
     };
-  },
-
-  availableFields(state) {
-    return () => {
-      let excludedFields = [
-        // objects
-        'id',
-        'tests',
-        // duplicates
-        'meta_engine',
-        'meta_screenshots',
-        'meta_prod',
-        'site_root',
-        // not working
-        'total_pages_load_time',
-        'result',
-        'max_result',
-        'result_percent'
-      ];
-
-      let fields = [];
-      let fieldPaths = [];
-
-      for (let siteInd in state.filteredSites) {
-        let site = state.filteredSites[siteInd];
-
-        // раньше из некоторых вложенных объектов доставались поля,
-        // теперь они прессуются в одномерный объект
-        let objs = {
-          '': site
-          // 'site_info.': site.site_info,
-          // 'meta.': site.meta
-        };
-
-        for (let prefix in objs) {
-          const obj = objs[prefix];
-          for (let fieldName in obj) {
-            let fieldPath = prefix + fieldName;
-            if (excludedFields.includes(fieldPath)) continue;
-            if (fieldPaths.includes(fieldPath)) continue;
-
-            let field = {
-              name: fieldPath,
-              title: fieldName
-            };
-
-            // info from /etc/site-info.yml
-            const info = state.tests[fieldName];
-            if (info) {
-              if (info.comment) field.comment = info.comment;
-              field.command = info.command;
-            }
-
-            fields.push(field);
-            fieldPaths.push(fieldPath);
-          }
-        }
-      }
-
-      return fields;
-    };
   }
 };
 
@@ -266,6 +265,9 @@ export const mutations = {
   availableFields(state, newValue) {
     state.availableFields = newValue;
   },
+  allFields(state, newValue) {
+    state.allFields = newValue;
+  },
   q(state, newValue) {
     if (!newValue) newValue = '';
     state.q = newValue;
@@ -285,6 +287,7 @@ export const actions = {
   sites({ commit, state, getters }, sites) {
     const sitesData = getters.sitesProcessing(sites);
     commit('sites', sitesData);
+    commit('allFields', fieldsBySites(state.sites, state.tests));
   },
 
   // фильтрует sites на основе q
@@ -346,7 +349,7 @@ export const actions = {
     }
 
     commit('filteredSites', filteredSites);
-    commit('availableFields', getters.availableFields());
+    commit('availableFields', fieldsBySites(state.filteredSites, state.tests));
   },
 
   q({ commit, dispatch }, q) {
