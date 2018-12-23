@@ -300,7 +300,9 @@ export default {
 
   created() {
     // приходит из FilterPresetButton
-    this.$nuxt.$on("inputFocus", () => this.$refs.input.focus());
+    this.$nuxt.$on("inputFocus", () => {
+      if (this.$refs.input) this.$refs.input.focus();
+    });
   },
 
   mounted() {
