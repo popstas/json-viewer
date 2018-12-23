@@ -25,7 +25,12 @@
       ></div>
     </v-client-table>
 
-    <div>{{ $store.state.name }} {{ $store.state.version }}</div>
+    <div>
+      <a
+        target="_blank"
+        :href="$store.state.homepage"
+      >{{ $store.state.name }} {{ $store.state.version }}</a>
+    </div>
   </section>
 </template>
 
