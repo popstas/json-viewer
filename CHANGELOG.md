@@ -1,4 +1,27 @@
-## [0.6.1](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.6.0...v0.6.1) (2018-12-09)
+# [0.7.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.6.0...v0.7.0) (2018-12-23)
+
+
+### Bug Fixes
+
+* filters in FieldGroup working ([8f45ba7](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/8f45ba7))
+* добавлялись дубли колонок ([13d95fa](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/13d95fa))
+* нормальная работа одиночных фильтров, очистка запроса по кнопке ([39f534f](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/39f534f))
+* решены проблемы с фокусом на строке запроса, когда надо и когда не надо ([00abd7f](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/00abd7f))
+
+
+### Features
+
+* автодополнение для фильтра ([10caa05](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/10caa05))
+* валидация SiteDetails, правки валидации ([e9b583b](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/e9b583b))
+* детали сайта на русском, SiteDetails component ([b96bcac](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/b96bcac))
+* дополнение: подсказка значений, переводы, css ([11e581e](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/11e581e))
+* оглавление для деталей сайта ([56dd64d](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/56dd64d))
+* перевод названий полей в тегах выбранных фильтров ([b02b38c](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/b02b38c))
+* поправлена валидация, sitesProcessing перенесен в store ([71b7cf3](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/71b7cf3))
+* правильное автодополнение, когда выдается нулевой результат ([e2695fb](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/e2695fb))
+* ускоренная фильтрация по полю ([64b302a](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/64b302a))
+* фильтры-выключатели ([74dfd4c](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/74dfd4c))
+* части запроса в виде тегов, легкое удаление одной части ([9ef6db6](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/9ef6db6))
 
 
 
