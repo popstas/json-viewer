@@ -116,7 +116,6 @@ export default {
       // console.log('this.q: ', this.q);
       // console.log('this.globalQ: ', this.globalQ);
       this.q = this.globalQ;
-      this.$refs.input.focus();
     }
   },
 
@@ -297,6 +296,11 @@ export default {
       }
       return tagName;
     }
+  },
+
+  created() {
+    // приходит из FilterPresetButton
+    this.$nuxt.$on("inputFocus", () => this.$refs.input.focus());
   },
 
   mounted() {

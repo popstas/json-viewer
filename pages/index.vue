@@ -2,10 +2,7 @@
   <section class="container">
     <div>total: {{ filteredSites.length }}</div>
 
-    <Toolbar
-      @toggleField="toggleField"
-      @setFields="setFields"
-    ></Toolbar>
+    <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
 
     <v-client-table
       v-if="filteredSites.length > 0"
@@ -38,7 +35,7 @@
 import Toolbar from "~/components/Toolbar";
 import SiteDetails from "~/components/SiteDetails";
 import columnPresets from "~/assets/js/presets/columns.conf";
-import _ from 'lodash';
+import _ from "lodash";
 
 export default {
   components: { Toolbar, SiteDetails },

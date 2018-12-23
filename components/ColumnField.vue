@@ -19,12 +19,14 @@
   }
 }
 .field-preset {
-  font-size: 10px;
-  color: #999;
+  &.filter-presets__button {
+    font-size: 10px;
+    color: #999;
 
-  &.filter-presets__button_active {
-    color: #ff0000;
-    border: none;
+    &_active {
+      color: #ff0000;
+      border: none;
+    }
   }
 }
 </style>

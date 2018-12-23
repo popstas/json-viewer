@@ -12,6 +12,24 @@
   </button>
 </template>
 
+<style lang="scss">
+.filter-presets__button {
+  outline: none;
+  background: none;
+  border: 1px solid transparent;
+  padding: 5px;
+  margin-right: 1em;
+  color: rgba(255, 0, 0, 0.87);
+  @media (max-width: 1000px) {
+    padding: 5px;
+  }
+
+  &_active {
+    border: 1px solid;
+  }
+}
+</style>
+
 <script>
 export default {
   props: {
@@ -75,6 +93,7 @@ export default {
       parts.push(q);
       const result = parts.join("&");
       this.$store.dispatch("q", { q: result });
+      this.$nuxt.$emit("inputFocus");
     }
   }
 };
