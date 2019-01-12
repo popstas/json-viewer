@@ -197,10 +197,15 @@ export default {
       return this.$store.getters.getColumnValidateClass(props, domain, column);
     },
 
-    // достает значение colName из row, со вложенностью
-    // https://stackoverflow.com/a/6394168/1716010
     getColumnValue(row, colName) {
-      return colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
+      // достает значение colName из row, со вложенностью
+      // https://stackoverflow.com/a/6394168/1716010
+      let val = colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
+
+      // шаблоны полей задаются здесь
+      if (colName == "url") val = `<a href="${val}" target="_blank">${val}</a>`;
+
+      return val;
     },
 
     fieldsInit() {
