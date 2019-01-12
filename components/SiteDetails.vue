@@ -6,12 +6,17 @@
       <a
         class="site-details__groups-link"
         :href="'#' + site.domain + '-' + group.name"
-        v-for="group in groups" :key="group.name"
-      >
-      {{ group.name }}</a>
+        v-for="group in groups"
+        :key="group.name"
+      >{{ group.name }}</a>
     </div>
 
-    <div class="site-details__group" v-for="group in groups" :key="group.name" :id="site.domain + '-' + group.name">
+    <div
+      class="site-details__group"
+      v-for="group in groups"
+      :key="group.name"
+      :id="site.domain + '-' + group.name"
+    >
       <div class="site-details__group-name">{{ group.name }}</div>
       <ul class="site-details__group-fields">
         <li
@@ -22,6 +27,15 @@
         >
           <span class="site-details__label">{{ field.comment }}</span>
           <span class="site-details__value">{{ field.valueText || field.value }}</span>
+
+          <FilterPresetButton
+            v-if="field.type == 'boolean'"
+            class="field-preset"
+            :preset="{ q: field.name + '=' + field.value }"
+            append
+          >
+            <icon name="filter" scale="0.6"></icon>
+          </FilterPresetButton>
         </li>
       </ul>
     </div>
@@ -40,6 +54,11 @@
 
   &__groups {
     padding: 0;
+
+    &-link {
+      display: inline-block;
+      padding: 10px;
+    }
   }
 
   li {
@@ -114,7 +133,11 @@
 </style>
 
 <script>
+import FilterPresetButton from "~/components/FilterPresetButton";
+import "vue-awesome/icons/filter";
+
 export default {
+  components: { FilterPresetButton },
   props: ["site"],
   computed: {
     tests() {
