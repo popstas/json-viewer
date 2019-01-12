@@ -1,3 +1,20 @@
+## [0.7.1](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.7.0...v0.7.1) (2019-01-12)
+
+
+### Bug Fixes
+
+* input не всегда доступен для фокуса ([e541b23](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/e541b23))
+* изменилась модель в sites.json, теперь boolean идут с правильным типом ([8ea385b](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/8ea385b))
+
+
+### Features
+
+* активная ссылка для поля url ([5b955f0](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/5b955f0))
+* быстрые фильтры в деталях сайта у boolean типов ([843c30b](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/843c30b))
+* ссылка на страницу проекта ([8afb28f](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/8afb28f))
+
+
+
 # [0.7.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.6.0...v0.7.0) (2018-12-23)
 
 
