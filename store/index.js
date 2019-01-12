@@ -104,6 +104,8 @@ export const getters = {
         // flatten site_info
         for (let i in site.site_info) {
           site[i] = site.site_info[i];
+          if (site[i] === true) site[i] = 1;
+          if (site[i] === false) site[i] = 0;
           if (i == 'files_size') site[i] = Math.round(site[i] / 1024);
           if (i == 'git_size') site[i] = Math.round(site[i] / 1024);
           if (i == 'updated_time') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
