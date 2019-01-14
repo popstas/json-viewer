@@ -145,10 +145,11 @@ export const getters = {
         site.prod = site.prod ? 1 : 0;
         site.https = site.https ? 1 : 0;
         site.errors = site.error ? 1 : 0;
-        site.id = site.domain;
+        site.id = `${site.domain}/${site.host}`;
         site.time = parseInt(site.time);
         return site;
       });
+      console.log('sitesData: ', sitesData.filter(site => site.domain == 'dostavkaperedach.ru'));
       return sitesData;
     };
   },
