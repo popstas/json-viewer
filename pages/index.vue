@@ -204,6 +204,7 @@ export default {
 
       // шаблоны полей задаются здесь
       if (colName == "url") val = `<a href="${val}" target="_blank">${val}</a>`;
+      if (colName == "favicon") val = `<img style="width:16px;height:16px" src="${val}"/>`;
 
       return val;
     },
