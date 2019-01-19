@@ -149,7 +149,6 @@ export const getters = {
         site.time = parseInt(site.time);
         return site;
       });
-      console.log('sitesData: ', sitesData.filter(site => site.domain == 'dostavkaperedach.ru'));
       return sitesData;
     };
   },
