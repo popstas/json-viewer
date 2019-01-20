@@ -20,7 +20,7 @@
         :key="colName"
         :slot="colName"
         slot-scope="props"
-        :class="[ 'cell', getColumnValidateClass(props, props.row.domain, colName) ]"
+        :class="[ 'cell', `col-${colName}`, getColumnValidateClass(props, props.row.domain, colName) ]"
         v-html="getColumnValue(props.row, colName)"
       ></div>
     </v-client-table>
@@ -69,6 +69,7 @@ export default {
     },
 
     tableOptions() {
+      console.log('perPage: ', this.filteredSites.length);
       return {
         headings: this.headings,
         headingsTooltips: this.headingsTooltips,
@@ -206,6 +207,7 @@ export default {
       if (colName == "url") val = `<a href="${val}" target="_blank">${val}</a>`;
       if (colName == "favicon" && val) {
         val = val.replace(/^\//, row.url);
+        console.log('val: ', val);
         val = `<img style="width:16px;height:16px" src="${val}"/>`;
       }
       if (colName == "domain_idn") {
