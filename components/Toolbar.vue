@@ -24,6 +24,23 @@
         :key="group.name"
         v-if="group.fields.length > 0"
       ></FieldGroup>
+
+      <el-autocomplete
+        class="field-search"
+        ref="input"
+        placeholder="добавить колонку"
+        v-model="fieldQuery"
+        title="Поиск полей"
+        :fetch-suggestions="fieldComplete"
+        valueKey="name"
+        :clearable="true"
+        @select="fieldSelect"
+      >
+        <template slot-scope="slotProps">
+          <span class="query-input__field-name">{{ slotProps.item.name }}</span>
+          <span class="query-input__field-label">{{ slotProps.item.comment }}</span>
+        </template>
+      </el-autocomplete>
     </div>
 
     <QueryInput class="filter__query"></QueryInput>
@@ -80,7 +97,9 @@ export default {
     return {
       columnPresets: columnPresets,
       filterPresets: filterPresets,
-      fieldGroupsOpened: {}
+      fieldGroupsOpened: {},
+      completionProcess: false,
+      fieldQuery: ""
     };
   },
 
@@ -95,6 +114,10 @@ export default {
 
     availableFields() {
       return this.$store.state.availableFields;
+    },
+
+    allFields() {
+      return this.$store.state.allFields;
     },
 
     // раскладывает поля по группам, с дублированием
@@ -159,6 +182,45 @@ export default {
       return this.fields.findIndex(column => {
         return field && column.name == field.name;
       });
+    },
+
+    // автодополнение названия поля
+    fieldComplete(q, cb) {
+      if (!q || this.completionProcess) return cb([]);
+
+      this.completionProcess = true;
+      setTimeout(() => {
+        this.completionProcess = false;
+      }, 500);
+
+      // field name completion
+      const fields =
+        this.$store.state.availableFields.length > 0
+          ? this.$store.state.availableFields
+          : this.allFields;
+      const matchFields = fields.filter(
+        filter =>
+          filter.name.includes(q) ||
+          filter.comment.toLowerCase().includes(q.toLowerCase())
+      );
+      const sortedFields = matchFields.sort((a, b) =>
+        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
+      );
+      cb(sortedFields);
+    },
+
+    // выбор автодополнения
+    fieldSelect(field) {
+      this.$refs.input.focus();
+      this.fieldQuery = "";
+
+      // const field = this.allFields.find(field => field.name == q);
+      if (field) this.toggleField(field);
+
+      // без этого сразу фильтрует при вводе имени
+      setTimeout(() => {
+        this.completionProcess = false;
+      }, 500);
     }
   }
 };
