@@ -1,3 +1,21 @@
+# [0.8.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.7.1...v0.8.0) (2019-01-21)
+
+
+### Bug Fixes
+
+* domain_idn выровнен по левому краю ([1130dfe](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/1130dfe))
+* сайты с одинаковыми доменами, но с разными хостами теперь нормально выводятся ([ba9f519](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/ba9f519))
+
+
+### Features
+
+* favicon ([dacadd0](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/dacadd0))
+* в domain_idn добавлены favicons ([054f5c1](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/054f5c1))
+* по умолчанию показывать приоритетные сайты ([647b786](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/647b786))
+* поиск по колонкам, быстрое добавление колонки ([1f96b35](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/1f96b35))
+
+
+
 ## [0.7.1](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.7.0...v0.7.1) (2019-01-12)
 
 
