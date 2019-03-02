@@ -212,10 +212,10 @@ export default {
       }
       if (colName == "domain_idn") {
         let icon = row.favicon ? row.favicon.replace(/^\//, row.url) : "";
-        val =
+        val = '<a href="' + row.url + '" target="_blank">' +
           (icon ? `<img style="width:16px;height:16px" src="${icon}"/>` : "") +
           " " +
-          val;
+          val + '</a>';
       }
 
       return val;

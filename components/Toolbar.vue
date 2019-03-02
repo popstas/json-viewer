@@ -201,7 +201,7 @@ export default {
       const matchFields = fields.filter(
         filter =>
           filter.name.includes(q) ||
-          filter.comment.toLowerCase().includes(q.toLowerCase())
+          filter.comment && filter.comment.toLowerCase().includes(q.toLowerCase())
       );
       const sortedFields = matchFields.sort((a, b) =>
         a.name > b.name ? 1 : b.name > a.name ? -1 : 0
