@@ -237,7 +237,7 @@ export default {
     this.$store.commit("tests", sitesJson.tests);
     this.$store.dispatch("sites", sitesJson.sites);
     if(!this.$route.query["q"]){
-      this.$route.query["q"] = 'meta_client_priority<3';
+      this.$route.query["q"] = 'prod=1';
     }
     this.$store.dispatch("q", this.$route.query["q"]);
 
