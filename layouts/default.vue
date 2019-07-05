@@ -1,6 +1,13 @@
 <template>
   <div>
     <nuxt/>
+
+    <div>
+      <a
+        target="_blank"
+        :href="$store.state.homepage"
+      >{{ $store.state.name }} {{ $store.state.version }}</a>
+    </div>
   </div>
 </template>
 

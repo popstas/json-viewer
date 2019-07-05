@@ -20,6 +20,7 @@
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
     "element-ui": "^2.4.11",
+    "js-yaml": "^3.13.1",
     "json-query": "^2.2.2",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",

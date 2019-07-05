@@ -1,0 +1,33 @@
+questions:
+  - name: Какой сайт вы хотите?
+    options:
+      - name: Каталог услуг
+        questions:
+          - name: Битрикс или Drupal?
+            options:
+              - name: 1С-Битрикс
+                price: 30000
+
+              - name: Drupal
+                price: 20000
+
+      - name: Интернет-магазин
+        questions:
+          - name: Сколько товаров?
+            required: true
+            options:
+              - name: 10-1000
+                price: 10000
+
+              - name: 1000-10000
+                price: 20000
+
+        price: 35000
+
+  - name: Вы будете наполнять сайт сами?
+    options:
+      - name: Да
+        price: 2000
+
+      - name: Нет
+        price: 20000

@@ -71,6 +71,8 @@ export const state = () => ({
 
   // constants
   sitesJsonUrl: 'https://dev.viasite.ru/viasite-projects/site-info/sites.json',
+  calcYmlUrl: 'https://dev.viasite.ru/viasite-projects/calc.yml',
+  currency: 'руб',
   // sitesJsonUrl: 'https://dev.viasite.ru/viasite-projects/sites.json',
   // sitesJsonUrl: 'https://test.home.popstas.ru/sites.json',
   name: pjson.name,
