@@ -1,3 +1,18 @@
+# [0.9.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.8.0...v0.9.0) (2020-03-02)
+
+
+### Bug Fixes
+
+* фильтр по умолчанию prod=1 ([c304879](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/c304879))
+
+
+### Features
+
+* простой вывод csv ([9932603](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/9932603))
+* ссылка с domain_idn ([181f716](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/181f716))
+
+
+
 # [0.8.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.7.1...v0.8.0) (2019-01-21)
 
 
