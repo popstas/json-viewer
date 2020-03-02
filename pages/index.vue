@@ -200,7 +200,7 @@ export default {
       if (colName == "url") val = `<a href="${val}" target="_blank">${val}</a>`;
       if (colName == "favicon" && val) {
         val = val.replace(/^\//, row.url);
-        console.log('val: ', val);
+        // console.log('val: ', val);
         val = `<img style="width:16px;height:16px" src="${val}"/>`;
       }
       if (colName == "domain_idn") {
