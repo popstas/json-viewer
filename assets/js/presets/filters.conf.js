@@ -12,12 +12,27 @@ module.exports = [
   {
     name: 'Bitrix',
     q: 'engine=bitrix',
-    groups: ['bitrix']
+    groups: ['info', 'bitrix']
   },
   {
     name: 'Drupal',
     q: 'engine=drupal',
-    groups: ['modules']
+    groups: ['info']
+  },
+  {
+    name: 'Визитки',
+    q: 'group~/(visitkaplus|snormal)/',
+    groups: ['info']
+  },
+  {
+    name: 'Vcorp',
+    q: 'group=vcorp',
+    groups: ['info']
+  },
+  {
+    name: 'Аспро',
+    q: 'bitrix_aspro',
+    groups: ['info', 'bitrix']
   },
   {
     name: 'Без cron',
