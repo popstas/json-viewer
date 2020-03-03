@@ -72,5 +72,10 @@ module.exports = {
     name: 'клиенты',
     groups: ['main'],
     columns: ['domain_idn', 'meta_title', 'meta_category', 'meta_type', 'meta_client_priority']
+  },
+  email: {
+    name: 'для рассылки',
+    groups: ['main'],
+    columns: ['domain_idn', 'email', 'meta_mail_domain', 'https', 'group']
   }
 };
