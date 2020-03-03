@@ -1,3 +1,18 @@
+# [0.10.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.9.0...v0.10.0) (2020-03-03)
+
+
+### Bug Fixes
+
+* remove console.log ([cbac03e](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/cbac03e))
+
+
+### Features
+
+* пресет колонок "для рассылки" ([5137375](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/5137375))
+* фильтры Визитки, Vcorp, Аспро ([81b74a7](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/81b74a7))
+
+
+
 # [0.9.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.8.0...v0.9.0) (2020-03-02)
 
 

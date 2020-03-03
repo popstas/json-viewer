@@ -1,6 +1,6 @@
 {
   "name": "viasite-projects-list",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "description": "Display sites.json as table",
   "author": "Stanislav Popov <popstas@gmail.com>",
   "homepage": "https://git.viasite.ru/servers/viasite-projects-list",
