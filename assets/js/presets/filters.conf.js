@@ -10,7 +10,7 @@ module.exports = [
     groups: ['main']
   },
   {
-    name: 'Bitrix',
+    name: 'Битриксы',
     q: 'engine=bitrix',
     groups: ['info', 'bitrix']
   },
@@ -31,7 +31,7 @@ module.exports = [
   },
   {
     name: 'Аспро',
-    q: 'bitrix_aspro',
+    q: 'bitrix_aspro=1',
     groups: ['info', 'bitrix']
   },
   {
