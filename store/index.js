@@ -204,6 +204,9 @@ export const getters = {
         if (Number.isInteger(rules)) {
           return value == rules;
         }
+        if (typeof rules == 'string') {
+          return value == rules;
+        }
         if ('max' in rules && value > rules.max) valid = false;
         if ('min' in rules && value < rules.min) valid = false;
         if (!('min' in rules) && !('max' in rules)) {
