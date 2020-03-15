@@ -208,7 +208,8 @@ export default {
         val = '<a href="' + row.url + '" target="_blank">' +
           (icon ? `<img style="width:16px;height:16px" src="${icon}"/>` : "") +
           " " +
-          val + '</a>';
+          val + '</a>'
+          + '<a href="ssh://' + row.ssh_command.replace('ssh ', '') + '" class="ssh-link" title="Open SSH">&nbsp;</a>'
       }
 
       return val;

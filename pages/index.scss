@@ -207,5 +207,13 @@
         }
       }
     }
+
+    .ssh-link {
+      display: inline-block;
+      float: right;
+      width:16px;
+      height:16px;
+      background: url(/viasite-projects/terminal.png) 0 0 no-repeat;
+    }
   }
 }
