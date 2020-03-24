@@ -60,6 +60,11 @@ module.exports = [
     groups: ['service']
   },
   {
+    name: 'Без почты на домене',
+    q: 'meta_mail_domain=0',
+    groups: ['service', 'info']
+  },
+  {
     name: 'Drupal без кэша анонимов',
     q: 'engine=drupal&cache=0&boost=0',
     groups: ['cache']
