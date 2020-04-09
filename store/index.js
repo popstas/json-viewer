@@ -111,6 +111,7 @@ export const getters = {
           if (i == 'files_size') site[i] = Math.round(site[i] / 1024);
           if (i == 'git_size') site[i] = Math.round(site[i] / 1024);
           if (i == 'updated_time') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
+          if (i == 'node_last_changed') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
         }
         delete site.site_info;
 
