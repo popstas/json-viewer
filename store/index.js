@@ -103,6 +103,10 @@ export const getters = {
           site.site_info.engine = site.engine;
         }
 
+        // TODO: not work
+        const vscodePrefix = 'c:/projects/site/';
+        site.vscode_link = 'vscode://' + vscodePrefix + site.domain + '/index.php';
+
         // flatten site_info
         for (let i in site.site_info) {
           site[i] = site.site_info[i];
@@ -112,6 +116,7 @@ export const getters = {
           if (i == 'git_size') site[i] = Math.round(site[i] / 1024);
           if (i == 'updated_time') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
           if (i == 'node_last_changed') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
+          if (i == 'content_last_changed') site[i] = moment.unix(site[i]).format('YYYY-MM-DD HH:mm:ss');
         }
         delete site.site_info;
 

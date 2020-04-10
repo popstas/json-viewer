@@ -212,6 +212,16 @@ export default {
           + '<a href="ssh://' + row.ssh_command.replace('ssh ', '') + '" class="ssh-link" title="Open SSH">&nbsp;</a>'
       }
 
+      // TODO: draft
+      if (colName == "vscode_link") {
+        val = '<a href="' + val + '" target="_blank">Open in VS Code</a>';
+      }
+
+      // in domain_idn
+      /* if (colName == "ssh_command") {
+        val = '<a href="ssh://' + val.replace('ssh ', '') + '" target="_blank">Open SSH</a>';
+      } */
+
       return val;
     },
 
