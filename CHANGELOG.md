@@ -1,3 +1,12 @@
+## [1.0.1](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v1.0.0...v1.0.1) (2020-04-17)
+
+
+### Bug Fixes
+
+* css xls button position ([5a64ed6](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/5a64ed6))
+
+
+
 # [1.0.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.10.0...v1.0.0) (2020-04-17)
 
 
