@@ -1,3 +1,22 @@
+# [1.0.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.10.0...v1.0.0) (2020-04-17)
+
+
+### Bug Fixes
+
+* bitrix_aspro фильтр ([5287d58](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/5287d58))
+* content_last_changed time to date, vscode_link draft ([54853a2](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/54853a2))
+* node_last_changed time to date ([5a988fa](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/5a988fa))
+* validate for string ([f5b134e](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/f5b134e))
+
+
+### Features
+
+* meta_mail_domain filter preset ([712de2e](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/712de2e))
+* ssh:// link in site_idn column ([1634cbd](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/1634cbd))
+* xlsx export ([214b8ea](http://git.viasite.ru:10022/servers/viasite-projects-list/commits/214b8ea))
+
+
+
 # [0.10.0](http://git.viasite.ru:10022/servers/viasite-projects-list/compare/v0.9.0...v0.10.0) (2020-03-03)
 
 
