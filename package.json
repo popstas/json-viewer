@@ -32,7 +32,8 @@
     "style-loader": "^0.23.1",
     "vue-awesome": "^3.2.0",
     "vue-style-loader": "^4.1.2",
-    "vue-tables-2": "^1.4.70"
+    "vue-tables-2": "^1.4.70",
+    "xlsx": "^0.15.6"
   },
   "devDependencies": {
     "babel-eslint": "^8.2.1",

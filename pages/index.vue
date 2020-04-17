@@ -4,6 +4,12 @@
 
     <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
 
+    <div class="table-actions">
+      <button class="btn btn-excel" @click="getXlsx">
+        <icon name="file-excel"></icon> xlsx
+      </button>
+    </div>
+
     <v-client-table
       v-if="filteredSites.length > 0"
       :columns="columns"
@@ -33,7 +39,10 @@
 import Toolbar from "~/components/Toolbar";
 import SiteDetails from "~/components/SiteDetails";
 import columnPresets from "~/assets/js/presets/columns.conf";
+import "vue-awesome/icons/file-excel";
 import _ from "lodash";
+// import { XlsxWorkbook, XlsxSheet, XlsxDownload } from "../../dist/vue-xlsx.es.js"
+import XLSX from "xlsx";
 
 export default {
   components: { Toolbar, SiteDetails },
@@ -62,7 +71,7 @@ export default {
     },
 
     tableOptions() {
-      console.log('perPage: ', this.filteredSites.length);
+      // console.log("perPage: ", this.filteredSites.length);
       return {
         headings: this.headings,
         headingsTooltips: this.headingsTooltips,
@@ -129,6 +138,60 @@ export default {
   },
 
   methods: {
+    formatExcelCols(json) {
+      let widthArr = Object.keys(json[0]).map(key => {
+        return { width: key.length + 2 }; // plus 2 to account for short object keys
+      });
+      for (let i = 0; i < json.length; i++) {
+        let value = Object.values(json[i]);
+        for (let j = 0; j < value.length; j++) {
+          if (value[j] !== null && widthArr[j] !== undefined && value[j].length > widthArr[j].width) {
+            widthArr[j].width = value[j].length;
+          }
+        }
+      }
+      return widthArr;
+    },
+
+    buildXlsx() {
+      const table = this.$el.querySelector(".VueTables__table");
+      const wb = XLSX.utils.table_to_book(table);
+      const ws = wb.Sheets[wb.SheetNames[0]];
+
+      const lastCell = ws['!ref'].split(':')[1];
+      const range = XLSX.utils.decode_range('B1:'+lastCell);
+
+      const cols = [1];
+
+      for(let r = 0; r <= range.e.r; r++){
+        // delete first col
+        const firstAddr = XLSX.utils.encode_cell({r:r, c:0});
+        delete(ws[firstAddr]);
+
+        // count columns width
+        for(let c = 1; c <= range.e.c; c++) {
+          const addr = XLSX.utils.encode_cell({r:r, c:c});
+          const length = Object.values(ws[addr].v).length + 2;
+          if(!cols[c]) cols[c] = length;
+          else cols[c] = Math.max(cols[c], length);
+        }
+      }
+      const colsObj = cols.map(length => { return {width: length} });
+
+      ws['!cols'] = colsObj;
+      ws['!autofilter'] = { ref: 'B1:'+lastCell };
+
+      // console.log('wb: ', wb);
+      return wb;
+    },
+
+    getXlsx() {
+      const wb = this.buildXlsx();
+      const suffix = this.q ? "--" + this.q.replace(/&/g, ",") : "";
+      const filename = `viasite-projects${suffix}.xlsx`;
+      XLSX.writeFile(wb, filename, {});
+    },
+
     // переключает поле в таблице по клику
     toggleField(field, add) {
       this.$store.dispatch("toggleField", { field, add });
@@ -240,8 +303,8 @@ export default {
     const sitesJson = await this.$axios.$get(this.$store.state.sitesJsonUrl);
     this.$store.commit("tests", sitesJson.tests);
     this.$store.dispatch("sites", sitesJson.sites);
-    if(!this.$route.query["q"]){
-      this.$route.query["q"] = 'prod=1';
+    if (!this.$route.query["q"]) {
+      this.$route.query["q"] = "prod=1";
     }
     this.$store.dispatch("q", this.$route.query["q"]);
 
