@@ -29,7 +29,7 @@
           <span class="item-details__value">{{ field.valueText || field.value }}</span>
 
           <FilterPresetButton
-            v-if="field.type == 'boolean'"
+            v-if="field.type == 'boolean' || true"
             class="field-preset"
             :preset="{ q: field.name + '=' + field.value }"
             append
