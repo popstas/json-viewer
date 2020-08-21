@@ -124,7 +124,7 @@ export default {
 
     getFilterCount() {
       let q = this.mergePreset(this.preset.q);
-      const filtered = this.$store.getters.getFilteredSites(q);
+      const filtered = this.$store.getters.getFilteredItems(q);
       return filtered.length;
     }
   }

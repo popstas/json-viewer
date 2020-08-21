@@ -1,8 +1,8 @@
 <template>
   <section class="container">
     <div>
-      <a :href="$store.state.sitesJsonUrl" v-html="$store.state.sitesJsonUrl" target="_blank"></a>,
-      total: {{ filteredSites.length }}</div>
+      <a :href="$store.state.itemsJsonUrl" v-html="$store.state.itemsJsonUrl" target="_blank"></a>,
+      total: {{ filteredItems.length }}</div>
     <br>
 
     <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
@@ -14,13 +14,13 @@
     </div>
 
     <v-client-table
-      v-if="filteredSites.length > 0"
+      v-if="filteredItems.length > 0"
       :columns="columns"
-      :data="filteredSites"
+      :data="filteredItems"
       :options="tableOptions"
     >
       <template slot="child_row" slot-scope="props">
-        <SiteDetails :site="$store.getters.getSiteByDomain(props.row.url)"></SiteDetails>
+        <ItemDetails :item="$store.getters.getItemByDomain(props.row.url)"></ItemDetails>
       </template>
 
       <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
@@ -40,7 +40,7 @@
 
 <script>
 import Toolbar from "~/components/Toolbar";
-import SiteDetails from "~/components/SiteDetails";
+import ItemDetails from "~/components/ItemDetails";
 import columnPresets from "~/assets/js/presets/columns.conf";
 import "vue-awesome/icons/file-excel";
 import _ from "lodash";
@@ -48,7 +48,7 @@ import _ from "lodash";
 import XLSX from "xlsx";
 
 export default {
-  components: { Toolbar, SiteDetails },
+  components: { Toolbar, ItemDetails },
   data() {
     return {
       routerProcess: false,
@@ -69,12 +69,12 @@ export default {
       return this.$store.state.availableFields;
     },
 
-    filteredSites() {
-      return this.$store.state.filteredSites;
+    filteredItems() {
+      return this.$store.state.filteredItems;
     },
 
     tableOptions() {
-      // console.log("perPage: ", this.filteredSites.length);
+      // console.log("perPage: ", this.filteredItems.length);
 
       const columnsClasses = {};
       for (let columnName of this.columns) {
@@ -137,7 +137,7 @@ export default {
         filterable: ["url"],
         cellClasses: cellClasses,
         columnsClasses: columnsClasses,
-        perPage: this.filteredSites.length,
+        perPage: this.filteredItems.length,
         perPageValues: [100, 250, 500],
         // columnsDropdown: true,
         rowClassCallback(row) {
@@ -145,7 +145,7 @@ export default {
           // return 'success';
         },
         templates: {
-          /* 'files_size'(h, row, index) { // работал, но перестал вызываться после убирания site.site_info
+          /* 'files_size'(h, row, index) { // работал, но перестал вызываться после убирания item.item_info
             console.log('row: ', row);
             if (!row.files_size) return '';
             return Math.round(row.files_size / 1024) || '';
@@ -180,7 +180,7 @@ export default {
     },
 
     pageTitle() {
-      let title = ["site-seo-audit"];
+      let title = ["site-audit-seo"];
       if (this.q) title.push("q: " + this.q);
       if (this.fields.length > 0) title.push("fields: " + this.columns);
       return title.join(", ");
@@ -251,7 +251,7 @@ export default {
     getXlsx() {
       const wb = this.buildXlsx();
       const suffix = this.q ? "--" + this.q.replace(/&/g, ",") : "";
-      const filename = `viasite-projects${suffix}.xlsx`;
+      const filename = `site-audit-seo${suffix}.xlsx`;
       XLSX.writeFile(wb, filename, {});
     },
 
@@ -355,14 +355,14 @@ export default {
   async mounted() {
     // set webhook
     if (this.$route.query.url) {
-      this.$store.commit('sitesJsonUrl', this.$route.query.url);
+      this.$store.commit('itemsJsonUrl', this.$route.query.url);
     }
 
     // data init
-    const sitesJson = await this.$axios.$get(this.$store.state.sitesJsonUrl);
-    // console.log('sitesJson.items: ', sitesJson.items);
-    this.$store.commit("tests", sitesJson.fields);
-    this.$store.dispatch("sites", sitesJson.items);
+    const itemsJson = await this.$axios.$get(this.$store.state.itemsJsonUrl);
+    // console.log('itemsJson.items: ', itemsJson.items);
+    this.$store.commit("tests", itemsJson.fields);
+    this.$store.dispatch("items", itemsJson.items);
     this.$store.dispatch("q", this.$route.query["q"]);
 
     this.fieldsInit();

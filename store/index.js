@@ -4,7 +4,7 @@ import dateformat from 'dateformat';
 import validateMap from '~/assets/js/validate.conf';
 import moment from 'moment';
 
-const fieldsBySites = (sites, tests) => {
+const fieldsByItems = (items, tests) => {
   let excludedFields = [
     // objects
     'id',
@@ -13,7 +13,7 @@ const fieldsBySites = (sites, tests) => {
     'meta_engine',
     'meta_screenshots',
     'meta_prod',
-    'site_root',
+    'item_root',
     // not working
     'total_pages_load_time',
     'result',
@@ -24,15 +24,15 @@ const fieldsBySites = (sites, tests) => {
   let fields = [];
   let fieldPaths = [];
 
-  for (let siteInd in sites) {
-    let site = sites[siteInd];
+  for (let itemInd in items) {
+    let item = items[itemInd];
 
     // раньше из некоторых вложенных объектов доставались поля,
     // теперь они прессуются в одномерный объект
     let objs = {
-      '': site
-      // 'site_info.': site.site_info,
-      // 'meta.': site.meta
+      '': item
+      // 'item_info.': item.item_info,
+      // 'meta.': item.meta
     };
 
     for (let prefix in objs) {
@@ -47,7 +47,7 @@ const fieldsBySites = (sites, tests) => {
           title: fieldName
         };
 
-        // info from /etc/site-info.yml
+        // info from /etc/item-info.yml
         const info = tests[fieldName];
         if (info) {
           for (let fName of ['comment', 'description', 'command', 'validate', 'default', 'align']) {
@@ -68,12 +68,12 @@ const fieldsBySites = (sites, tests) => {
 
 export const state = () => ({
   // data
-  sites: [],
+  items: [],
   tests: [], // объявления тестов
-  filteredSites: [],
+  filteredItems: [],
 
   // constants
-  sitesJsonUrl: 'http://localhost:3001/data.json',
+  itemsJsonUrl: 'http://localhost:3001/data.json',
   name: pjson.name,
   version: pjson.version,
   description: pjson.description,
@@ -87,19 +87,19 @@ export const state = () => ({
 });
 
 export const getters = {
-  // дополняет колонки sites.json
-  sitesProcessing(state) {
-    return sites => {
-      if (!sites) return [];
-      const sitesData = sites.map(s => {
-        let site = { ...s };
-        // should be before site_info flatten
+  // дополняет колонки items.json
+  itemsProcessing(state) {
+    return items => {
+      if (!items) return [];
+      const itemsData = items.map(s => {
+        let item = { ...s };
+        // should be before item_info flatten
 
-        site.id = `${site.url}`;
-        return site;
+        item.id = `${item.url}`;
+        return item;
       });
-      // console.log('sitesData: ', sitesData);
-      return sitesData;
+      // console.log('itemsData: ', itemsData);
+      return itemsData;
     };
   },
 
@@ -122,9 +122,9 @@ export const getters = {
     };
   },
 
-  getSiteByDomain(state) {
+  getItemByDomain(state) {
     return url => {
-      return state.filteredSites.find(site => site.url == url);
+      return state.filteredItems.find(item => item.url == url);
     };
   },
 
@@ -166,42 +166,42 @@ export const getters = {
     }
   },
 
-  getFilteredSites(state, getters) {
+  getFilteredItems(state, getters) {
     return (q) => {
-      // console.log('getFilteredSites: ', q);
-      let filteredSites = [];
+      // console.log('getFilteredItems: ', q);
+      let filteredItems = [];
 
       // empty query
-      if (q == '') filteredSites = state.sites;
+      if (q == '') filteredItems = state.items;
 
       // json-query
       // регулярка отсекает значения, которые могут быть именами полей
       // запросы с ':' фильтруются, т.к. json-query выдает фигню и для совместимости с custom format
-      if (filteredSites.length == 0 && !q.match(/^[a-z0-9_]+$/) && q.indexOf(':') === -1) {
+      if (filteredItems.length == 0 && !q.match(/^[a-z0-9_]+$/) && q.indexOf(':') === -1) {
         try {
           const res = jsonQuery('data[*' + q + ']', {
-            data: { data: state.sites },
+            data: { data: state.items },
             allowRegexp: true
           });
-          filteredSites = res.value;
+          filteredItems = res.value;
 
           // normalize to array
-          if (!filteredSites) filteredSites = [];
-          /* if (typeof filteredSites === 'object' && !obj instanceof Array){ // for single result
-            filteredSites = [filteredSites];
+          if (!filteredItems) filteredItems = [];
+          /* if (typeof filteredItems === 'object' && !obj instanceof Array){ // for single result
+            filteredItems = [filteredItems];
           } */
         } catch (e) {
           // console.log(`failed to filter json-query data${q}`, e);
         }
-        // console.log('filteredSites after json-query: ', filteredSites);
+        // console.log('filteredItems after json-query: ', filteredItems);
       }
 
       // custom format:
-      // site_info.engine:bitrix cron:0
-      if (filteredSites.length == 0) {
+      // item_info.engine:bitrix cron:0
+      if (filteredItems.length == 0) {
         // console.log('custom search');
         let filters = q.split(' ');
-        filteredSites = state.sites;
+        filteredItems = state.items;
         let errors = 0;
         for (let fid in filters) {
           const [name, value] = filters[fid].split(':');
@@ -213,33 +213,33 @@ export const getters = {
 
           const [parent, child] = name.split('.');
 
-          filteredSites = filteredSites.filter(site => {
-            if (child) return site[parent] && site[parent][child] == value;
-            else return site[name] == value;
-            // console.log('site: ', site.domain, site[name], site[name] == value);
+          filteredItems = filteredItems.filter(item => {
+            if (child) return item[parent] && item[parent][child] == value;
+            else return item[name] == value;
+            // console.log('item: ', item.domain, item[name], item[name] == value);
           });
-          // console.log('filteredSites after ' + filters[fid] + ': ', filteredSites);
+          // console.log('filteredItems after ' + filters[fid] + ': ', filteredItems);
         }
 
-        if (errors > 0) filteredSites = [];
+        if (errors > 0) filteredItems = [];
       }
 
-      // console.log('filteredSites: ', filteredSites);
-      return filteredSites;
+      // console.log('filteredItems: ', filteredItems);
+      return filteredItems;
     }
   }
 };
 
 export const mutations = {
-  sitesJsonUrl(state, newValue) {
-    state.sitesJsonUrl = newValue;
+  itemsJsonUrl(state, newValue) {
+    state.itemsJsonUrl = newValue;
   },
   fields(state, newValue) {
     state.fields = newValue;
   },
-  sites(state, newValue) {
-    state.sites = newValue;
-    state.filteredSites = newValue;
+  items(state, newValue) {
+    state.items = newValue;
+    state.filteredItems = newValue;
   },
   tests(state, newValue) {
     const tests = {};
@@ -248,8 +248,8 @@ export const mutations = {
     });
     state.tests = tests;
   },
-  filteredSites(state, newValue) {
-    state.filteredSites = newValue;
+  filteredItems(state, newValue) {
+    state.filteredItems = newValue;
   },
   availableFields(state, newValue) {
     state.availableFields = newValue;
@@ -272,23 +272,23 @@ export const mutations = {
 };
 
 export const actions = {
-  // дополняет sites и сохраняет
-  sites({ commit, state, getters }, sites) {
-    const sitesData = getters.sitesProcessing(sites);
-    commit('sites', sitesData);
-    // console.log('sites: ', sitesData);
+  // дополняет items и сохраняет
+  items({ commit, state, getters }, items) {
+    const itemsData = getters.itemsProcessing(items);
+    commit('items', itemsData);
+    // console.log('items: ', itemsData);
     // console.log('state.tests: ', state.tests);
-    commit('allFields', fieldsBySites(state.sites, state.tests));
-    // console.log('allFields: ', fieldsBySites(state.sites, state.tests));
+    commit('allFields', fieldsByItems(state.items, state.tests));
+    // console.log('allFields: ', fieldsByItems(state.items, state.tests));
   },
 
-  // фильтрует sites на основе q
-  filterSites({ commit, state, getters }) {
+  // фильтрует items на основе q
+  filterItems({ commit, state, getters }) {
     const q = state.q.toLowerCase();
-    const filteredSites = getters.getFilteredSites(q);
+    const filteredItems = getters.getFilteredItems(q);
 
-    commit('filteredSites', filteredSites);
-    commit('availableFields', fieldsBySites(state.filteredSites, state.tests));
+    commit('filteredItems', filteredItems);
+    commit('availableFields', fieldsByItems(state.filteredItems, state.tests));
   },
 
   q({ commit, dispatch }, q) {
@@ -296,7 +296,7 @@ export const actions = {
       commit('q', q.q);
     } else {
       commit('q', q);
-      dispatch('filterSites');
+      dispatch('filterItems');
     }
   },
 

@@ -126,8 +126,8 @@ export default {
       return this.$store.state.allFields;
     },
 
-    filteredSites() {
-      return this.$store.state.filteredSites;
+    filteredItems() {
+      return this.$store.state.filteredItems;
     },
 
     // раскладывает поля по группам, с дублированием

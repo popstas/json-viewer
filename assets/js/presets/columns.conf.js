@@ -1,3 +1,4 @@
+// TODO: column presets from json
 module.exports = {
   default: {
     name: 'default',

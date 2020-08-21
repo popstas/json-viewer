@@ -1,32 +1,32 @@
 <template>
-  <div class="site-details">
-    <a class="site-details__title" :href="site.url" target="_blank">{{ site.url }}</a>
+  <div class="item-details">
+    <a class="item-details__title" :href="item.url" target="_blank">{{ item.url }}</a>
 
-    <div class="site-details__groups">
+    <div class="item-details__groups">
       <a
-        class="site-details__groups-link"
-        :href="'#' + site.url + '-' + group.name"
+        class="item-details__groups-link"
+        :href="'#' + item.url + '-' + group.name"
         v-for="group in groups"
         :key="group.name"
       >{{ group.name }}</a>
     </div>
 
     <div
-      class="site-details__group"
+      class="item-details__group"
       v-for="group in groups"
       :key="group.name"
-      :id="site.url + '-' + group.name"
+      :id="item.url + '-' + group.name"
     >
-      <div class="site-details__group-name">{{ group.name }}</div>
-      <ul class="site-details__group-fields">
+      <div class="item-details__group-name">{{ group.name }}</div>
+      <ul class="item-details__group-fields">
         <li
           v-for="field in group.fields"
           :key="field.name"
           :title="field.name"
           :class="field.validateClass"
         >
-          <span class="site-details__label">{{ field.comment || field.name }}</span>
-          <span class="site-details__value">{{ field.valueText || field.value }}</span>
+          <span class="item-details__label">{{ field.comment || field.name }}</span>
+          <span class="item-details__value">{{ field.valueText || field.value }}</span>
 
           <FilterPresetButton
             v-if="field.type == 'boolean'"
@@ -47,7 +47,7 @@
   background: none !important;
 }
 
-.site-details {
+.item-details {
   padding: 15px;
   max-width: 100vw;
   overflow-x: auto;
@@ -70,13 +70,13 @@
     }
 
     &.colored {
-      &.success .site-details__value {
+      &.success .item-details__value {
         color: #407927;
       }
-      &.warning .site-details__value {
+      &.warning .item-details__value {
         color: #a09600;
       }
-      &.danger .site-details__value {
+      &.danger .item-details__value {
         color: #94070a;
       }
 
@@ -138,7 +138,7 @@ import "vue-awesome/icons/filter";
 
 export default {
   components: { FilterPresetButton },
-  props: ["site"],
+  props: ["item"],
   computed: {
     tests() {
       return this.$store.state.tests;
@@ -146,8 +146,8 @@ export default {
 
     groups() {
       let groups = { unnamed: { name: "", fields: [] } };
-      for (let fieldName in this.site) {
-        const fieldValue = this.site[fieldName];
+      for (let fieldName in this.item) {
+        const fieldValue = this.item[fieldName];
         if (typeof fieldValue === "object") continue;
         if (fieldValue === "") continue;
         const info = this.tests[fieldName];
@@ -168,7 +168,7 @@ export default {
           info.value = fieldValue;
           info.validateClass = this.$store.getters.getColumnValidateClass(
             null,
-            this.site.url,
+            this.item.url,
             fieldName
           );
           // console.log(fieldName + ' validateClass: ', info.validateClass);

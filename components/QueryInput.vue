@@ -206,16 +206,16 @@ export default {
         const fieldValue = valueMatch ? valueMatch[1] : "";
         const qRegex = new RegExp(fieldValue, "i");
 
-        const sites =
-          this.$store.state.filteredSites.length > 0
-            ? this.$store.state.filteredSites
-            : this.$store.state.sites;
-        const values = sites.map(site => {
+        const items =
+          this.$store.state.filteredItems.length > 0
+            ? this.$store.state.filteredItems
+            : this.$store.state.items;
+        const values = items.map(item => {
           if (
             !fieldValue ||
-            (site[fieldName] && site[fieldName].toString().includes(fieldValue))
+            (item[fieldName] && item[fieldName].toString().includes(fieldValue))
           ) {
-            return site[fieldName];
+            return item[fieldName];
           }
         });
         const uniqueValues = values.filter((v, i, a) => a.indexOf(v) === i);
