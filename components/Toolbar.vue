@@ -3,14 +3,14 @@
     <!-- columns by tag -->
     <div class="available-fields">
       <button class="column-presets__button" @click="changeGroupOpenedAll">
-        <span v-if="this.$store.state.openGroups">свернуть все</span>
-        <span v-else>развернуть все</span>
+        <span v-if="this.$store.state.openGroups">collapse all</span>
+        <span v-else>expand all</span>
       </button>
 
       <button
         class="column-presets__button"
         @click="setPreset({name: 'none', columns: [$store.state.defaultField]});"
-        v-html="'убрать все колонки'"
+        v-html="'remove all columns'"
       ></button>
       <!-- <button
         class="column-presets__button"
@@ -34,7 +34,7 @@
       <el-autocomplete
         class="field-search field-add-input"
         ref="input"
-        placeholder="добавить колонку"
+        placeholder="add column"
         v-model="fieldQuery"
         title="Поиск полей"
         :fetch-suggestions="fieldComplete"

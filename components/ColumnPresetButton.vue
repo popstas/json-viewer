@@ -5,7 +5,7 @@
       'column-presets__button_active': isActive(),
     }"
     v-html="preset.name"
-    :title="'Вывести колонки:\n' + preset.columns.join('\n')"
+    :title="'Columns:\n' + preset.columns.join('\n')"
   ></button>
 </template>
 

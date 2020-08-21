@@ -6,7 +6,7 @@
         type="checkbox"
         :checked="groupChecked"
         @click="setPreset({name: 'all', columns: [...[$store.state.defaultField],...group.fields.map(f => f.name)]});"
-        :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')"
+        :title="'Columns:\n' + group.fields.map(f => f.comment).join('\n')"
       >
 
       <el-dropdown>

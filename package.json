@@ -1,9 +1,9 @@
 {
-  "name": "aite-audit-seo-viewer",
+  "name": "site-audit-seo-viewer",
   "version": "2.1.0",
   "description": "Display audit.json as table",
   "author": "Stanislav Popov <popstas@gmail.com>",
-  "homepage": "https://github.com/viasite/aite-audit-seo-viewer",
+  "homepage": "https://github.com/viasite/site-audit-seo-viewer",
   "private": true,
   "scripts": {
     "dev": "cross-env HOST=0.0.0.0 PORT=3000 nuxt",
@@ -27,6 +27,7 @@
     "moment": "^2.22.2",
     "node-sass": "^4.14.1",
     "nuxt": "^1.4.4",
+    "nuxt-i18n": "^6.13.11",
     "sass-loader": "^7.1.0",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-vue": "^0.3.3",

@@ -2,7 +2,7 @@
   <button
     @click="setPreset(preset.q)"
     class="filter-presets__button"
-    :title="'Отфильтровать:\n' + preset.q"
+    :title="'Filter:\n' + preset.q"
     :class="{
       'filter-presets__button': true,
       'filter-presets__button_active': isActive(preset.q),

@@ -3,7 +3,23 @@ module.exports = {
 
   modules: [
     'semantic-ui-vue/nuxt',
-    '@nuxtjs/axios'
+    '@nuxtjs/axios',
+    /* 'nuxt-i18n',
+    {
+      locales: ['en', 'ru'],
+      defaultLocale: 'ru',
+      vueI18n: {
+        fallbackLocale: 'en',
+        messages: {
+          en: {
+            total: 'total'
+          },
+          ru: {
+            total: 'всего'
+          }
+        }
+      }
+    } */
   ],
 
   css: [
