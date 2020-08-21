@@ -83,7 +83,9 @@ export const state = () => ({
   fields: [],
   availableFields: [],
   allFields: [],
-  q: ''
+  q: '',
+  columnPresets: {},
+  filterPresets: [],
 });
 
 export const getters = {
@@ -260,6 +262,12 @@ export const mutations = {
   q(state, newValue) {
     if (!newValue) newValue = '';
     state.q = newValue;
+  },
+  columnPresets(state, newValue) {
+    state.columnPresets = newValue;
+  },
+  filterPresets(state, newValue) {
+    state.filterPresets = newValue;
   },
 
   addField(state, field) {

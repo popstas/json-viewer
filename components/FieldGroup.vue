@@ -86,8 +86,6 @@
 </template>
 
 <script>
-import columnPresets from "~/assets/js/presets/columns.conf";
-import filterPresets from "~/assets/js/presets/filters.conf";
 import FilterPresetButton from "~/components/FilterPresetButton";
 import ColumnPresetButton from "~/components/ColumnPresetButton";
 import ColumnField from "~/components/ColumnField";
@@ -96,13 +94,16 @@ export default {
   components: { FilterPresetButton, ColumnPresetButton, ColumnField },
   props: ["group", "opened"],
   data() {
-    return {
-      columnPresets: columnPresets,
-      filterPresets: filterPresets
-    };
+    return {};
   },
 
   computed: {
+    columnPresets() {
+      return this.$store.state.columnPresets;
+    },
+    filterPresets() {
+      return this.$store.state.filterPresets;
+    },
     groupChecked() {
       let checked = true;
       this.group.fields.forEach(field => {

@@ -361,6 +361,9 @@ export default {
     // data init
     const itemsJson = await this.$axios.$get(this.$store.state.itemsJsonUrl);
     // console.log('itemsJson.items: ', itemsJson.items);
+    // console.log('itemsJson.fields: ', itemsJson.fields);
+    this.$store.commit("columnPresets", itemsJson.columns);
+    this.$store.commit("filterPresets", itemsJson.filters);
     this.$store.commit("tests", itemsJson.fields);
     this.$store.dispatch("items", itemsJson.items);
     this.$store.dispatch("q", this.$route.query["q"]);

@@ -85,8 +85,6 @@
 </style>
 
 <script>
-import columnPresets from "~/assets/js/presets/columns.conf";
-import filterPresets from "~/assets/js/presets/filters.conf";
 import FilterPresetButton from "~/components/FilterPresetButton";
 import ColumnPresetButton from "~/components/ColumnPresetButton";
 import FieldGroup from "~/components/FieldGroup";
@@ -101,8 +99,6 @@ export default {
   },
   data() {
     return {
-      columnPresets: columnPresets,
-      filterPresets: filterPresets,
       fieldGroupsOpened: {},
       completionProcess: false,
       fieldQuery: ""
@@ -110,6 +106,14 @@ export default {
   },
 
   computed: {
+    columnPresets() {
+      return this.$store.state.columnPresets;
+    },
+
+    filterPresets() {
+      return this.$store.state.filterPresets;
+    },
+
     tests() {
       return this.$store.state.tests;
     },
