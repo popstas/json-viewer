@@ -5,7 +5,7 @@
     <div class="site-details__groups">
       <a
         class="site-details__groups-link"
-        :href="'#' + site.domain + '-' + group.name"
+        :href="'#' + site.url + '-' + group.name"
         v-for="group in groups"
         :key="group.name"
       >{{ group.name }}</a>
@@ -15,7 +15,7 @@
       class="site-details__group"
       v-for="group in groups"
       :key="group.name"
-      :id="site.domain + '-' + group.name"
+      :id="site.url + '-' + group.name"
     >
       <div class="site-details__group-name">{{ group.name }}</div>
       <ul class="site-details__group-fields">
@@ -25,7 +25,7 @@
           :title="field.name"
           :class="field.validateClass"
         >
-          <span class="site-details__label">{{ field.comment }}</span>
+          <span class="site-details__label">{{ field.comment || field.name }}</span>
           <span class="site-details__value">{{ field.valueText || field.value }}</span>
 
           <FilterPresetButton
@@ -168,7 +168,7 @@ export default {
           info.value = fieldValue;
           info.validateClass = this.$store.getters.getColumnValidateClass(
             null,
-            this.site.domain,
+            this.site.url,
             fieldName
           );
           // console.log(fieldName + ' validateClass: ', info.validateClass);
@@ -178,6 +178,7 @@ export default {
           groups[groupName].fields.push(info);
         }
       }
+      console.log('groups: ', groups);
       return groups;
     }
   }

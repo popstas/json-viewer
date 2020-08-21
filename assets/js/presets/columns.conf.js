@@ -3,79 +3,88 @@ module.exports = {
     name: 'default',
     groups: ['main'],
     columns: [
-      'domain_idn',
-      'host',
-      'prod',
-      'engine',
-      'meta_year',
-      'meta_visitors',
-      'meta_client_priority',
-    ]
-  },
-  cron: {
-    name: 'cron',
-    groups: ['cron'],
-    columns: ['domain_idn', 'host', 'prod', 'cron']
-  },
-  bitrix: {
-    name: 'bitrix',
-    groups: ['bitrix'],
-    columns: [
-      'domain_idn',
-      'host',
-      'prod',
-      'email',
-      'engine_version',
-      'bitrix_image_quality',
-      'bitrix_total_mark_value',
-      'files_count',
-      'files_size',
-      'git_clean',
-      'h1_count'
-    ]
-  },
-  pagespeed_performance: {
-    name: 'pagespeed_performance',
-    groups: ['lighthouse', 'perf'],
-    columns: [
-      'domain_idn',
-      'engine',
-      'lighthouse_performance',
+      'url',
+      'h1',
+      'request_time',
+      'status',
+      'dom_size',
+      'html_size',
+      'is_canonical',
+      'canonical_count',
+      'h1_count',
+      'h2_count',
+      'h3_count',
+      'h4_count',
+      'images',
+      'images_without_alt',
+      'images_alt_empty',
+      'images_outer',
+      'links',
+      'links_inner',
+      'links_outer',
+      'text_ratio_percent',
+      /* 'lighthouse_scores_performance',
+      'lighthouse_scores_pwa',
+      'lighthouse_scores_accessibility',
+      'lighthouse_scores_best-practices',
+      'lighthouse_scores_seo',
+      'lighthouse_first-contentful-paint',
+      'lighthouse_speed-index',
+      'lighthouse_largest-contentful-paint',
       'lighthouse_interactive',
-      'lighthouse_speed_index',
-      'lighthouse_first_contentful_paint',
-      'lighthouse_first_cpu_idle',
-      'lighthouse_first_meaningful_paint',
-      'lighthouse_input_latency'
+      'lighthouse_total-blocking-time',
+      'lighthouse_cumulative-layout-shift', */
     ]
   },
-  pagespeed_score: {
-    name: 'pagespeed_score',
-    groups: ['lighthouse', 'perf'],
+  lighthouse: {
+    name: 'lighthouse',
+    groups: ['lighthouse'],
     columns: [
-      'domain_idn',
-      'engine',
-      'lighthouse_all',
-      'lighthouse_performance',
-      'lighthouse_pwa',
-      'lighthouse_accessibility',
-      'lighthouse_best_practices',
-      'lighthouse_seo'
+      'url',
+      'lighthouse_scores_performance',
+      'lighthouse_scores_pwa',
+      'lighthouse_scores_accessibility',
+      'lighthouse_scores_best-practices',
+      'lighthouse_scores_seo',
+      'lighthouse_first-contentful-paint',
+      'lighthouse_speed-index',
+      'lighthouse_largest-contentful-paint',
+      'lighthouse_interactive',
+      'lighthouse_total-blocking-time',
+      'lighthouse_cumulative-layout-shift',
     ]
   },
-  https: {
-    name: 'https',
-    groups: ['service'],
-    columns: ['domain_idn', 'https', 'email']
+  opengraph: {
+    name: 'opengraph',
+    groups: ['seo'],
+    columns: [
+      'url',
+      'og_image',
+      'og_title',
+      'schema_types',
+    ]
   },
-  clients: {
-    name: 'клиенты',
-    groups: ['main'],
-    columns: ['domain_idn', 'meta_title', 'meta_category', 'meta_type', 'meta_client_priority']
+  mixed_content: {
+    name: 'mixed_content',
+    groups: ['info', 'seo'],
+    columns: [
+      'url',
+      'mixed_content_url',
+    ]
   },
-  email: {
-    name: 'для рассылки',
-    groups: ['main'],
-    columns: ['domain_idn', 'email', 'meta_mail_domain', 'https', 'group']
-  }
+  metatags: {
+    name: 'metatags',
+    groups: ['info'],
+    columns: [
+      'url',
+      'title',
+      'description',
+      'keywords',
+      'h1',
+      'canonical',
+      'og_image',
+      'og_title',
+      'schema_types',
+    ]
+  },
 };

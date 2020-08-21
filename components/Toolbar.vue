@@ -6,18 +6,18 @@
         <span v-if="'main' in this.fieldGroupsOpened && this.fieldGroupsOpened.main">свернуть все</span>
         <span v-else>развернуть все</span>
       </button>
-      <br>
+
       <button
         class="column-presets__button"
-        @click="setPreset({name: 'none', columns: ['domain_idn']});"
+        @click="setPreset({name: 'none', columns: ['url']});"
         v-html="'убрать все колонки'"
       ></button>
-      <button
+      <!-- <button
         class="column-presets__button"
         @click="getCSV"
         v-html="'получить CSV'"
         title="Вывод будет в console.log"
-      ></button>
+      ></button> -->
 
       <!-- one group -->
       <FieldGroup
@@ -32,7 +32,7 @@
       ></FieldGroup>
 
       <el-autocomplete
-        class="field-search"
+        class="field-search field-add-input"
         ref="input"
         placeholder="добавить колонку"
         v-model="fieldQuery"
@@ -152,6 +152,7 @@ export default {
           groups[groupName].fields.push(field);
         }
       }
+      // console.log('groups: ', groups);
       return groups;
     }
   },
@@ -231,26 +232,6 @@ export default {
       setTimeout(() => {
         this.completionProcess = false;
       }, 500);
-    },
-
-    getCSV() {
-      // console.log('this.fields: ', this.fields);
-      // console.log('this.filteredSites: ', this.filteredSites);
-      const header = this.fields.map(f => f.title);
-      const data = this.filteredSites.map(s => {
-        return this.fields.map(f => {
-          return s[f.name];
-        });
-      });
-
-      const csv = [...[header], ...data];
-      // console.log('csv: ', csv);
-      // console.log('data: ', data);
-
-      const raw = csv.map(row => {
-        return row.join(',');
-      }).join('\n');
-      console.log(raw);
     }
   }
 };

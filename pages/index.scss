@@ -45,9 +45,12 @@
 .available-fields {
   margin: 0 auto;
   text-align: left;
-  columns: 4;
+  columns: 3;
+  @media (min-width: 1800px) {
+    columns: 4;
+  }
   @media (max-width: 1200px) {
-    columns: 3;
+    columns: 2;
   }
   @media (max-width: 1000px) {
     columns: 2;
@@ -55,7 +58,7 @@
   @media (max-width: 539px) {
     columns: 1;
   }
-  max-width: 1140px;
+  max-width: 1900px;
 
   .field-group {
     padding: 0 3px;
@@ -67,25 +70,42 @@
     &__header {
       margin-top: 15px;
       margin-bottom: 5px;
+
+      input[type=checkbox], input[type=radio] {
+        margin-left: -18px;
+      }
     }
 
     &__name {
       margin-left: 5px;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
+      color: #222;
+      font-weight: bold;
     }
   }
 
   &__field {
     opacity: 0.7;
+    margin-left: 32px;
 
     &.active {
       opacity: 1;
     }
 
+    input[type=checkbox], input[type=radio] {
+      margin-left: -18px;
+    }
+
     label {
       font-weight: normal;
       margin-left: 5px;
+      vertical-align: top;
+      display: inline;
     }
+  }
+
+  .field-add-input {
+    margin-top: 15px;
   }
 }
 
@@ -104,6 +124,9 @@
     font-weight: normal;
     @media (max-width: 1000px) {
       padding: 5px;
+    }
+    &_active {
+      font-weight: bold;
     }
   }
 }
@@ -140,6 +163,19 @@
 
   &__child-row {
     text-align: left;
+  }
+
+  /* гор. прокрутка таблицы не даёт сделать закреплённые заголовки колонок */
+  .table-responsive {
+    overflow-x: visible;
+    @media screen and (max-width: 767px) {
+      overflow-y: visible;
+    }
+  }
+  th {
+    position: sticky;
+    top: 0;
+    box-shadow: 0 0 3px #ccc;
   }
 
   .VueTables__child-row-toggler {
@@ -179,20 +215,23 @@
   }
 
   &__table {
+    position: relative;
+    overflow: auto !important;
+
     th {
       background: #fff;
-      position: sticky;
+      position: sticky !important;
       top: 0;
       z-index: 2;
     }
     td {
-      padding: 0 !important;
+      // padding: 0 !important;
       position: relative;
 
-      .cell {
-        padding: 8px;
+      &.cell {
+        padding: 8px 2px;
 
-        &.colored {
+        /* &.colored {
           position: absolute;
           top: 0;
           right: 0;
@@ -208,20 +247,36 @@
           &.danger {
             background: #ffaaaa;
           }
-        }
-
-        &.col-domain_idn {
-          text-align: left;
-        }
+        } */
       }
     }
 
-    .ssh-link {
-      display: inline-block;
-      float: right;
-      width:16px;
-      height:16px;
-      background: url(/viasite-projects/terminal.png) 0 0 no-repeat;
+    .col-url,
+    .col-description,
+    .col-h1,
+    .col-canonical,
+    .col-og_image,
+    .col-og_title,
+    .col-schema_types,
+    .col-keywords
+    {
+        text-align: left;
+    }
+    .col-title {
+      text-align: right;
+    }
+
+    @media(min-width:800px) {
+      // sticky first column
+      .col-url {
+        position: sticky;
+        left: 0;
+        z-index: 1;
+        background: #fff;
+      }
+      th.col-url {
+        z-index: 2;
+      }
     }
   }
 }

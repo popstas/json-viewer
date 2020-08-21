@@ -5,10 +5,12 @@
     :title="'Отфильтровать:\n' + preset.q"
     :class="{
       'filter-presets__button': true,
-      'filter-presets__button_active': isActive(preset.q)
+      'filter-presets__button_active': isActive(preset.q),
+      'filter-presets__button_inactive': isInactive(preset.q)
     }"
   >
     <slot name="default">{{ preset.name }}</slot>
+    {{ filterCounter }}
   </button>
 </template>
 
@@ -27,6 +29,10 @@
   &_active {
     border: 1px solid;
   }
+
+  &_inactive {
+    opacity: 0.5;
+  }
 }
 </style>
 
@@ -43,16 +49,31 @@ export default {
       default: false
     }
   },
+  computed: {
+    filterCounter() {
+      if (this.preset.q.match(/=$/)) return '';
+      return '(' + this.getFilterCount() + ')';
+    }
+  },
   methods: {
     isActive(q) {
       return this.$store.state.q.includes(q);
+    },
+
+    isInactive(q) {
+      let qParts = this.parseQuery(q);
+      for (let p of qParts) {
+        const isAvailable = !!this.$store.state.availableFields.find(f => f.name == p.name);
+        if (!isAvailable) return true;
+      }
+      return false;
     },
 
     parseQuery(q) {
       let qParts = q.split("&");
       qParts = qParts
         .map(part => {
-          const match = part.match(/(.*?)\s*([<=>~]+)\s*(.*)/);
+          const match = part.match(/(.*?)\s*([!<=>~]+)\s*(.*)/);
           if (match) {
             return {
               name: match[1],
@@ -80,20 +101,31 @@ export default {
       return result.map(part => part.name + part.op + part.value).join("&");
     },
 
-    setPreset(q) {
+    mergePreset(q) {
+      if (!q) q = '';
       if (!this.append) {
         if (this.toggle) {
           q = this.togglePreset(q);
         }
-        this.$store.dispatch("q", q);
-        return;
+        return q;
       }
 
       let parts = this.$store.state.q ? this.$store.state.q.split("&") : [];
       parts.push(q);
       const result = parts.join("&");
-      this.$store.dispatch("q", { q: result });
+      return result;
+    },
+
+    setPreset(q) {
+      q = this.mergePreset(q);
+      this.$store.dispatch("q", q);
       this.$nuxt.$emit("inputFocus");
+    },
+
+    getFilterCount() {
+      let q = this.mergePreset(this.preset.q);
+      const filtered = this.$store.getters.getFilteredSites(q);
+      return filtered.length;
     }
   }
 };

@@ -1,9 +1,9 @@
 {
-  "name": "viasite-projects-list",
+  "name": "aite-audit-seo-viewer",
   "version": "1.0.1",
-  "description": "Display sites.json as table",
+  "description": "Display audit.json as table",
   "author": "Stanislav Popov <popstas@gmail.com>",
-  "homepage": "https://git.viasite.ru/servers/viasite-projects-list",
+  "homepage": "https://github.com/viasite/aite-audit-seo-viewer",
   "private": true,
   "scripts": {
     "dev": "cross-env HOST=0.0.0.0 PORT=3000 nuxt",
@@ -24,7 +24,7 @@
     "json-query": "^2.2.2",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
-    "node-sass": "^4.10.0",
+    "node-sass": "^4.14.1",
     "nuxt": "^1.4.4",
     "sass-loader": "^7.1.0",
     "semantic-ui-css": "^2.4.1",
@@ -32,7 +32,8 @@
     "style-loader": "^0.23.1",
     "vue-awesome": "^3.2.0",
     "vue-style-loader": "^4.1.2",
-    "vue-tables-2": "^1.4.70",
+    "vue-tables-2": "^1.6.25",
+    "vuex-persistedstate": "^3.1.0",
     "xlsx": "^0.15.6"
   },
   "devDependencies": {

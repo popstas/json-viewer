@@ -1,6 +1,9 @@
 <template>
   <section class="container">
-    <div>total: {{ filteredSites.length }}</div>
+    <div>
+      <a :href="$store.state.sitesJsonUrl" v-html="$store.state.sitesJsonUrl" target="_blank"></a>,
+      total: {{ filteredSites.length }}</div>
+    <br>
 
     <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
 
@@ -17,16 +20,16 @@
       :options="tableOptions"
     >
       <template slot="child_row" slot-scope="props">
-        <SiteDetails :site="$store.getters.getSiteByDomain(props.row.domain)"></SiteDetails>
+        <SiteDetails :site="$store.getters.getSiteByDomain(props.row.url)"></SiteDetails>
       </template>
 
       <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
       <div
-        v-for="colName in columns"
+        v-for="colName in ['url']"
         :key="colName"
         :slot="colName"
         slot-scope="props"
-        :class="[ 'cell', `col-${colName}`, getColumnValidateClass(props, props.row.domain, colName) ]"
+        :class="[ getColumnValidateClass(props, props.row.url, colName) ]"
         v-html="getColumnValue(props.row, colName)"
       ></div>
     </v-client-table>
@@ -72,10 +75,68 @@ export default {
 
     tableOptions() {
       // console.log("perPage: ", this.filteredSites.length);
+
+      const columnsClasses = {};
+      for (let columnName of this.columns) {
+        columnsClasses[columnName] = 'col-' + columnName;
+      }
+      // console.log('columnsClasses: ', columnsClasses);
+
+      const cellClasses = {};
+      const classMap = {
+        warning: 'warning',
+        error: 'danger'
+      };
+      for (let columnName of this.columns) {
+        const field = this.fields.find(f => f.name == columnName);
+        const rules = [];
+        if (field && field.validate) {
+
+          // console.log('field.name: ', field.name);
+          // console.log('field.validate: ', field.validate);
+
+          // default
+          rules.push({
+            class: 'cell',
+            condition: () => true
+          });
+
+          // warning
+          for (let errType of ['warning', 'error']) {
+            if (!field.validate[errType]) continue;
+            rules.push({
+              class: classMap[errType] + ' err2' || 'err1',
+              condition: row => {
+                return this.getValidateFunc(field.validate[errType])(row[columnName])
+              }
+            });
+          }
+
+          // success
+          if (field.validate.warning || field.validate.error) {
+            rules.push({
+              class: 'success',
+              condition: row => {
+                const isSuccess =
+                  !this.getValidateFunc(field.validate.warning)(row[columnName]) &&
+                  !this.getValidateFunc(field.validate.error)(row[columnName]) &&
+                  !['', NaN, null].includes(row[columnName]);
+                // console.log(row[columnName]);
+                return isSuccess;
+              }
+            });
+          }
+        }
+        cellClasses[columnName] = rules;
+      }
+      // console.log('cellClasses: ', cellClasses);
+
       return {
         headings: this.headings,
         headingsTooltips: this.headingsTooltips,
-        filterable: ["domain_idn"],
+        filterable: ["url"],
+        cellClasses: cellClasses,
+        columnsClasses: columnsClasses,
         perPage: this.filteredSites.length,
         perPageValues: [100, 250, 500],
         // columnsDropdown: true,
@@ -94,6 +155,7 @@ export default {
     },
 
     columns() {
+      // console.log('this.fields: ', this.fields);
       return this.fields.map(field => field.name);
     },
 
@@ -110,14 +172,15 @@ export default {
     headingsTooltips() {
       let h = {};
       this.fields.forEach(field => {
-        h[field.name] = field.name;
-        if (field.comment) h[field.name] = `${field.name} (${field.comment})`;
+        h[field.name] = field.name
+          + (field.comment ? `\n\n${field.comment}` : '')
+          + (field.description ? `\n\n${field.description}` : '');
       });
       return h;
     },
 
     pageTitle() {
-      let title = ["viasite-projects"];
+      let title = ["site-seo-audit"];
       if (this.q) title.push("q: " + this.q);
       if (this.fields.length > 0) title.push("fields: " + this.columns);
       return title.join(", ");
@@ -228,11 +291,13 @@ export default {
     // устанавливает поля по массиву имен, сбрасывает предыдущие выбранные поля
     setFields(columnNames) {
       const fields = [];
+      // console.log('fields: ', fields);
       columnNames = _.uniq(columnNames);
-      columnNames.forEach(name => {
+      for(let name of columnNames) {
         const field = this.availableFields.find(field => field.name == name);
-        fields.push(field);
-      });
+        if (field) fields.push(field);
+      }
+      // console.log('fields: ', fields);
       this.$store.commit("fields", fields);
       this.updateUrlQuery();
     },
@@ -250,8 +315,13 @@ export default {
     },
 
     // выдает класс валидации по домену сайта и имени колонки
-    getColumnValidateClass(props, domain, column) {
-      return this.$store.getters.getColumnValidateClass(props, domain, column);
+    getColumnValidateClass(props, url, column) {
+      return this.$store.getters.getColumnValidateClass(props, url, column);
+    },
+
+    // выдает класс валидации по домену сайта и имени колонки
+    getValidateFunc(str) {
+      return this.$store.getters.getValidateFunc(str);
     },
 
     getColumnValue(row, colName) {
@@ -260,30 +330,14 @@ export default {
       let val = colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
 
       // шаблоны полей задаются здесь
+
       if (colName == "url") val = `<a href="${val}" target="_blank">${val}</a>`;
-      if (colName == "favicon" && val) {
+
+      /* if (colName == "favicon" && val) {
         val = val.replace(/^\//, row.url);
         // console.log('val: ', val);
         val = `<img style="width:16px;height:16px" src="${val}"/>`;
-      }
-      if (colName == "domain_idn") {
-        let icon = row.favicon ? row.favicon.replace(/^\//, row.url) : "";
-        val = '<a href="' + row.url + '" target="_blank">' +
-          (icon ? `<img style="width:16px;height:16px" src="${icon}"/>` : "") +
-          " " +
-          val + '</a>'
-          + '<a href="ssh://' + row.ssh_command.replace('ssh ', '') + '" class="ssh-link" title="Open SSH">&nbsp;</a>'
-      }
-
-      // TODO: draft
-      if (colName == "vscode_link") {
-        val = '<a href="' + val + '" target="_blank">Open in VS Code</a>';
-      }
-
-      // in domain_idn
-      /* if (colName == "ssh_command") {
-        val = '<a href="ssh://' + val.replace('ssh ', '') + '" target="_blank">Open SSH</a>';
-      } */
+      }*/
 
       return val;
     },
@@ -299,13 +353,16 @@ export default {
   },
 
   async mounted() {
+    // set webhook
+    if (this.$route.query.url) {
+      this.$store.commit('sitesJsonUrl', this.$route.query.url);
+    }
+
     // data init
     const sitesJson = await this.$axios.$get(this.$store.state.sitesJsonUrl);
-    this.$store.commit("tests", sitesJson.tests);
-    this.$store.dispatch("sites", sitesJson.sites);
-    if (!this.$route.query["q"]) {
-      this.$route.query["q"] = "prod=1";
-    }
+    // console.log('sitesJson.items: ', sitesJson.items);
+    this.$store.commit("tests", sitesJson.fields);
+    this.$store.dispatch("sites", sitesJson.items);
     this.$store.dispatch("q", this.$route.query["q"]);
 
     this.fieldsInit();

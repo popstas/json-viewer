@@ -22,10 +22,18 @@ html {
   -webkit-font-smoothing: antialiased;
   box-sizing: border-box;
 }
+body {
+  overflow-x: auto;
+}
 
 *, *:before, *:after {
   box-sizing: border-box;
   margin: 0;
+}
+
+/* 100% width */
+.container {
+  width: auto;
 }
 
 .button--green {

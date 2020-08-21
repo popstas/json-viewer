@@ -7,7 +7,7 @@
           <input
             type="checkbox"
             :checked="groupChecked"
-            @click="setPreset({name: 'all', columns: [...['domain_idn'],...group.fields.map(f => f.name)]});"
+            @click="setPreset({name: 'all', columns: [...['url'],...group.fields.map(f => f.name)]});"
             :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')"
           >
           <span class="field-group__name">{{ group.name }}</span>

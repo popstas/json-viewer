@@ -2,7 +2,7 @@
   <div
     class="available-fields__field"
     ref="component"
-    :title="field.name + (field.comment ? ` \n${field.comment}` : '') + (field.command ? ` \n${field.command}` : '')"
+    :title="title"
   >
     <input type="checkbox" :checked="checked" @click="click">
     <label @click="click">{{ field.comment || field.title }}</label>
@@ -42,6 +42,14 @@ export default {
     click() {
       this.$refs.component.classList.add("clicked");
       this.$emit("click", this.field);
+    }
+  },
+  computed: {
+    title() {
+      return this.field.name
+      + (this.field.comment ? ` \n\n${this.field.comment}` : '')
+      + (this.field.command ? ` \n\n${this.field.command}` : '')
+      + (this.field.description ? ` \n\n${this.field.description}` : '')
     }
   }
 };

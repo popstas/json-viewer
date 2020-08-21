@@ -1,4 +1,12 @@
 #!/bin/bash
 set -eu
 
-ssh popstas@popstas-server "cd /home/popstas/projects/js/viasite-projects-list/ && git pull && npm i && npm run generate && rsync -r dist/ viasite@dev.viasite.ru:/home/viasite/www/dev.viasite.ru/viasite-projects/"
+rm -rf dist
+base=/site-audit-seo/ npm run generate
+cd dist
+git init
+git add -A
+git commit -m "deploy"
+git remote add origin git@github.com:viasite/site-audit-seo.git
+git push --force origin master:gh-pages
+cd ..
