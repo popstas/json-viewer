@@ -1,3 +1,21 @@
+# [2.1.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.0.0...v2.1.0) (2020-08-21)
+
+
+### Bug Fixes
+
+* better field group open ([78d5b8b](https://github.com/viasite/site-audit-seo-viewer/commit/78d5b8b))
+* correct default id after default field set ([e1a56f8](https://github.com/viasite/site-audit-seo-viewer/commit/e1a56f8))
+* ssh-link from viasite-projects-list ([4700287](https://github.com/viasite/site-audit-seo-viewer/commit/4700287))
+
+
+### Features
+
+* add filters to all fields in ItemDetails ([203ba5f](https://github.com/viasite/site-audit-seo-viewer/commit/203ba5f))
+* align left for strings, align center for numbers, default: string ([f12c5cd](https://github.com/viasite/site-audit-seo-viewer/commit/f12c5cd))
+* persistent always open field groups ([cd0b665](https://github.com/viasite/site-audit-seo-viewer/commit/cd0b665))
+
+
+
 # [2.0.0](https://github.com/viasite/site-audit-seo-viewer/compare/v1.0.1...v2.0.0) (2020-08-21)
 
 

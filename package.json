@@ -1,6 +1,6 @@
 {
   "name": "aite-audit-seo-viewer",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Display audit.json as table",
   "author": "Stanislav Popov <popstas@gmail.com>",
   "homepage": "https://github.com/viasite/aite-audit-seo-viewer",
