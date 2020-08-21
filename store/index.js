@@ -85,6 +85,7 @@ export const state = () => ({
   availableFields: [],
   allFields: [],
   defaultField: '',
+  openGroups: true,
   q: '',
   columnPresets: {},
   filterPresets: [],
@@ -261,6 +262,9 @@ export const mutations = {
   },
   defaultField(state, newValue) {
     state.defaultField = newValue;
+  },
+  openGroups(state, newValue) {
+    state.openGroups = newValue;
   },
   q(state, newValue) {
     if (!newValue) newValue = '';

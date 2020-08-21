@@ -3,7 +3,7 @@
     <!-- columns by tag -->
     <div class="available-fields">
       <button class="column-presets__button" @click="changeGroupOpenedAll">
-        <span v-if="'main' in this.fieldGroupsOpened && this.fieldGroupsOpened.main">свернуть все</span>
+        <span v-if="this.$store.state.openGroups">свернуть все</span>
         <span v-else>развернуть все</span>
       </button>
 
@@ -22,7 +22,7 @@
       <!-- one group -->
       <FieldGroup
         :group="group"
-        :opened="fieldGroupsOpened[group.name]"
+        :opened="fieldGroupsOpened[group.name] || $store.state.openGroups"
         @changeGroupOpened="changeGroupOpened(group)"
         @toggleField="toggleField"
         @setPreset="setPreset"
@@ -136,7 +136,7 @@ export default {
 
     // раскладывает поля по группам, с дублированием
     fieldGroups() {
-      let groups = { unnamed: { name: "", fields: [] } };
+      let groups = { unnamed: { name: "[без группы]", fields: [] } };
       for (let i in this.availableFields) {
         const field = this.availableFields[i];
         const info = this.tests[field.name];
@@ -148,6 +148,7 @@ export default {
         const groupsList = Array.isArray(info.groups)
           ? info.groups
           : [info.groups];
+
         for (let g in groupsList) {
           let groupName = groupsList[g];
           if (!(groupName in groups)) {
@@ -173,9 +174,8 @@ export default {
 
     // сворачивает/разворачивает все группы
     changeGroupOpenedAll() {
-      let to = true;
-      if ("main" in this.fieldGroupsOpened && this.fieldGroupsOpened.main)
-        to = false;
+      let to = !this.$store.state.openGroups;
+      this.$store.commit('openGroups', to);
 
       Object.keys(this.fieldGroups).forEach(groupName => {
         this.fieldGroupsOpened[groupName] = to;

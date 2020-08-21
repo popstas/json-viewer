@@ -6,7 +6,12 @@
       placeholder="query"
       v-model="q"
       title="Например:
-  engine=bitrix&prod=1"
+
+  engine=bitrix&prod=1
+
+  site_template~/aspro-.*/
+
+  meta_year!=2019"
       v-bind:style="{width: filterWidth + 'px'}"
       :fetch-suggestions="queryComplete"
       valueKey="name"
@@ -141,27 +146,6 @@ export default {
       });
       return normalizedParts.join("&");
     }, */
-
-    // сворачивает/разворачивает одну группу
-    changeGroupOpened(group) {
-      this.fieldGroupsOpened[group.name] =
-        group.name in this.fieldGroupsOpened
-          ? !this.fieldGroupsOpened[group.name]
-          : true;
-      this.$forceUpdate();
-    },
-
-    // сворачивает/разворачивает все группы
-    changeGroupOpenedAll() {
-      let to = true;
-      if ("main" in this.fieldGroupsOpened && this.fieldGroupsOpened.main)
-        to = false;
-
-      Object.keys(this.fieldGroups).forEach(groupName => {
-        this.fieldGroupsOpened[groupName] = to;
-      });
-      this.$forceUpdate();
-    },
 
     // поставить из пресета полей
     setPreset(preset) {
