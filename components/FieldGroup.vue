@@ -2,14 +2,15 @@
   <div class="field-group" :id="'filter-' + group.name">
     <!-- group header -->
     <div class="field-group__header">
+      <input
+        type="checkbox"
+        :checked="groupChecked"
+        @click="setPreset({name: 'all', columns: [...[$store.state.defaultField],...group.fields.map(f => f.name)]});"
+        :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')"
+      >
+
       <el-dropdown>
         <span class="el-dropdown-link" @click="changeGroupOpened">
-          <input
-            type="checkbox"
-            :checked="groupChecked"
-            @click="setPreset({name: 'all', columns: [...[$store.state.defaultField],...group.fields.map(f => f.name)]});"
-            :title="'Вывести колонки:\n' + group.fields.map(f => f.comment).join('\n')"
-          >
           <span class="field-group__name">{{ group.name }}</span>
           <i class="el-icon-arrow-down el-icon--right"></i>
         </span>
@@ -21,7 +22,6 @@
           >
             <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
           </el-dropdown-item>
-
           <el-dropdown-item
             v-for="preset in filterPresets"
             :key="preset.name"
@@ -29,7 +29,6 @@
           >
             <FilterPresetButton :preset="preset"></FilterPresetButton>
           </el-dropdown-item>
-
           <el-dropdown-item v-for="field in group.fields" :key="field.name">
             <ColumnField
               :field="field"
