@@ -7,6 +7,10 @@
 
     <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
 
+    <div><br>
+      total: {{ filteredItems.length }}
+    </div>
+
     <div class="table-actions">
       <button class="btn btn-excel" @click="getXlsx">
         <icon name="file-excel"></icon> xlsx
