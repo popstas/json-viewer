@@ -375,11 +375,12 @@ export default {
 
       if (colName == "domain_idn") {
         let icon = row.favicon ? row.favicon.replace(/^\//, row.url) : "";
-        val = '<a href="' + row.url + '" target="_blank">' +
-          (icon ? `<img style="width:16px;height:16px" src="${icon}"/>` : "") +
-          " " +
-          val + '</a>'
-          + '<a href="ssh://' + row.ssh_command.replace('ssh ', '') + '" class="ssh-link" title="Open SSH">&nbsp;</a>'
+        icon = icon ? `<img style="width:16px;height:16px" src="${icon}"/>` : '';
+        val = `<a href="${row.url}" target="_blank">${icon} ${val}</a>`;
+        if (row.ssh_command){
+          const href = 'ssh://' + row.ssh_command.replace('ssh ', '');
+          val += `<a href="${href}" class="ssh-link float-right" title="Open SSH">ssh</a>`;
+        }
       }
 
       return val;
