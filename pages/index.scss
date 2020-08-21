@@ -249,20 +249,12 @@
           }
         } */
       }
+
+      &.align-left { text-align: left; }
+      &.align-center { text-align: center; }
+      &.align-right { text-align: right; }
     }
 
-    .col-domain_idn,
-    .col-url,
-    .col-description,
-    .col-h1,
-    .col-canonical,
-    .col-og_image,
-    .col-og_title,
-    .col-schema_types,
-    .col-keywords
-    {
-        text-align: left;
-    }
     .col-title {
       text-align: right;
     }

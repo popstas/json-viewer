@@ -49,10 +49,12 @@ const fieldsByItems = (items, tests) => {
         // info from /etc/item-info.yml
         const info = tests[fieldName];
         if (info) {
-          for (let fName of ['comment', 'description', 'command', 'validate', 'default', 'align']) {
+          for (let fName of ['comment', 'description', 'command', 'validate', 'default', 'align', 'type']) {
             if(info[fName]) field[fName] = info[fName];
           }
         }
+
+        if (!field.type) field.type = 'string';
 
         fields.push(field);
         fieldPaths.push(fieldPath);

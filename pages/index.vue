@@ -92,9 +92,16 @@ export default {
       };
       for (let columnName of this.columns) {
         const field = this.fields.find(f => f.name == columnName);
+        if (!field) continue;
         const rules = [];
 
-        // default field
+        // default class
+        rules.push({
+          class: 'cell',
+          condition: () => true
+        });
+
+        // default column (sticky)
         if (field.default) {
           rules.push({
             class: 'col-default',
@@ -102,17 +109,31 @@ export default {
           });
         }
 
-        if (field && field.validate) {
-
-          // console.log('field.name: ', field.name);
-          // console.log('field.validate: ', field.validate);
-
-          // default
+        // align left for text
+        if (field.type == 'string') {
           rules.push({
-            class: 'cell',
+            class: 'align-left',
             condition: () => true
           });
+        }
+        // align center for numbers
+        if (['integer', 'boolean', 'time'].includes(field.type)) {
+          rules.push({
+            class: 'align-center',
+            condition: () => true
+          });
+        }
 
+        // align
+        if (field.align) {
+          rules.push({
+            class: 'align-' + field.align,
+            condition: () => true
+          });
+        }
+
+        // validate
+        if (field.validate) {
           // warning
           for (let errType of ['warning', 'error']) {
             if (!field.validate[errType]) continue;
@@ -139,6 +160,7 @@ export default {
             });
           }
         }
+
         cellClasses[columnName] = rules;
       }
       // console.log('cellClasses: ', cellClasses);
