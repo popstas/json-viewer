@@ -45,7 +45,6 @@
 <script>
 import Toolbar from "~/components/Toolbar";
 import ItemDetails from "~/components/ItemDetails";
-import columnPresets from "~/assets/js/presets/columns.conf";
 import "vue-awesome/icons/file-excel";
 import _ from "lodash";
 // import { XlsxWorkbook, XlsxSheet, XlsxDownload } from "../../dist/vue-xlsx.es.js"
@@ -369,7 +368,7 @@ export default {
       if (this.$route.query["fields"]) {
         this.setFields(this.$route.query["fields"].split(","));
       } else {
-        this.setFields(columnPresets.default.columns);
+        this.setFields(this.$store.state.columnPresets.default.columns);
       }
     }
   },
