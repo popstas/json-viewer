@@ -77,7 +77,7 @@ export default {
     },
 
     tableOptions() {
-      // console.log("perPage: ", this.filteredItems.length);
+      // console.log("this.filteredItems: ", this.filteredItems);
 
       const columnsClasses = {};
       for (let columnName of this.columns) {

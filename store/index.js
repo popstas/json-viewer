@@ -98,8 +98,6 @@ export const getters = {
       const itemsData = items.map(s => {
         let item = { ...s };
         // should be before item_info flatten
-
-        if(!item.id) item.id = `${item[state.defaultField]}`;
         return item;
       });
       // console.log('itemsData: ', itemsData);
@@ -299,6 +297,13 @@ export const actions = {
     if (!defaultField) defaultField = state.allFields[0];
     // console.log('defaultField: ', defaultField);
     commit('defaultField', defaultField.name);
+
+    // add id after defaultField
+    for (let i in itemsData) {
+      if (!itemsData[i].id) itemsData[i].id = itemsData[i][defaultField.name];
+    }
+
+    commit('items', itemsData);
   },
 
   // фильтрует items на основе q
