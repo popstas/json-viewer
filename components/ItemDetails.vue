@@ -1,11 +1,11 @@
 <template>
   <div class="item-details">
-    <a class="item-details__title" :href="item.url" target="_blank">{{ item.url }}</a>
+    <a v-if="item.url" class="item-details__title" :href="item.url" target="_blank">{{ item.url }}</a>
 
     <div class="item-details__groups">
       <a
         class="item-details__groups-link"
-        :href="'#' + item.url + '-' + group.name"
+        :href="'#' + item[$store.state.defaultField] + '-' + group.name"
         v-for="group in groups"
         :key="group.name"
       >{{ group.name }}</a>
@@ -15,7 +15,7 @@
       class="item-details__group"
       v-for="group in groups"
       :key="group.name"
-      :id="item.url + '-' + group.name"
+      :id="item[$store.state.defaultField] + '-' + group.name"
     >
       <div class="item-details__group-name">{{ group.name }}</div>
       <ul class="item-details__group-fields">
@@ -168,7 +168,7 @@ export default {
           info.value = fieldValue;
           info.validateClass = this.$store.getters.getColumnValidateClass(
             null,
-            this.item.url,
+            this.item[this.$store.state.defaultField],
             fieldName
           );
           // console.log(fieldName + ' validateClass: ', info.validateClass);

@@ -18,7 +18,7 @@ module.exports = {
   ],
 
   router: {
-    // base: '/site-audit-seo/'
+    // base: '/site-audit-seo-viewer/'
     base: '/'
   },
 

@@ -9,7 +9,7 @@
 
       <button
         class="column-presets__button"
-        @click="setPreset({name: 'none', columns: ['url']});"
+        @click="setPreset({name: 'none', columns: [$store.state.defaultField]});"
         v-html="'убрать все колонки'"
       ></button>
       <!-- <button

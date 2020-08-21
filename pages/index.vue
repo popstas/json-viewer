@@ -24,16 +24,16 @@
       :options="tableOptions"
     >
       <template slot="child_row" slot-scope="props">
-        <ItemDetails :item="$store.getters.getItemByDomain(props.row.url)"></ItemDetails>
+        <ItemDetails :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
       </template>
 
       <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
       <div
-        v-for="colName in ['url']"
+        v-for="colName in ['url', 'domain_idn', 'favicon']"
         :key="colName"
         :slot="colName"
         slot-scope="props"
-        :class="[ getColumnValidateClass(props, props.row.url, colName) ]"
+        :class="[ getColumnValidateClass(props, props.row[$store.state.defaultField], colName) ]"
         v-html="getColumnValue(props.row, colName)"
       ></div>
     </v-client-table>
@@ -94,6 +94,15 @@ export default {
       for (let columnName of this.columns) {
         const field = this.fields.find(f => f.name == columnName);
         const rules = [];
+
+        // default field
+        if (field.default) {
+          rules.push({
+            class: 'col-default',
+            condition: () => true
+          });
+        }
+
         if (field && field.validate) {
 
           // console.log('field.name: ', field.name);
@@ -138,7 +147,7 @@ export default {
       return {
         headings: this.headings,
         headingsTooltips: this.headingsTooltips,
-        filterable: ["url"],
+        filterable: [this.$store.state.defaultField],
         cellClasses: cellClasses,
         columnsClasses: columnsClasses,
         perPage: this.filteredItems.length,
@@ -319,8 +328,8 @@ export default {
     },
 
     // выдает класс валидации по домену сайта и имени колонки
-    getColumnValidateClass(props, url, column) {
-      return this.$store.getters.getColumnValidateClass(props, url, column);
+    getColumnValidateClass(props, defaultField, column) {
+      return this.$store.getters.getColumnValidateClass(props, defaultField, column);
     },
 
     // выдает класс валидации по домену сайта и имени колонки
@@ -337,11 +346,20 @@ export default {
 
       if (colName == "url") val = `<a href="${val}" target="_blank">${val}</a>`;
 
-      /* if (colName == "favicon" && val) {
+      if (colName == "favicon" && val) {
         val = val.replace(/^\//, row.url);
         // console.log('val: ', val);
         val = `<img style="width:16px;height:16px" src="${val}"/>`;
-      }*/
+      }
+
+      if (colName == "domain_idn") {
+        let icon = row.favicon ? row.favicon.replace(/^\//, row.url) : "";
+        val = '<a href="' + row.url + '" target="_blank">' +
+          (icon ? `<img style="width:16px;height:16px" src="${icon}"/>` : "") +
+          " " +
+          val + '</a>'
+          + '<a href="ssh://' + row.ssh_command.replace('ssh ', '') + '" class="ssh-link" title="Open SSH">&nbsp;</a>'
+      }
 
       return val;
     },

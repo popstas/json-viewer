@@ -251,6 +251,7 @@
       }
     }
 
+    .col-domain_idn,
     .col-url,
     .col-description,
     .col-h1,
@@ -268,13 +269,13 @@
 
     @media(min-width:800px) {
       // sticky first column
-      .col-url {
+      .col-default {
         position: sticky;
         left: 0;
         z-index: 1;
         background: #fff;
       }
-      th.col-url {
+      th.col-default {
         z-index: 2;
       }
     }

@@ -83,6 +83,7 @@ export const state = () => ({
   fields: [],
   availableFields: [],
   allFields: [],
+  defaultField: '',
   q: '',
   columnPresets: {},
   filterPresets: [],
@@ -97,7 +98,7 @@ export const getters = {
         let item = { ...s };
         // should be before item_info flatten
 
-        item.id = `${item.url}`;
+        if(!item.id) item.id = `${item[state.defaultField]}`;
         return item;
       });
       // console.log('itemsData: ', itemsData);
@@ -124,9 +125,9 @@ export const getters = {
     };
   },
 
-  getItemByDomain(state) {
-    return url => {
-      return state.filteredItems.find(item => item.url == url);
+  getItemByDefaultField(state) {
+    return val => {
+      return state.filteredItems.find(item => item[state.defaultField] == val);
     };
   },
 
@@ -259,6 +260,9 @@ export const mutations = {
   allFields(state, newValue) {
     state.allFields = newValue;
   },
+  defaultField(state, newValue) {
+    state.defaultField = newValue;
+  },
   q(state, newValue) {
     if (!newValue) newValue = '';
     state.q = newValue;
@@ -288,6 +292,12 @@ export const actions = {
     // console.log('state.tests: ', state.tests);
     commit('allFields', fieldsByItems(state.items, state.tests));
     // console.log('allFields: ', fieldsByItems(state.items, state.tests));
+
+    // default field (or use first field)
+    let defaultField = state.allFields.find(f => f.default);
+    if (!defaultField) defaultField = state.allFields[0];
+    // console.log('defaultField: ', defaultField);
+    commit('defaultField', defaultField.name);
   },
 
   // фильтрует items на основе q
