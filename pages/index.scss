@@ -6,6 +6,20 @@
   text-align: center;
 }
 
+.current-json {
+  .el-select {
+    min-width: 300px;
+    @media (min-width:600px) {
+      min-width: 500px;
+    }
+  }
+  &__history input{
+    padding-left: 5px;
+  }
+
+  button { background: none; border: none; }
+}
+
 .filter {
   &__query {
     padding: 5px 0px;

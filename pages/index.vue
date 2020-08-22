@@ -1,8 +1,21 @@
 <template>
   <section class="container">
-    <div>
-      <a :href="$store.state.itemsJsonUrl" v-html="$store.state.itemsJsonUrl" target="_blank"></a>,
-      total: {{ filteredItems.length }}</div>
+    <div class="current-json">
+      <el-select size="mini" class="current-json__history" placeholder="Report URL" v-model="itemsJsonUrl">
+        <el-option
+          v-for="(data, url) in jsonUrlHistory" :key="url"
+          :value="url">
+          <span style="float: left">{{ url.replace('https://site-audit.viasite.ru/reports/', '') }}</span>
+          <span style="float: right; color: #8492a6; font-size: 13px">{{ data.created }}</span>
+        </el-option>
+      </el-select>
+
+      <button class="input-clear" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
+
+      <a :href="itemsJsonUrl" target="_blank">link</a>,
+
+      total: {{ filteredItems.length }}
+    </div>
     <br>
 
     <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
@@ -62,6 +75,19 @@ export default {
   computed: {
     q() {
       return this.$store.state.q;
+    },
+
+    itemsJsonUrl: {
+      get() {
+        return this.$store.state.itemsJsonUrl;
+      },
+      set(val) {
+        this.$store.commit('itemsJsonUrl', val);
+      }
+    },
+
+    jsonUrlHistory() {
+      return this.$store.state.jsonUrlHistory;
     },
 
     fields() {
@@ -231,6 +257,10 @@ export default {
         const match = part.match(/^[a-zA-Z0-9_]+/);
         if (match) this.addFieldByName(match[0]);
       });
+    },
+
+    async itemsJsonUrl() {
+      await this.changeJsonUrl(this.itemsJsonUrl)
     }
   },
 
@@ -393,7 +423,30 @@ export default {
       } else {
         this.setFields(this.$store.state.columnPresets.default.columns);
       }
+    },
+
+    async changeJsonUrl(itemsJsonUrl) {
+      // data init
+      const itemsJson = await this.$axios.$get(itemsJsonUrl);
+      // console.log('itemsJson.items: ', itemsJson.items);
+      // console.log('itemsJson.fields: ', itemsJson.fields);
+      this.$store.commit("columnPresets", itemsJson.columns);
+      this.$store.commit("filterPresets", itemsJson.filters);
+      this.$store.commit("tests", itemsJson.fields);
+      this.$store.dispatch("items", itemsJson.items);
+      this.$store.dispatch("q", this.$route.query["q"]);
+
+      this.fieldsInit();
+    },
+
+    removeCurrentFromHistory() {
+      const history = {...this.$store.state.jsonUrlHistory};
+      if(history[this.itemsJsonUrl]) {
+        delete(history[this.itemsJsonUrl]);
+        this.$store.commit('jsonUrlHistory', history);
+      }
     }
+
   },
 
   async mounted() {
@@ -402,17 +455,7 @@ export default {
       this.$store.commit('itemsJsonUrl', this.$route.query.url);
     }
 
-    // data init
-    const itemsJson = await this.$axios.$get(this.$store.state.itemsJsonUrl);
-    // console.log('itemsJson.items: ', itemsJson.items);
-    // console.log('itemsJson.fields: ', itemsJson.fields);
-    this.$store.commit("columnPresets", itemsJson.columns);
-    this.$store.commit("filterPresets", itemsJson.filters);
-    this.$store.commit("tests", itemsJson.fields);
-    this.$store.dispatch("items", itemsJson.items);
-    this.$store.dispatch("q", this.$route.query["q"]);
-
-    this.fieldsInit();
+    await this.changeJsonUrl(this.itemsJsonUrl);
 
     // router change event
     this.$router.afterEach((to, from) => {

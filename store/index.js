@@ -75,6 +75,7 @@ export const state = () => ({
 
   // constants
   itemsJsonUrl: 'http://localhost:3001/data.json',
+  jsonUrlHistory: {},
   name: pjson.name,
   version: pjson.version,
   description: pjson.description,
@@ -236,6 +237,24 @@ export const getters = {
 export const mutations = {
   itemsJsonUrl(state, newValue) {
     state.itemsJsonUrl = newValue;
+
+    const historyItem = {
+      added: Date.now(),
+      used: Date.now(),
+    };
+
+    if(!state.jsonUrlHistory[state.itemsJsonUrl]) {
+      state.jsonUrlHistory[state.itemsJsonUrl] = {
+        added: Date.now(),
+        used: Date.now(),
+      }
+    } else {
+      state.jsonUrlHistory[state.itemsJsonUrl].used = Date.now();
+    }
+  },
+
+  jsonUrlHistory(state, newValue) {
+    state.jsonUrlHistory = newValue;
   },
   fields(state, newValue) {
     state.fields = newValue;
