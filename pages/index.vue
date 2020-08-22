@@ -415,12 +415,28 @@ export default {
       return val;
     },
 
+    setDefaultFields() {
+      let fields = [];
+      for (let i in this.$store.state.columnPresets) {
+        const preset = this.$store.state.columnPresets[i];
+        if (preset.default) {
+          fields = preset.columns;
+          break;
+        }
+      }
+      if (fields.length === 0 && this.$store.state.columnPresets.default) {
+        fields = this.$store.state.columnPresets.default.columns;
+      }
+
+      this.setFields(fields);
+    },
+
     fieldsInit() {
       // fields init
       if (this.$route.query["fields"]) {
         this.setFields(this.$route.query["fields"].split(","));
       } else {
-        this.setFields(this.$store.state.columnPresets.default.columns);
+        this.setDefaultFields();
       }
     },
 
@@ -436,9 +452,7 @@ export default {
       this.$store.dispatch("q", this.$route.query["q"]);
 
       if (forceDefaultColumns) {
-        if (this.$store.state.columnPresets.default){
-          this.setFields(this.$store.state.columnPresets.default.columns);
-        }
+        this.setDefaultFields();
       }
     },
 
