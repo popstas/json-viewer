@@ -2,7 +2,7 @@
 set -eu
 
 rm -rf dist
-base=/site-audit-seo/ npm run generate
+npm run generate
 cd dist
 git init
 git add -A
