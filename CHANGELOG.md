@@ -1,3 +1,18 @@
+# [2.2.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.1.0...v2.2.0) (2020-08-22)
+
+
+### Bug Fixes
+
+* reset columns to default preset when change json ([6199540](https://github.com/viasite/site-audit-seo-viewer/commit/6199540))
+* translate interface to English ([cd7eccb](https://github.com/viasite/site-audit-seo-viewer/commit/cd7eccb))
+
+
+### Features
+
+* json url history ([f0566ab](https://github.com/viasite/site-audit-seo-viewer/commit/f0566ab))
+
+
+
 # [2.1.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.0.0...v2.1.0) (2020-08-21)
 
 
