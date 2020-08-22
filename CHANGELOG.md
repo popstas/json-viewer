@@ -1,3 +1,17 @@
+## [2.2.1](https://github.com/viasite/site-audit-seo-viewer/compare/v2.2.0...v2.2.1) (2020-08-22)
+
+
+### Bug Fixes
+
+* don't validate empty cells as success ([4089f00](https://github.com/viasite/site-audit-seo-viewer/commit/4089f00))
+
+
+### Features
+
+* default column preset by field default: true ([10d6d69](https://github.com/viasite/site-audit-seo-viewer/commit/10d6d69))
+
+
+
 # [2.2.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.1.0...v2.2.0) (2020-08-22)
 
 
