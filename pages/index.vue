@@ -160,27 +160,50 @@ export default {
 
         // validate
         if (field.validate) {
+          let validateRules = field.validate;
+          /* if (columnName == 'cron'){
+            validateRules = {
+              warning: '> 1',
+              error: '< 1'
+            };
+          } */
+
           // warning
           for (let errType of ['warning', 'error']) {
-            if (!field.validate[errType]) continue;
+            if (!validateRules[errType]) continue;
             rules.push({
-              class: classMap[errType] + ' err2' || 'err1',
+              class: classMap[errType],
               condition: row => {
-                return this.getValidateFunc(field.validate[errType])(row[columnName])
+                const val = row[columnName];
+                const func = this.getValidateFunc(validateRules[errType]);
+                if(columnName == 'cron') {
+
+                  // console.log('errType: ', errType);
+                  // console.log('rules: ', validateRules[errType]);
+                  // console.log('val: ', val);
+                  // console.log('valid: ', func(val));
+                  // console.log('');
+                }
+                return func(val);
               }
             });
           }
 
           // success
-          if (field.validate.warning || field.validate.error) {
+          if (validateRules.warning || validateRules.error) {
             rules.push({
               class: 'success',
               condition: row => {
+                const val = row[columnName];
                 const isSuccess =
-                  !this.getValidateFunc(field.validate.warning)(row[columnName]) &&
-                  !this.getValidateFunc(field.validate.error)(row[columnName]) &&
-                  !['', NaN, null].includes(row[columnName]);
-                // console.log(row[columnName]);
+                  !this.getValidateFunc(validateRules.warning)(val) &&
+                  !this.getValidateFunc(validateRules.error)(val) &&
+                  !['', NaN, null, undefined].includes(val);
+
+                  // console.log('errType: ', 'success');
+                  // console.log('val: ', val);
+                  // console.log('valid: ', isSuccess);
+                  // console.log('');
                 return isSuccess;
               }
             });
