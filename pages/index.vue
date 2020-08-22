@@ -215,7 +215,6 @@ export default {
     },
 
     columns() {
-      // console.log('this.fields: ', this.fields);
       return this.fields.map(field => field.name);
     },
 
@@ -260,7 +259,7 @@ export default {
     },
 
     async itemsJsonUrl() {
-      await this.changeJsonUrl(this.itemsJsonUrl)
+      await this.changeJsonUrl(this.itemsJsonUrl, true);
     }
   },
 
@@ -425,7 +424,7 @@ export default {
       }
     },
 
-    async changeJsonUrl(itemsJsonUrl) {
+    async changeJsonUrl(itemsJsonUrl, forceDefaultColumns) {
       // data init
       const itemsJson = await this.$axios.$get(itemsJsonUrl);
       // console.log('itemsJson.items: ', itemsJson.items);
@@ -436,7 +435,11 @@ export default {
       this.$store.dispatch("items", itemsJson.items);
       this.$store.dispatch("q", this.$route.query["q"]);
 
-      this.fieldsInit();
+      if (forceDefaultColumns) {
+        if (this.$store.state.columnPresets.default){
+          this.setFields(this.$store.state.columnPresets.default.columns);
+        }
+      }
     },
 
     removeCurrentFromHistory() {
@@ -455,7 +458,8 @@ export default {
       this.$store.commit('itemsJsonUrl', this.$route.query.url);
     }
 
-    await this.changeJsonUrl(this.itemsJsonUrl);
+    await this.changeJsonUrl(this.itemsJsonUrl, false);
+    this.fieldsInit();
 
     // router change event
     this.$router.afterEach((to, from) => {
