@@ -42,7 +42,7 @@
 
       <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
       <div
-        v-for="colName in ['url', 'domain_idn', 'favicon', 'updated_time']"
+        v-for="colName in columns /*['url', 'domain_idn', 'favicon', 'updated_time']*/"
         :key="colName"
         :slot="colName"
         slot-scope="props"
@@ -419,22 +419,21 @@ export default {
 
       // шаблоны полей задаются здесь
 
-      // TODO: updated_time всё равно захардкожена
       if (field.type === 'timestamp' && val) {
         const offset = new Date().getTimezoneOffset() * 60000;
         val = new Date(val * 1000 - offset).toISOString();
         val = val.replace('T', ' ').replace(/\..*/, '')
       }
 
-      if (colName == "url") val = `<a href="${val}" target="_blank">${val}</a>`;
+      if (colName === "url") val = `<a href="${val}" target="_blank">${val}</a>`;
 
-      if (colName == "favicon" && val) {
+      if (colName === "favicon" && val) {
         val = val.replace(/^\//, row.url);
         // console.log('val: ', val);
         val = `<img style="width:16px;height:16px" src="${val}"/>`;
       }
 
-      if (colName == "domain_idn") {
+      if (colName === "domain_idn") {
         let icon = row.favicon ? row.favicon.replace(/^\//, row.url) : "";
         icon = icon ? `<img style="width:16px;height:16px" src="${icon}"/>` : '';
         val = `<a href="${row.url}" target="_blank">${icon} ${val}</a>`;
