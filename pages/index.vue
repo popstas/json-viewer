@@ -436,46 +436,46 @@ export default {
     getColumnValue(row, colName) {
       // достает значение colName из row, со вложенностью
       // https://stackoverflow.com/a/6394168/1716010
-      let val = colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
+      let valueText = colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
 
       const field = this.fields.find(f => f.name == colName); // TODO: without find
 
       // шаблоны полей задаются здесь
 
-      if (field.type === 'timestamp' && val) {
+      if (field.type === 'timestamp' && valueText) {
         const offset = new Date().getTimezoneOffset() * 60000;
-        val = new Date(val * 1000 - offset).toISOString();
-        val = val.replace('T', ' ').replace(/\..*/, '')
+        valueText = new Date(valueText * 1000 - offset).toISOString();
+        valueText = valueText.replace('T', ' ').replace(/\..*/, '')
       }
 
-      if (colName === "url") val = `<a href="${val}" target="_blank">${val}</a>`;
+      if (colName === "url") valueText = `<a href="${valueText}" target="_blank">${valueText}</a>`;
 
-      if (colName === "favicon" && val) {
-        val = val.replace(/^\//, row.url);
-        // console.log('val: ', val);
-        val = `<img style="width:16px;height:16px" src="${val}"/>`;
+      if (colName === "favicon" && valueText) {
+        valueText = valueText.replace(/^\//, row.url);
+        // console.log('valueText: ', valueText);
+        valueText = `<img style="width:16px;height:16px" src="${valueText}"/>`;
       }
 
       if (colName === "domain_idn") {
         let icon = row.favicon ? row.favicon.replace(/^\//, row.url) : "";
         icon = icon ? `<img style="width:16px;height:16px" src="${icon}"/>` : '';
-        val = `<a href="${row.url}" target="_blank">${icon} ${val}</a>`;
+        valueText = `<a href="${row.url}" target="_blank">${icon} ${valueText}</a>`;
         if (row.ssh_command){
           const href = 'ssh://' + row.ssh_command.replace('ssh ', '');
-          val += `<a href="${href}" class="ssh-link float-right" title="Open SSH">ssh</a>`;
+          valueText += `<a href="${href}" class="ssh-link float-right" title="Open SSH">ssh</a>`;
         }
       }
 
       // show images as images
-      if (typeof val === 'string' && val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) {
-        val = `<img style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
+      if (typeof valueText === 'string' && (field.type === 'image' || valueText.match(/^http.*\.(jpg|jpeg|png|gif)$/)) && valueText) {
+        valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${valueText}" title="${valueText}"/>`;
       }
 
       if (field.type == "boolean") {
-        val = parseInt(val) ? "yes" : "no"; // tolang
+        valueText = parseInt(valueText) ? "yes" : "no"; // tolang
       }
 
-      return val;
+      return valueText;
     },
 
     setDefaultFields() {

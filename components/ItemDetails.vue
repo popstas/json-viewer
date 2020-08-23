@@ -182,6 +182,7 @@ export default {
           // groups.unnamed.fields.push(val);
           continue;
         }
+        field.value = val;
 
         const groupsList = Array.isArray(field.groups)
           ? field.groups
@@ -197,16 +198,18 @@ export default {
 
           // console.log(fieldName + ' validateClass: ', field.validateClass);
 
+          let valueText;
+
           if (field.type == "boolean") {
-            field.valueText = parseInt(field.value) ? "yes" : "no"; // tolang
+            valueText = parseInt(field.value) ? "yes" : "no"; // tolang
           }
 
 
-          if (typeof val === 'string' && val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) {
-            field.valueText = `<img style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
+          if (typeof val === 'string' && (field.type === 'image' || val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) && val) {
+            valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
           }
 
-          field.value = val;
+          field.valueText = valueText;
           groups[groupName].fields.push(field);
         }
       }
