@@ -35,6 +35,8 @@
       :columns="columns"
       :data="filteredItems"
       :options="tableOptions"
+      @row-click="rowClick"
+      ref="table"
     >
       <template slot="child_row" slot-scope="props">
         <ItemDetails :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
@@ -509,6 +511,10 @@ export default {
         delete(history[this.itemsJsonUrl]);
         this.$store.commit('jsonUrlHistory', history);
       }
+    },
+
+    rowClick(event) {
+      this.$refs.table.toggleChildRow(event.row.id);
     }
 
   },
