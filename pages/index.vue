@@ -416,12 +416,13 @@ export default {
       return this.$store.getters.getValidateFunc(str);
     },
 
+    // обёртка над шаблоном колонки
     getColumnValue(row, colName) {
       // достает значение colName из row, со вложенностью
       // https://stackoverflow.com/a/6394168/1716010
       let val = colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
 
-      const field = this.fields.find(f => f.name == colName);
+      const field = this.fields.find(f => f.name == colName); // TODO: without find
 
       // шаблоны полей задаются здесь
 
@@ -449,6 +450,10 @@ export default {
         }
       }
 
+      // show images as images
+      if (typeof val === 'string' && val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) {
+        val = `<img style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
+      }
       return val;
     },
 
