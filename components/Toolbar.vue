@@ -7,11 +7,19 @@
         <span v-else>expand all</span>
       </button>
 
+      <br>
+      <button
+        class="column-presets__button"
+        @click="setPreset({name: 'none', columns: availableFields.map(f => f.name)});"
+        v-html="'add all columns'"
+      ></button>
+
       <button
         class="column-presets__button"
         @click="setPreset({name: 'none', columns: [$store.state.defaultField]});"
         v-html="'remove all columns'"
       ></button>
+
       <!-- <button
         class="column-presets__button"
         @click="getCSV"
