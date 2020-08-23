@@ -42,7 +42,7 @@
 
       <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
       <div
-        v-for="colName in ['url', 'domain_idn', 'favicon']"
+        v-for="colName in ['url', 'domain_idn', 'favicon', 'updated_time']"
         :key="colName"
         :slot="colName"
         slot-scope="props"
@@ -415,7 +415,16 @@ export default {
       // https://stackoverflow.com/a/6394168/1716010
       let val = colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
 
+      const field = this.fields.find(f => f.name == colName);
+
       // шаблоны полей задаются здесь
+
+      // TODO: updated_time всё равно захардкожена
+      if (field.type === 'timestamp' && val) {
+        const offset = new Date().getTimezoneOffset() * 60000;
+        val = new Date(val * 1000 - offset).toISOString();
+        val = val.replace('T', ' ').replace(/\..*/, '')
+      }
 
       if (colName == "url") val = `<a href="${val}" target="_blank">${val}</a>`;
 
