@@ -15,6 +15,7 @@ module.exports = {
     '@/plugins/localStorage',
     '@/plugins/vue-awesome',
     { src: '@/plugins/vue-tables', ssr: false },
+    { src: '@/plugins/yametrika', ssr: false },
   ],
 
   router: {
