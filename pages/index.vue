@@ -229,8 +229,8 @@ export default {
         filterable: [this.$store.state.defaultField],
         cellClasses: cellClasses,
         columnsClasses: columnsClasses,
-        perPage: this.filteredItems.length,
-        perPageValues: [100, 250, 500],
+        perPage: Math.min(1000, this.filteredItems.length),
+        perPageValues: [50, 100, 250, 500, 1000, 5000],
         // columnsDropdown: true,
         rowClassCallback(row) {
           if (row.error) return "danger";
