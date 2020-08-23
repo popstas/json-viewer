@@ -146,6 +146,13 @@
     &_active {
       font-weight: bold;
     }
+
+    &_icon {
+      border-bottom: none;
+      span {
+        border-bottom: 1px dashed;
+      }
+    }
   }
 }
 

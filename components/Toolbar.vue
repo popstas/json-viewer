@@ -2,23 +2,25 @@
   <div class="table-toolbar">
     <!-- columns by tag -->
     <div class="available-fields">
-      <button class="column-presets__button" @click="changeGroupOpenedAll">
-        <span v-if="this.$store.state.openGroups">collapse all</span>
-        <span v-else>expand all</span>
+      <button class="column-presets__button column-presets__button_icon" @click="changeGroupOpenedAll">
+        <template v-if="this.$store.state.openGroups">
+          <icon name="minus-square"></icon>&nbsp;<span>collapse all</span>
+        </template>
+        <template v-else>
+          <icon name="plus-square"></icon>&nbsp;<span>expand all</span>
+        </template>
       </button>
 
-      <br>
+      <br><br>
       <button
-        class="column-presets__button"
+        class="column-presets__button column-presets__button_icon"
         @click="setPreset({name: 'none', columns: availableFields.map(f => f.name)});"
-        v-html="'add all columns'"
-      ></button>
+      ><icon name="check-double"></icon>&nbsp;<span>show all columns</span></button>
 
       <button
-        class="column-presets__button"
+        class="column-presets__button column-presets__button_icon"
         @click="setPreset({name: 'none', columns: [$store.state.defaultField]});"
-        v-html="'remove all columns'"
-      ></button>
+      >✖ <span>remove all columns</span></button>
 
       <!-- <button
         class="column-presets__button"
@@ -97,6 +99,9 @@ import FilterPresetButton from "~/components/FilterPresetButton";
 import ColumnPresetButton from "~/components/ColumnPresetButton";
 import FieldGroup from "~/components/FieldGroup";
 import QueryInput from "~/components/QueryInput";
+import "vue-awesome/icons/check-double";
+import "vue-awesome/icons/plus-square";
+import "vue-awesome/icons/minus-square";
 
 export default {
   components: {
