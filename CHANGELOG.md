@@ -1,3 +1,20 @@
+## [2.2.2](https://github.com/viasite/site-audit-seo-viewer/compare/v2.2.1...v2.2.2) (2020-08-23)
+
+
+### Bug Fixes
+
+* default table rows limit to 1000 (was too slow) ([20d7ed8](https://github.com/viasite/site-audit-seo-viewer/commit/20d7ed8))
+* enable templates for all columns ([3f234c0](https://github.com/viasite/site-audit-seo-viewer/commit/3f234c0))
+* ignore non-string (legacy) field validate ([f443c74](https://github.com/viasite/site-audit-seo-viewer/commit/f443c74))
+* value convert for fields with type = timestamp ([5440176](https://github.com/viasite/site-audit-seo-viewer/commit/5440176))
+
+
+### Features
+
+* add all columns ([940f4f5](https://github.com/viasite/site-audit-seo-viewer/commit/940f4f5))
+
+
+
 ## [2.2.1](https://github.com/viasite/site-audit-seo-viewer/compare/v2.2.0...v2.2.1) (2020-08-22)
 
 
