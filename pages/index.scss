@@ -6,6 +6,12 @@
   text-align: center;
 }
 
+.msg {
+  &.danger {
+    color: #F56C6C;
+  }
+}
+
 .current-json {
   .el-select {
     min-width: 300px;

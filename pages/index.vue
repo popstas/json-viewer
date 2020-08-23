@@ -18,39 +18,45 @@
     </div>
     <br>
 
-    <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
-
-    <div><br>
-      total: {{ filteredItems.length }}
+    <div v-if="jsonLoadError">
+      <div class="msg danger">Failed to load {{ itemsJsonUrl}}</div>
     </div>
+    <div v-if="jsonLoading">Loading...</div>
+    <div v-if="!jsonLoading && !jsonLoadError">
+      <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
 
-    <div class="table-actions">
-      <button class="btn btn-excel" @click="getXlsx">
-        <icon name="file-excel"></icon> xlsx
-      </button>
+      <div><br>
+        total: {{ filteredItems.length }}
+      </div>
+
+      <div class="table-actions">
+        <button class="btn btn-excel" @click="getXlsx">
+          <icon name="file-excel"></icon> xlsx
+        </button>
+      </div>
+
+      <v-client-table
+        v-if="filteredItems.length > 0"
+        :columns="columns"
+        :data="filteredItems"
+        :options="tableOptions"
+        @row-click="rowClick"
+        ref="table"
+      >
+        <template slot="child_row" slot-scope="props">
+          <ItemDetails :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
+        </template>
+
+        <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
+        <div
+          v-for="colName in columns /*['url', 'domain_idn', 'favicon', 'updated_time']*/"
+          :key="colName"
+          :slot="colName"
+          slot-scope="props"
+          v-html="getColumnValue(props.row, colName)"
+        ></div>
+      </v-client-table>
     </div>
-
-    <v-client-table
-      v-if="filteredItems.length > 0"
-      :columns="columns"
-      :data="filteredItems"
-      :options="tableOptions"
-      @row-click="rowClick"
-      ref="table"
-    >
-      <template slot="child_row" slot-scope="props">
-        <ItemDetails :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
-      </template>
-
-      <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
-      <div
-        v-for="colName in columns /*['url', 'domain_idn', 'favicon', 'updated_time']*/"
-        :key="colName"
-        :slot="colName"
-        slot-scope="props"
-        v-html="getColumnValue(props.row, colName)"
-      ></div>
-    </v-client-table>
   </section>
 </template>
 
@@ -69,7 +75,9 @@ export default {
   data() {
     return {
       routerProcess: false,
-      tests: this.$store.state.tests
+      tests: this.$store.state.tests,
+      jsonLoadError: false,
+      jsonLoading: true,
     };
   },
 
@@ -491,17 +499,28 @@ export default {
 
     async changeJsonUrl(itemsJsonUrl, forceDefaultColumns) {
       // data init
-      const itemsJson = await this.$axios.$get(itemsJsonUrl);
-      // console.log('itemsJson.items: ', itemsJson.items);
-      // console.log('itemsJson.fields: ', itemsJson.fields);
-      this.$store.commit("columnPresets", itemsJson.columns);
-      this.$store.commit("filterPresets", itemsJson.filters);
-      this.$store.commit("tests", itemsJson.fields);
-      this.$store.dispatch("items", itemsJson.items);
-      this.$store.dispatch("q", this.$route.query["q"]);
+      this.jsonLoadError = false;
+      this.jsonLoading = true;
+      try {
+        const itemsJson = await this.$axios.$get(itemsJsonUrl);
+        // console.log('itemsJson.items: ', itemsJson.items);
+        // console.log('itemsJson.fields: ', itemsJson.fields);
+        this.$store.commit("columnPresets", itemsJson.columns);
+        this.$store.commit("filterPresets", itemsJson.filters);
+        this.$store.commit("tests", itemsJson.fields);
+        this.$store.dispatch("items", itemsJson.items);
+        this.$store.dispatch("q", this.$route.query["q"]);
 
-      if (forceDefaultColumns) {
-        this.setDefaultFields();
+        if (forceDefaultColumns) {
+          this.setDefaultFields();
+        }
+
+        this.jsonLoadError = false;
+        this.jsonLoading = false;
+      } catch(e) {
+        this.jsonLoadError = true;
+        this.jsonLoading = false;
+        // console.log('e: ', e);
       }
     },
 
