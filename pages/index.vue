@@ -437,6 +437,7 @@ export default {
       // достает значение colName из row, со вложенностью
       // https://stackoverflow.com/a/6394168/1716010
       let valueText = colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
+      if (['', undefined, null].includes(valueText)) return valueText; // только null видел
 
       const field = this.fields.find(f => f.name == colName); // TODO: without find
 
@@ -450,7 +451,7 @@ export default {
 
       if (colName === "url") valueText = `<a href="${valueText}" target="_blank">${valueText}</a>`;
 
-      if (colName === "favicon" && valueText) {
+      if (colName === "favicon") {
         valueText = valueText.replace(/^\//, row.url);
         // console.log('valueText: ', valueText);
         valueText = `<img style="width:16px;height:16px" src="${valueText}"/>`;
