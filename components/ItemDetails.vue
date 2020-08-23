@@ -61,6 +61,10 @@
     }
   }
 
+  .field-preset {
+    margin-left: 15px;
+  }
+
   li {
     list-style: none;
     padding: 0;
@@ -69,27 +73,49 @@
       background: #fbfbfb;
     }
 
-    &.colored {
-      &.success .item-details__value {
+    .item-details__value {
+      min-width: 75px;
+      display: inline-block;
+    }
+
+    &.success,
+    &.warning,
+    &.danger {
+      .item-details__value::after {
+        margin-left: 15px;
+        float: right;
+      }
+    }
+
+    &.success {
+      .item-details__value {
         color: #407927;
-      }
-      &.warning .item-details__value {
-        color: #a09600;
-      }
-      &.danger .item-details__value {
-        color: #94070a;
+        // &::after { content: '✔'; }
       }
 
-      &:hover {
-        &.success {
-          background: #aaffaa;
-        }
-        &.warning {
-          background: #ffffaa;
-        }
-        &.danger {
-          background: #ffaaaa;
-        }
+    }
+    &.warning {
+      .item-details__value {
+        color: #a09600;
+        &::after { content: '⚠'; }
+      }
+    }
+    &.danger {
+      .item-details__value {
+        color: #94070a;
+        &::after { content: '❌'; }
+      }
+    }
+
+    &:hover {
+      &.success {
+        background: #ccffcc;
+      }
+      &.warning {
+        background: #ffffcc;
+      }
+      &.danger {
+        background: #ffcccc;
       }
     }
   }
@@ -166,11 +192,8 @@ export default {
             groups[groupName] = { name: groupName, fields: [] };
           }
           info.value = fieldValue;
-          info.validateClass = this.$store.getters.getColumnValidateClass(
-            null,
-            this.item[this.$store.state.defaultField],
-            fieldName
-          );
+          info.validateClass = this.getColumnValidateClass(info.value, info.validate);
+
           // console.log(fieldName + ' validateClass: ', info.validateClass);
           if (info.type == "boolean") {
             info.valueText = parseInt(info.value) ? "да" : "нет";
@@ -181,6 +204,12 @@ export default {
       console.log('groups: ', groups);
       return groups;
     }
+  },
+  methods: {
+    // выдает класс валидации по значению и правилам валидации
+    getColumnValidateClass(value, validateRules) {
+      return this.$store.getters.getColumnValidateClass(value, validateRules);
+    },
   }
 };
 </script>

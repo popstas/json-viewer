@@ -132,11 +132,31 @@ export const getters = {
     };
   },
 
-  // @deprecated
-  // validate now with index.vue: cellClasses
+  // validate in ItemDetails
   getColumnValidateClass(state, getters) {
-    return (props, url, column) => {
-      return '';
+    const tests = {};
+    return (value, validateRules) => {
+      if (!validateRules) return '';
+
+      const classMap = {
+        error: 'danger',
+        warning: 'warning',
+        success: 'success',
+      };
+
+      for (let errType of ['warning', 'error', 'success']) {;
+        if (!validateRules[errType]) continue;
+        const func = getters.getValidateFunc(validateRules[errType]);
+        tests[errType] = func(value);
+      }
+
+      let c = '';
+      if (tests['error']) c = 'error';
+      else if (tests['warning']) c = 'warning';
+      else if (tests['success']) c = 'success';
+      else if (validateRules['warning'] || validateRules['error']) c = 'success';
+
+      return classMap[c];
     }
   },
 

@@ -46,7 +46,6 @@
         :key="colName"
         :slot="colName"
         slot-scope="props"
-        :class="[ getColumnValidateClass(props, props.row[$store.state.defaultField], colName) ]"
         v-html="getColumnValue(props.row, colName)"
       ></div>
     </v-client-table>
@@ -162,7 +161,7 @@ export default {
         if (field.validate) {
           let validateRules = field.validate;
 
-          // ignore legacy object rules
+          // fix validateRules: ignore legacy object rules
           for (let errType of ['success', 'warning', 'error']) {
             if (validateRules[errType] && typeof validateRules[errType] !== 'string') {
               console.log(`${columnName}: only strings should be in field.validate.${errType}, given: `, validateRules[errType]);
@@ -170,6 +169,7 @@ export default {
             }
           }
 
+          // fix validateRules: test rules
           /* if (columnName == 'cron'){
             validateRules = {
               warning: '> 1',
@@ -407,11 +407,6 @@ export default {
       return this.fields.findIndex(column => {
         return field && column.name == field.name;
       });
-    },
-
-    // выдает класс валидации по домену сайта и имени колонки
-    getColumnValidateClass(props, defaultField, column) {
-      return this.$store.getters.getColumnValidateClass(props, defaultField, column);
     },
 
     // выдает класс валидации по домену сайта и имени колонки
