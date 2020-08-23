@@ -161,6 +161,15 @@ export default {
         // validate
         if (field.validate) {
           let validateRules = field.validate;
+
+          // ignore legacy object rules
+          for (let errType of ['success', 'warning', 'error']) {
+            if (validateRules[errType] && typeof validateRules[errType] !== 'string') {
+              console.log(`${columnName}: only strings should be in field.validate.${errType}, given: `, validateRules[errType]);
+              delete(validateRules[errType]);
+            }
+          }
+
           /* if (columnName == 'cron'){
             validateRules = {
               warning: '> 1',
