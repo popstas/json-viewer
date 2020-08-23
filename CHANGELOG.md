@@ -1,3 +1,29 @@
+# [2.3.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.2.2...v2.3.0) (2020-08-23)
+
+
+### Bug Fixes
+
+* align right for 'title' and all fields with align = right ([0a8b79b](https://github.com/viasite/site-audit-seo-viewer/commit/0a8b79b))
+* better json loading ux ([2d6ec72](https://github.com/viasite/site-audit-seo-viewer/commit/2d6ec72))
+* better og_image view, use type = image for og_image ([7380b71](https://github.com/viasite/site-audit-seo-viewer/commit/7380b71))
+* field names was broken ([bc0d2d8](https://github.com/viasite/site-audit-seo-viewer/commit/bc0d2d8))
+* fix validate empty boolean fields (was as false) ([b261a37](https://github.com/viasite/site-audit-seo-viewer/commit/b261a37))
+* icons for column operations buttons ([03cd719](https://github.com/viasite/site-audit-seo-viewer/commit/03cd719))
+
+
+### Features
+
+* better validation in ItemDetails ([4e8675e](https://github.com/viasite/site-audit-seo-viewer/commit/4e8675e))
+* boolean in table, images in ItemDetails ([fddc9ea](https://github.com/viasite/site-audit-seo-viewer/commit/fddc9ea))
+* inactive filter when result is 0 ([0a27e65](https://github.com/viasite/site-audit-seo-viewer/commit/0a27e65))
+* mark filters as unique in SiteDetails ([a4384ca](https://github.com/viasite/site-audit-seo-viewer/commit/a4384ca))
+* share link to view current report ([c9d833f](https://github.com/viasite/site-audit-seo-viewer/commit/c9d833f))
+* show current columns ([b9f01c7](https://github.com/viasite/site-audit-seo-viewer/commit/b9f01c7))
+* show images as images ([9a5c538](https://github.com/viasite/site-audit-seo-viewer/commit/9a5c538))
+* show ItemDetails on row click ([d0baf29](https://github.com/viasite/site-audit-seo-viewer/commit/d0baf29))
+
+
+
 ## [2.2.2](https://github.com/viasite/site-audit-seo-viewer/compare/v2.2.1...v2.2.2) (2020-08-23)
 
 
