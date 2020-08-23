@@ -49,6 +49,11 @@ export default {
       default: false
     }
   },
+  data() {
+    return {
+      filterCount: ''
+    }
+  },
   computed: {
     filterCounter() {
       if (this.preset.q.match(/=$/)) return '';
@@ -66,6 +71,7 @@ export default {
         const isAvailable = !!this.$store.state.availableFields.find(f => f.name == p.name);
         if (!isAvailable) return true;
       }
+      if (this.filterCount === 0) return true;
       return false;
     },
 
@@ -125,7 +131,8 @@ export default {
     getFilterCount() {
       let q = this.mergePreset(this.preset.q);
       const filtered = this.$store.getters.getFilteredItems(q);
-      return filtered.length;
+      this.filterCount = filtered.length;
+      return this.filterCount;
     }
   }
 };
