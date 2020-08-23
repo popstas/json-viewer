@@ -12,7 +12,8 @@
 
       <button class="input-clear" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
 
-      <a :href="itemsJsonUrl" target="_blank">link</a>,
+      <a :href="itemsJsonUrl" target="_blank">json</a>,
+      <a :href="shareUrl" target="_blank">share</a>,
 
       total: {{ filteredItems.length }}
     </div>
@@ -287,7 +288,12 @@ export default {
       if (this.q) title.push("q: " + this.q);
       if (this.fields.length > 0) title.push("fields: " + this.columns);
       return title.join(", ");
-    }
+    },
+
+    shareUrl() {
+      // console.log('this.$router: ', this.$router);
+      return this.$router.options.base + `?url=${this.itemsJsonUrl}`;
+    },
   },
 
   watch: {
