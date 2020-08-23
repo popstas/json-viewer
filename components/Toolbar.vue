@@ -46,7 +46,7 @@
         ref="input"
         placeholder="add column"
         v-model="fieldQuery"
-        title="Поиск полей"
+        title="Field search"
         :fetch-suggestions="fieldComplete"
         valueKey="name"
         :clearable="true"
@@ -78,6 +78,17 @@
         :key="preset.name"
       ></ColumnPresetButton>
     </div>
+
+    <div class="current-columns"><span style="margin-right:18px;">current:</span>
+       <ColumnField
+        :field="field"
+        :checked="$store.getters.fieldExists(field)"
+        @click="$emit('toggleField', field)"
+        :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
+        v-for="field of fieldsWithoutComments"
+        :key="field.name"
+      ></ColumnField>
+    </div>
   </div>
 </template>
 
@@ -97,6 +108,7 @@
 <script>
 import FilterPresetButton from "~/components/FilterPresetButton";
 import ColumnPresetButton from "~/components/ColumnPresetButton";
+import ColumnField from "~/components/ColumnField";
 import FieldGroup from "~/components/FieldGroup";
 import QueryInput from "~/components/QueryInput";
 import "vue-awesome/icons/check-double";
@@ -107,6 +119,7 @@ export default {
   components: {
     FilterPresetButton,
     ColumnPresetButton,
+    ColumnField,
     FieldGroup,
     QueryInput
   },
@@ -133,6 +146,13 @@ export default {
 
     fields() {
       return this.$store.state.fields;
+    },
+
+    fieldsWithoutComments() {
+      return this.$store.state.fields.map(f => {
+        delete (f.comment);
+        return f;
+      });
     },
 
     availableFields() {

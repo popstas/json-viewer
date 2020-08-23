@@ -156,6 +156,14 @@
   }
 }
 
+.current-columns {
+  margin-top: 15px;
+  .available-fields__field {
+    display: inline-block;
+    margin: 0 5px;
+  }
+}
+
 .table-actions {
   text-align: right;
   margin-bottom: -10px;
