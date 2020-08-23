@@ -454,6 +454,11 @@ export default {
       if (typeof val === 'string' && val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) {
         val = `<img style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
       }
+
+      if (field.type == "boolean") {
+        val = parseInt(val) ? "yes" : "no";
+      }
+
       return val;
     },
 

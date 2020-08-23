@@ -26,7 +26,7 @@
           :class="field.validateClass"
         >
           <span class="item-details__label">{{ field.comment || field.name }}</span>
-          <span class="item-details__value">{{ field.valueText || field.value }}</span>
+          <span class="item-details__value" v-html="field.valueText || field.value"></span>
 
           <FilterPresetButton
             v-if="field.type == 'boolean' || true"
@@ -126,11 +126,11 @@
 
   &__group {
     margin-bottom: 15px;
+    margin-top: 50px;
 
     &:target {
-      margin-top: 30px;
-      padding: 15px;
-      background: #fbfbfb;
+      padding: 75px 15px 15px;
+      background: #feffba;
     }
     &-name {
       font-size: 1.2rem;
@@ -173,32 +173,41 @@ export default {
     groups() {
       let groups = { unnamed: { name: "", fields: [] } };
       for (let fieldName in this.item) {
-        const fieldValue = this.item[fieldName];
-        if (typeof fieldValue === "object") continue;
-        if (fieldValue === "") continue;
-        const info = this.tests[fieldName];
-        if (!info || !info.groups) {
-          // groups.unnamed.fields.push(fieldValue);
+        let val = this.item[fieldName];
+        if (typeof val === "object") continue;
+        if (val === "") continue;
+
+        const field = this.tests[fieldName];
+        if (!field || !field.groups) {
+          // groups.unnamed.fields.push(val);
           continue;
         }
 
-        const groupsList = Array.isArray(info.groups)
-          ? info.groups
-          : [info.groups];
+        const groupsList = Array.isArray(field.groups)
+          ? field.groups
+          : [field.groups];
 
         for (let g in groupsList) {
           let groupName = groupsList[g];
           if (!(groupName in groups)) {
             groups[groupName] = { name: groupName, fields: [] };
           }
-          info.value = fieldValue;
-          info.validateClass = this.getColumnValidateClass(info.value, info.validate);
 
-          // console.log(fieldName + ' validateClass: ', info.validateClass);
-          if (info.type == "boolean") {
-            info.valueText = parseInt(info.value) ? "да" : "нет";
+          field.validateClass = this.getColumnValidateClass(field.value, field.validate);
+
+          // console.log(fieldName + ' validateClass: ', field.validateClass);
+
+          if (field.type == "boolean") {
+            field.valueText = parseInt(field.value) ? "yes" : "no";
           }
-          groups[groupName].fields.push(info);
+
+
+          if (typeof val === 'string' && val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) {
+            field.valueText = `<img style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
+          }
+
+          field.value = val;
+          groups[groupName].fields.push(field);
         }
       }
       console.log('groups: ', groups);
