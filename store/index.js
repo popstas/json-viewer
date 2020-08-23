@@ -201,12 +201,14 @@ export const getters = {
       // json-query
       // регулярка отсекает значения, которые могут быть именами полей
       // запросы с ':' фильтруются, т.к. json-query выдает фигню и для совместимости с custom format
-      if (filteredItems.length == 0 && !q.match(/^[a-z0-9_]+$/) && q.indexOf(':') === -1) {
+      if (filteredItems.length == 0 && !q.match(/^[a-z0-9_]+$/)/*  && q.indexOf(':') === -1 */) {
         try {
-          const res = jsonQuery('data[*' + q + ']', {
+          const query = 'data[*' + q + ']'
+          const res = jsonQuery(query, {
             data: { data: state.items },
             allowRegexp: true
           });
+          // console.log('query: ', query);
           filteredItems = res.value;
 
           // normalize to array

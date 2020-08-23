@@ -456,7 +456,7 @@ export default {
       }
 
       if (field.type == "boolean") {
-        val = parseInt(val) ? "yes" : "no";
+        val = parseInt(val) ? "yes" : "no"; // tolang
       }
 
       return val;

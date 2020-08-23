@@ -198,7 +198,7 @@ export default {
           // console.log(fieldName + ' validateClass: ', field.validateClass);
 
           if (field.type == "boolean") {
-            field.valueText = parseInt(field.value) ? "yes" : "no";
+            field.valueText = parseInt(field.value) ? "yes" : "no"; // tolang
           }
 
 

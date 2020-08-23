@@ -57,7 +57,9 @@ export default {
   computed: {
     filterCounter() {
       if (this.preset.q.match(/=$/)) return '';
-      return '(' + this.getFilterCount() + ')';
+      const count = this.getFilterCount();
+      if (count === 1) return 'unique'; // tolang
+      return '(' + count + ')';
     }
   },
   methods: {
