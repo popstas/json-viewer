@@ -134,27 +134,29 @@ export default {
           });
         }
 
-        // align left for text
-        if (field.type == 'string') {
-          rules.push({
-            class: 'align-left',
-            condition: () => true
-          });
-        }
-        // align center for numbers
-        if (['integer', 'boolean', 'time'].includes(field.type)) {
-          rules.push({
-            class: 'align-center',
-            condition: () => true
-          });
-        }
-
         // align
         if (field.align) {
           rules.push({
             class: 'align-' + field.align,
             condition: () => true
           });
+        }
+        else {
+          // align left for text
+          if (field.type == 'string') {
+            rules.push({
+              class: 'align-left',
+              condition: () => true
+            });
+          }
+
+          // align center for numbers
+          if (['integer', 'boolean', 'time'].includes(field.type)) {
+            rules.push({
+              class: 'align-center',
+              condition: () => true
+            });
+          }
         }
 
         // validate
