@@ -2,7 +2,7 @@
   <div class="table-toolbar">
     <!-- columns by tag -->
     <div class="available-fields">
-      <button class="column-presets__button column-presets__button_icon" @click="changeGroupOpenedAll">
+      <button class="column-presets__button_expand-all column-presets__button column-presets__button_icon" @click="changeGroupOpenedAll">
         <template v-if="this.$store.state.openGroups">
           <icon name="minus-square"></icon>&nbsp;<span>collapse all</span>
         </template>
@@ -13,7 +13,7 @@
 
       <br><br>
       <button
-        class="column-presets__button column-presets__button_icon"
+        class="column-presets__button_show-all column-presets__button column-presets__button_icon"
         @click="setPreset({name: 'none', columns: availableFields.map(f => f.name)});"
       ><icon name="check-double"></icon>&nbsp;<span>show all columns</span></button>
 

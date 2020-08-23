@@ -1,6 +1,9 @@
 <template>
   <section class="container">
+    <v-tour name="introTour" :steps="introTourSteps" :options="{ highlight: true }"></v-tour>
+
     <div class="current-json">
+      <button class="help-tour-button" @click="startIntroTour">Help tour</button>
       <el-select size="mini" class="current-json__history" placeholder="Report URL" v-model="itemsJsonUrl">
         <el-option
           v-for="(data, url) in jsonUrlHistory" :key="url"
@@ -79,6 +82,64 @@ export default {
       tests: this.$store.state.tests,
       jsonLoadError: false,
       jsonLoading: true,
+      introTourSteps: [
+        {
+          target: '.current-json',
+          header: {
+            title: 'Get Started',
+          },
+          content: `Current loaded report's JSON file, history of last reports.`,
+          params: {
+            placement: 'top' // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+          },
+          offset: -150,
+        },
+        {
+          target: '.column-presets__button_expand-all',
+          content: `Show all fields list.`,
+          offset: -100,
+        },
+        {
+          target: '.column-presets__button_show-all',
+          content: `Add all fields to table (or remove).`,
+          offset: -200,
+        },
+        {
+          target: '.field-add-input',
+          content: `Search field by name and add to table.`,
+          offset: -200,
+        },
+        {
+          target: '.filter__query',
+          content: `Query filter, with autocomplete, regexp, and/or conditionals.`,
+          offset: -200,
+        },
+        {
+          target: '.filter-presets',
+          content: `Use filters to quick get needed data.`,
+          offset: -200,
+        },
+        {
+          target: '.column-presets',
+          content: `Use column presets for get scoped columns.`,
+          offset: -200,
+        },
+        {
+          target: '.current-columns',
+          content: `Quick remove current table columns.`,
+          offset: -200,
+        },
+        {
+          target: '.VueTables__search-field',
+          content: `Search by main column`,
+          offset: -200,
+        },
+        {
+          target: '.VueTables__row ',
+          content: `Click to row for open item details `,
+          offset: -200,
+        },
+      ]
     };
   },
 
@@ -541,8 +602,11 @@ export default {
 
     rowClick(event) {
       this.$refs.table.toggleChildRow(event.row.id);
-    }
+    },
 
+    startIntroTour() {
+      this.$tours['introTour'].start();
+    }
   },
 
   async mounted() {
@@ -564,6 +628,8 @@ export default {
         this.fieldsInit();
       }
     });
+
+    // this.startIntroTour();
   },
 
   head() {

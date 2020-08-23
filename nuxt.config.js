@@ -14,6 +14,7 @@ module.exports = {
     '@/plugins/element-ui',
     '@/plugins/localStorage',
     '@/plugins/vue-awesome',
+    '@/plugins/vue-tour',
     { src: '@/plugins/vue-tables', ssr: false },
     { src: '@/plugins/yametrika', ssr: false },
   ],
