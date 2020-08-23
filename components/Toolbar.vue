@@ -150,6 +150,7 @@ export default {
 
     fieldsWithoutComments() {
       return this.$store.state.fields.map(f => {
+        f = {...f};
         delete (f.comment);
         return f;
       });
