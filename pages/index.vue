@@ -133,6 +133,11 @@ export default {
           offset: -200,
         },
         {
+          target: '.table-stats',
+          content: `Stats by filtered rows: average, non-unique, enum values.`,
+          offset: -200,
+        },
+        {
           target: '.VueTables__search-field',
           content: `Search by main column`,
           offset: -200,
