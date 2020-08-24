@@ -1,3 +1,22 @@
+# [2.4.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.3.0...v2.4.0) (2020-08-24)
+
+
+### Bug Fixes
+
+* add table stats to tour ([aec3b1a](https://github.com/viasite/site-audit-seo-viewer/commit/aec3b1a))
+* remove button after delete current report from history ([e197a38](https://github.com/viasite/site-audit-seo-viewer/commit/e197a38))
+
+
+### Features
+
+* highlight help tour for new users ([d0a1f26](https://github.com/viasite/site-audit-seo-viewer/commit/d0a1f26))
+* reports history: sort by name/added/used ([c04b544](https://github.com/viasite/site-audit-seo-viewer/commit/c04b544))
+* sort last reports by url (was by added date) ([df6105e](https://github.com/viasite/site-audit-seo-viewer/commit/df6105e))
+* **table stats:** average, non-unique, enum values for some fieldsfield names hardcoded ([d171498](https://github.com/viasite/site-audit-seo-viewer/commit/d171498))
+* help tour ([892e3ce](https://github.com/viasite/site-audit-seo-viewer/commit/892e3ce))
+
+
+
 # [2.3.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.2.2...v2.3.0) (2020-08-23)
 
 
