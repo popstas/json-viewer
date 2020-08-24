@@ -47,7 +47,11 @@ export default {
     toggle: {
       type: Boolean,
       default: false
-    }
+    },
+    noCount: {
+      type: Boolean,
+      default: false
+    },
   },
   data() {
     return {
@@ -56,6 +60,7 @@ export default {
   },
   computed: {
     filterCounter() {
+      if (this.noCount) return '';
       if (this.preset.q.match(/=$/)) return '';
       const count = this.getFilterCount();
       if (count === 1) return 'unique'; // tolang

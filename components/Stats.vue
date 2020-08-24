@@ -15,7 +15,7 @@
           >
             {{ subval.value }}: {{ subval.count }}
 
-            <FilterPresetButton class="field-preset" :preset="{ q: fStat.name + '=' + subval.value }" toggle>
+            <FilterPresetButton class="field-preset" :preset="{ q: fStat.name + '=' + subval.value }" toggle no-count>
               <icon name="filter" scale="0.6"></icon>
             </FilterPresetButton>
           </div>
