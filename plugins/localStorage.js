@@ -2,6 +2,6 @@ import createPersistedState from 'vuex-persistedstate';
 
 export default ({ store }) => {
   createPersistedState({
-    paths: ['itemsJsonUrl', 'jsonUrlHistory', 'openGroups']
+    paths: ['itemsJsonUrl', 'jsonUrlHistory', 'openGroups', 'currentJsonSort']
   })(store);
 };

@@ -87,6 +87,7 @@ export const state = () => ({
   allFields: [],
   defaultField: '',
   openGroups: true,
+  currentJsonSort: 'added',
   q: '',
   columnPresets: {},
   filterPresets: [],
@@ -306,6 +307,9 @@ export const mutations = {
   },
   openGroups(state, newValue) {
     state.openGroups = newValue;
+  },
+  currentJsonSort(state, newValue) {
+    state.currentJsonSort = newValue;
   },
   q(state, newValue) {
     if (!newValue) newValue = '';

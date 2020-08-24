@@ -1,11 +1,17 @@
 <template>
   <div class="report-history">
-    <el-select size="mini" class="current-json__history" placeholder="Report URL" v-model="itemsJsonUrl">
-      <el-option
+    <el-radio-group class="report-history__sort" v-model="currentJsonSort" size="mini">
+      <el-radio-button label="url">name</el-radio-button>
+      <el-radio-button label="added">date</el-radio-button>
+      <el-radio-button label="used">last used</el-radio-button>
+    </el-radio-group>
+
+    <el-select size="mini" class="report-history__select" placeholder="Report URL" v-model="itemsJsonUrl">
+      <el-option class="report-history__option"
         v-for="option in options" :key="option.url"
         :value="option.url">
-        <span style="float: left">{{ option.url.replace('https://site-audit.viasite.ru/reports/', '') }}</span>
-        <span style="float: right; color: #8492a6; font-size: 13px">{{ new Date(option.used).toLocaleString() }}</span>
+        <span style="report-history__value-name">{{ option.url.replace('https://site-audit.viasite.ru/reports/', '') }}</span>
+        <span class="report-history__value-date">{{ new Date(option.added).toLocaleString() }}</span>
       </el-option>
     </el-select>
 
@@ -21,14 +27,42 @@
 
 <style lang="scss">
 .report-history {
-  .el-select {
+  &__sort {
+    margin: 4px 3px 0 0;
+
+    .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+      background-color: #ccc;
+      border-color: #ccc;
+      box-shadow: -1px 0 0 0 #ccc;
+    }
+  }
+
+  &__select {
     min-width: 300px;
     @media (min-width:600px) {
       min-width: 500px;
     }
+
+    input{
+      padding-left: 5px;
+    }
   }
-  &__history input{
-    padding-left: 5px;
+
+  &__option {
+    max-width: 98vw;
+  }
+
+  &__value-name {
+    float: left;
+  }
+
+  &__value-date {
+    float: right;
+    color: #8492a6;
+    font-size: 13px;
+    @media (max-width: 640px){
+      display: none;
+    }
   }
 
   button {
@@ -56,6 +90,15 @@ export default {
       }
     },
 
+    currentJsonSort: {
+      get() {
+        return this.$store.state.currentJsonSort;
+      },
+      set(val) {
+        this.$store.commit('currentJsonSort', val);
+      }
+    },
+
     options() {
       const opts = [];
       for (let url in this.jsonUrlHistory) {
@@ -66,10 +109,14 @@ export default {
           added: data.added,
         });
       }
-      const byField = 'url';
+      const byField = this.currentJsonSort;
+      const orderDesc = ['added', 'used'].includes(byField);
       return opts.sort((a, b) => {
-        if (a[byField] === b[byField]) return 0;
-        return a[byField] > b[byField] ? 1 : -1;
+        let val = 0;
+        if (a[byField] === b[byField]) val = 0;
+        else val = a[byField] > b[byField] ? 1 : -1;
+        if (orderDesc) val *= -1; // inverse;
+        return val;
       });
     },
 

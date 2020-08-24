@@ -80,7 +80,7 @@ export default {
           header: {
             title: 'Get Started',
           },
-          content: `Current loaded report's JSON file, history of last reports.`,
+          content: `Current loaded report's JSON file, history of last reports. Sort by name, added date or used date`,
           params: {
             placement: 'top' // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
