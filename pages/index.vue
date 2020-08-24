@@ -4,19 +4,7 @@
 
     <div class="current-json">
       <button class="help-tour-button" @click="startIntroTour">Help tour</button>
-      <el-select size="mini" class="current-json__history" placeholder="Report URL" v-model="itemsJsonUrl">
-        <el-option
-          v-for="(data, url) in jsonUrlHistory" :key="url"
-          :value="url">
-          <span style="float: left">{{ url.replace('https://site-audit.viasite.ru/reports/', '') }}</span>
-          <span style="float: right; color: #8492a6; font-size: 13px">{{ data.created }}</span>
-        </el-option>
-      </el-select>
-
-      <button class="input-clear" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
-
-      <a :href="itemsJsonUrl" target="_blank">json</a>,
-      <a :href="shareUrl" target="_blank">share</a>,
+      <ReportHistory></ReportHistory>
 
       total: {{ filteredItems.length }}
     </div>
@@ -72,13 +60,14 @@
 import Toolbar from "~/components/Toolbar";
 import ItemDetails from "~/components/ItemDetails";
 import Stats from "~/components/Stats";
+import ReportHistory from "~/components/ReportHistory";
 import "vue-awesome/icons/file-excel";
 import _ from "lodash";
 // import { XlsxWorkbook, XlsxSheet, XlsxDownload } from "../../dist/vue-xlsx.es.js"
 import XLSX from "xlsx";
 
 export default {
-  components: { Toolbar, ItemDetails, Stats },
+  components: { Toolbar, ItemDetails, Stats, ReportHistory },
   data() {
     return {
       routerProcess: false,
@@ -156,17 +145,8 @@ export default {
       return this.$store.state.q;
     },
 
-    itemsJsonUrl: {
-      get() {
-        return this.$store.state.itemsJsonUrl;
-      },
-      set(val) {
-        this.$store.commit('itemsJsonUrl', val);
-      }
-    },
-
-    jsonUrlHistory() {
-      return this.$store.state.jsonUrlHistory;
+    itemsJsonUrl() {
+      return this.$store.state.itemsJsonUrl;
     },
 
     fields() {
@@ -357,11 +337,6 @@ export default {
       if (this.q) title.push("q: " + this.q);
       if (this.fields.length > 0) title.push("fields: " + this.columns);
       return title.join(", ");
-    },
-
-    shareUrl() {
-      // console.log('this.$router: ', this.$router);
-      return this.$router.options.base + `?url=${this.itemsJsonUrl}`;
     },
   },
 
@@ -577,6 +552,7 @@ export default {
       // data init
       this.jsonLoadError = false;
       this.jsonLoading = true;
+      this.$store.commit('filteredItems', []);
       try {
         const itemsJson = await this.$axios.$get(itemsJsonUrl);
         // console.log('itemsJson.items: ', itemsJson.items);
@@ -597,14 +573,6 @@ export default {
         this.jsonLoadError = true;
         this.jsonLoading = false;
         // console.log('e: ', e);
-      }
-    },
-
-    removeCurrentFromHistory() {
-      const history = {...this.$store.state.jsonUrlHistory};
-      if(history[this.itemsJsonUrl]) {
-        delete(history[this.itemsJsonUrl]);
-        this.$store.commit('jsonUrlHistory', history);
       }
     },
 

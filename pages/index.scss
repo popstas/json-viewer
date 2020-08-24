@@ -15,20 +15,8 @@
 .help-tour-button {
   float: left;
   margin: 6px 3px 0 0;
-}
-
-.current-json {
-  .el-select {
-    min-width: 300px;
-    @media (min-width:600px) {
-      min-width: 500px;
-    }
-  }
-  &__history input{
-    padding-left: 5px;
-  }
-
-  button { background: none; border: none; }
+  background: none;
+  border: none;
 }
 
 .filter {
