@@ -175,6 +175,121 @@
   }
 }
 
+// ItemDetails and Stats components use it
+.item-details {
+  padding: 15px;
+  max-width: 100vw;
+  overflow-x: auto;
+
+  &__groups {
+    padding: 0;
+
+    &-link {
+      display: inline-block;
+      padding: 10px;
+    }
+  }
+
+  .field-preset {
+    margin-left: 15px;
+  }
+
+  li {
+    list-style: none;
+    padding: 0;
+
+    &:hover {
+      background: #fbfbfb;
+    }
+
+    .item-details__label {
+      vertical-align: top;
+    }
+
+    .item-details__value {
+      min-width: 75px;
+      display: inline-block;
+    }
+
+    &.success,
+    &.warning,
+    &.danger {
+      .item-details__value::after {
+        margin-left: 15px;
+        float: right;
+      }
+    }
+
+    &.success {
+      .item-details__value {
+        color: #407927;
+        // &::after { content: '✔'; }
+      }
+
+    }
+    &.warning {
+      &:not(.item-details__value_has-subvalues) .item-details__value {
+        color: #a09600;
+        &:not(.item-details__value_has-subvalues)::after { content: '⚠'; }
+      }
+    }
+    &.danger {
+      &:not(.item-details__value_has-subvalues) .item-details__value {
+        color: #94070a;
+        &::after { content: '❌'; }
+      }
+    }
+
+    &:hover {
+      &.success {
+        background: #ccffcc;
+      }
+      &.warning {
+        background: #ffffcc;
+      }
+      &.danger {
+        background: #ffcccc;
+      }
+    }
+  }
+
+  &__title {
+    font-size: 1.5rem;
+  }
+
+  &__group {
+    margin-bottom: 15px;
+    margin-top: 50px;
+
+    &:target {
+      padding: 75px 15px 15px;
+      background: #feffba;
+    }
+    &-name {
+      font-size: 1.2rem;
+      font-weight: bold;
+    }
+
+    &-fields {
+      padding: 0;
+    }
+  }
+
+  &__label {
+    display: inline-block;
+    width: 290px;
+
+    @media (max-width: 400px) {
+      width: auto;
+      margin-right: 0.5em;
+      color: #999;
+      &:after {
+        content: ":";
+      }
+    }
+  }
+}
+
 .table-actions {
   text-align: right;
   margin-bottom: -10px;

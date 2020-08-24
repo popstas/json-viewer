@@ -134,8 +134,8 @@ export const getters = {
 
   // validate in ItemDetails
   getColumnValidateClass(state, getters) {
-    const tests = {};
     return (value, validateRules) => {
+      const tests = {};
       if (!validateRules) return '';
 
       const classMap = {

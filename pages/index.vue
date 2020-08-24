@@ -39,6 +39,8 @@
         </button>
       </div>
 
+      <Stats></Stats>
+
       <v-client-table
         v-if="filteredItems.length > 0"
         :columns="columns"
@@ -69,13 +71,14 @@
 <script>
 import Toolbar from "~/components/Toolbar";
 import ItemDetails from "~/components/ItemDetails";
+import Stats from "~/components/Stats";
 import "vue-awesome/icons/file-excel";
 import _ from "lodash";
 // import { XlsxWorkbook, XlsxSheet, XlsxDownload } from "../../dist/vue-xlsx.es.js"
 import XLSX from "xlsx";
 
 export default {
-  components: { Toolbar, ItemDetails },
+  components: { Toolbar, ItemDetails, Stats },
   data() {
     return {
       routerProcess: false,
