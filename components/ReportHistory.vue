@@ -2,10 +2,10 @@
   <div class="report-history">
     <el-select size="mini" class="current-json__history" placeholder="Report URL" v-model="itemsJsonUrl">
       <el-option
-        v-for="(data, url) in jsonUrlHistory" :key="url"
-        :value="url">
-        <span style="float: left">{{ url.replace('https://site-audit.viasite.ru/reports/', '') }}</span>
-        <span style="float: right; color: #8492a6; font-size: 13px">{{ new Date(data.used).toLocaleString() }}</span>
+        v-for="option in options" :key="option.url"
+        :value="option.url">
+        <span style="float: left">{{ option.url.replace('https://site-audit.viasite.ru/reports/', '') }}</span>
+        <span style="float: right; color: #8492a6; font-size: 13px">{{ new Date(option.used).toLocaleString() }}</span>
       </el-option>
     </el-select>
 
@@ -54,6 +54,23 @@ export default {
       set(val) {
         this.$store.commit('itemsJsonUrl', val);
       }
+    },
+
+    options() {
+      const opts = [];
+      for (let url in this.jsonUrlHistory) {
+        const data = this.jsonUrlHistory[url];
+        opts.push({
+          url: url,
+          used: data.used,
+          added: data.added,
+        });
+      }
+      const byField = 'url';
+      return opts.sort((a, b) => {
+        if (a[byField] === b[byField]) return 0;
+        return a[byField] > b[byField] ? 1 : -1;
+      });
     },
 
     jsonUrlHistory() {
