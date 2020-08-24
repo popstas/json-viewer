@@ -15,7 +15,7 @@
       </el-option>
     </el-select>
 
-    <button class="input-clear" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
+    <button :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
 
     <a :href="itemsJsonUrl" target="_blank">json</a>,
     <a :href="shareUrl" target="_blank">share</a>
@@ -124,6 +124,10 @@ export default {
       return this.$store.state.jsonUrlHistory;
     },
 
+    isCurrentJsonInHistory() {
+      return this.jsonUrlHistory[this.itemsJsonUrl] !== undefined;
+    },
+
     shareUrl() {
       // console.log('this.$router: ', this.$router);
       return this.$router.options.base + `?url=${this.itemsJsonUrl}`;
@@ -138,7 +142,7 @@ export default {
 
   methods: {
     removeCurrentFromHistory() {
-      const history = {...this.$store.state.jsonUrlHistory};
+      const history = {...this.jsonUrlHistory};
       if(history[this.itemsJsonUrl]) {
         delete(history[this.itemsJsonUrl]);
         this.$store.commit('jsonUrlHistory', history);
