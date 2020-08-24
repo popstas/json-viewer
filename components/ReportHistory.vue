@@ -10,7 +10,7 @@
       <el-option class="report-history__option"
         v-for="option in options" :key="option.url"
         :value="option.url">
-        <span style="report-history__value-name">{{ option.url.replace('https://site-audit.viasite.ru/reports/', '') }}</span>
+        <a @click.prevent="" class="report-history__value-name" :href="getShareUrl(option.url)">{{ option.url.replace('https://site-audit.viasite.ru/reports/', '') }}</a>
         <span class="report-history__value-date">{{ new Date(option.added).toLocaleString() }}</span>
       </el-option>
     </el-select>
@@ -18,7 +18,7 @@
     <button :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
 
     <a :href="itemsJsonUrl" target="_blank">json</a>,
-    <a :href="shareUrl" target="_blank">share</a>
+    <a :href="getShareUrl(itemsJsonUrl)" target="_blank">share</a>
     <template v-if="$router.options.base == '/'">
       , <a  :href="shareProdUrl" target="_blank">prod</a>
     </template>
@@ -128,11 +128,6 @@ export default {
       return this.jsonUrlHistory[this.itemsJsonUrl] !== undefined;
     },
 
-    shareUrl() {
-      // console.log('this.$router: ', this.$router);
-      return this.$router.options.base + `?url=${this.itemsJsonUrl}`;
-    },
-
     shareProdUrl() {
       // console.log('this.$router: ', this.$router);
       return `https://viasite.github.io/site-audit-seo-viewer/?url=${this.itemsJsonUrl}`;
@@ -149,6 +144,9 @@ export default {
       }
     },
 
+    getShareUrl(url) {
+      return this.$router.options.base + `?url=${url}`;
+    },
   },
 };
 </script>
