@@ -3,7 +3,14 @@
     <v-tour name="introTour" :steps="introTourSteps" :options="{ highlight: true }"></v-tour>
 
     <div class="current-json">
-      <button class="help-tour-button" @click="startIntroTour">Help tour</button>
+
+      <el-button
+        class="help-tour-button"
+        :plain="!isNewUser"
+        :type="isNewUser ? 'primary' : ''" @click="startIntroTour"
+        :size="isNewUser ? '' : 'mini'"
+      >Help tour</el-button>
+
       <ReportHistory></ReportHistory>
 
       total: {{ filteredItems.length }}
@@ -338,6 +345,10 @@ export default {
       if (this.fields.length > 0) title.push("fields: " + this.columns);
       return title.join(", ");
     },
+
+    isNewUser() {
+      return this.$store.state.visitCount < this.$store.state.newUserVisits;
+    },
   },
 
   watch: {
@@ -586,6 +597,9 @@ export default {
   },
 
   async mounted() {
+    // add visit
+    this.$store.commit('visitCount', this.$store.state.visitCount + 1);
+
     // set webhook
     if (this.$route.query.url) {
       this.$store.commit('itemsJsonUrl', this.$route.query.url);
@@ -604,8 +618,6 @@ export default {
         this.fieldsInit();
       }
     });
-
-    // this.startIntroTour();
   },
 
   head() {

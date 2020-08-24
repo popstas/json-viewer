@@ -80,8 +80,10 @@ export const state = () => ({
   version: pjson.version,
   description: pjson.description,
   homepage: pjson.homepage,
+  newUserVisits: 5, // highlisht tour for new users
 
   // app state
+  visitCount: 0,
   fields: [],
   availableFields: [],
   allFields: [],
@@ -281,6 +283,9 @@ export const mutations = {
   },
   fields(state, newValue) {
     state.fields = newValue;
+  },
+  visitCount(state, newValue) {
+    state.visitCount = newValue;
   },
   items(state, newValue) {
     state.items = newValue;
