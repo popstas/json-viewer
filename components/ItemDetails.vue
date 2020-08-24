@@ -103,7 +103,7 @@ export default {
           groups[groupName].fields.push(field);
         }
       }
-      console.log('groups: ', groups);
+      // console.log('groups: ', groups);
       return groups;
     }
   },

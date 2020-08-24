@@ -4,7 +4,22 @@
     <ul>
       <li v-for="fStat in stats" :key="fStat.name" :class="['table-stats__field', fStat.class]">
         <span class="table-stats__field-name item-details__label" v-html="fStat.title"></span>
-        <span class="table-stats__field-value item-details__value" v-html="fStat.value"></span>
+
+        <span v-if="fStat.subvalues.length === 0"
+          class="table-stats__field-value item-details__value"
+          v-html="fStat.value"></span>
+
+        <span v-else class="table-stats__field-value item-details__value">
+          <div v-for="subval of fStat.subvalues" :key="subval.value"
+            :class="{'item-details__subvalue': true, [subval.validateClass]: true}"
+          >
+            {{ subval.value }}: {{ subval.count }}
+
+            <FilterPresetButton class="field-preset" :preset="{ q: fStat.name + '=' + subval.value }" toggle>
+              <icon name="filter" scale="0.6"></icon>
+            </FilterPresetButton>
+          </div>
+        </span>
       </li>
     </ul>
   </div>
@@ -61,9 +76,9 @@
 </style>
 
 <script>
+import FilterPresetButton from "~/components/FilterPresetButton";
 export default {
-  props: [""],
-  components: {},
+  components: {FilterPresetButton},
   data() {
     return {
       fieldGroupsOpened: {},
@@ -80,6 +95,7 @@ export default {
         if (!field) continue;
 
         let val = "";
+        let subvalues = [];
         let valueText = "";
         let validateClass = "";
 
@@ -138,7 +154,14 @@ export default {
             else if (valClass == 'warning' && validateClass != 'danger') validateClass = valClass;
             else if (!validateClass) validateClass = valClass;
 
+            subvalues.push({
+              validateClass: valClass,
+              value: valName,
+              count: count,
+            });
+
             // if (valClass === 'success') valClass = '';
+            // TODO: remove, not used, subvalues
             msg.push(
               `<span class="item-details__subvalue ${valClass}">${valName}: ${count}</span>`
             );
@@ -183,6 +206,7 @@ export default {
             title: field.comment || field.name,
             class: validateClass,
             value: valueText || val,
+            subvalues: subvalues,
           });
         }
       }
