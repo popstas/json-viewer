@@ -13,7 +13,7 @@
           <div v-for="subval of fStat.subvalues" :key="subval.value"
             :class="{'item-details__subvalue': true, [subval.validateClass]: true}"
           >
-            {{ subval.value }}: {{ subval.count }}
+            <span class="item-details__subvalue-text">{{ subval.value }}: {{ subval.count }}</span>
 
             <FilterPresetButton class="field-preset" :preset="{ q: fStat.name + '=' + subval.value }" toggle no-count>
               <icon name="filter" scale="0.6"></icon>
@@ -57,6 +57,10 @@
   }
 
   .item-details__subvalue {
+    &:hover {
+      background: #eee;
+    }
+
     &.warning {
       &::after {
         content: "⚠";
@@ -70,6 +74,11 @@
         margin-left: 15px;
         float: right;
       }
+    }
+
+    &-text {
+      display: inline-block;
+      min-width: 100px;
     }
   }
 }
@@ -205,7 +214,7 @@ export default {
             name: field.name,
             title: field.comment || field.name,
             class: validateClass,
-            value: valueText || val,
+            value: '<span class="item-details__subvalue-text">' + (valueText || val) + '</span>',
             subvalues: subvalues,
           });
         }
