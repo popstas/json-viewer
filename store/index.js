@@ -175,17 +175,23 @@ export const getters = {
         let expected = res[2];
         if(!['==', '==='].includes(operator)) expected = parseFloat(expected);
 
+        // always not match for empty values (except 0)
+        const funcReturn = (val, condition) => {
+          if ([null, undefined, ''].includes(val)) return false;
+          return condition;
+        }
+
         // console.log('operator: ', operator);
         // console.log('expected: ', expected);
         const funcs = {
-          '==': (v) => v == expected,
-          '===': (v) => v === expected,
-          '!=': (v) => v != expected,
-          '!==': (v) => v !== expected,
-          '>': (v) => v > expected,
-          '>=': (v) => v >= expected,
-          '<': (v) => v < expected,
-          '<=': (v) => v <= expected,
+          '==': (v) => funcReturn(v, v == expected),
+          '===': (v) => funcReturn(v, v === expected),
+          '!=': (v) => funcReturn(v, v != expected),
+          '!==': (v) => funcReturn(v, v !== expected),
+          '>': (v) => funcReturn(v, v > expected),
+          '>=': (v) => funcReturn(v, v >= expected),
+          '<': (v) => funcReturn(v, v < expected),
+          '<=': (v) => funcReturn(v, v <= expected),
         };
         if (funcs[operator]) return funcs[operator];
       }

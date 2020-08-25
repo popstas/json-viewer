@@ -210,7 +210,7 @@ export default {
         }
         else {
           // align left for text
-          if (field.type == 'string') {
+          if (field.type === 'string') {
             rules.push({
               class: 'align-left',
               condition: () => true
@@ -238,13 +238,13 @@ export default {
             }
           }
 
-          // fix validateRules: test rules
-          /* if (columnName == 'cron'){
+          // for debug
+          /*if (columnName == 'status'){
             validateRules = {
-              warning: '> 1',
-              error: '< 1'
+              error: '!= 200'
             };
-          } */
+            console.log()
+          }*/
 
           // warning
           for (let errType of ['warning', 'error']) {
@@ -254,14 +254,16 @@ export default {
               condition: row => {
                 const val = row[columnName];
                 const func = this.getValidateFunc(validateRules[errType]);
-                if(columnName == 'cron') {
 
-                  // console.log('errType: ', errType);
-                  // console.log('rules: ', validateRules[errType]);
-                  // console.log('val: ', val);
-                  // console.log('valid: ', func(val));
-                  // console.log('');
-                }
+                // for debug
+                /*if(columnName == 'status') {
+                  console.log('errType: ', errType);
+                  console.log('rules: ', validateRules[errType]);
+                  console.log('val: ', val);
+                  console.log('valid: ', func(val));
+                  console.log('');
+                }*/
+
                 return func(val);
               }
             });
