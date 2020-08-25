@@ -498,6 +498,10 @@ export default {
 
       // шаблоны полей задаются здесь
 
+      if (field.type === 'integer' && valueText) {
+        valueText = new Intl.NumberFormat().format(valueText);
+      }
+
       if (field.type === 'timestamp' && valueText) {
         const offset = new Date().getTimezoneOffset() * 60000;
         valueText = new Date(valueText * 1000 - offset).toISOString();
