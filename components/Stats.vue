@@ -159,9 +159,14 @@ export default {
           for (let valName in vals) {
             const count = vals[valName];
             let valClass = this.getColumnValidateClass(valName, field.validate);
-            if (valClass == 'danger') validateClass = valClass;
-            else if (valClass == 'warning' && validateClass != 'danger') validateClass = valClass;
+            if (valClass === 'danger') validateClass = valClass;
+            else if (valClass === 'warning' && validateClass !== 'danger') validateClass = valClass;
             else if (!validateClass) validateClass = valClass;
+
+            // TODO: universal renderItemValue, getColumnValue
+            if (field.type === 'boolean') {
+              valName = parseInt(valName) ? 'yes' : 'no'; // tolang
+            }
 
             subvalues.push({
               validateClass: valClass,

@@ -533,7 +533,7 @@ export default {
         valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${valueText}" title="${valueText}"/>`;
       }
 
-      if (field.type == "boolean") {
+      if (field.type === 'boolean') {
         valueText = parseInt(valueText) ? "yes" : "no"; // tolang
       }
 
