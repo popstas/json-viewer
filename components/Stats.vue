@@ -134,7 +134,7 @@ export default {
           }
           val = Math.round(sum / this.filteredItems.length);
           validateClass = this.getColumnValidateClass(val, field.validate);
-          valueText = val + " (average)";
+          valueText = val + " (average)"; // tolang
         }
 
         // enum
@@ -205,11 +205,11 @@ export default {
           // console.log('dupls: ', dupls);
 
           val = dupls.length;
-          validateClass = dupls.length > 0 ? "warning" : "success";
+          validateClass = dupls.length > 0 ? "warning" : "success"; // tolang
           if (dupls.length > 0) {
-            valueText = `${dupls.length} non-unique values`;
+            valueText = `${dupls.length} non-unique values`; // tolang
           } else {
-            valueText = `all unique`;
+            valueText = `all unique`; // tolang
           }
         }
 

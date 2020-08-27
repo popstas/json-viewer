@@ -24,6 +24,19 @@
     <div v-if="!jsonLoading && !jsonLoadError">
       <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
 
+      <Stats></Stats>
+
+      <div class="current-columns"><span style="margin-right:18px;">current:</span>
+        <ColumnField
+          :field="field"
+          :checked="$store.getters.fieldExists(field)"
+          @click="toggleField(field)"
+          :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
+          v-for="field of fieldsWithoutComments"
+          :key="field.name"
+        ></ColumnField>
+      </div>
+
       <div><br>
         total: {{ filteredItems.length }}
       </div>
@@ -33,8 +46,6 @@
           <icon name="file-excel"></icon> xlsx
         </button>
       </div>
-
-      <Stats></Stats>
 
       <v-client-table
         v-if="filteredItems.length > 0"
@@ -65,6 +76,7 @@
 
 <script>
 import Toolbar from "~/components/Toolbar";
+import ColumnField from "~/components/ColumnField";
 import ItemDetails from "~/components/ItemDetails";
 import Stats from "~/components/Stats";
 import ReportHistory from "~/components/ReportHistory";
@@ -74,14 +86,20 @@ import _ from "lodash";
 import XLSX from "xlsx";
 
 export default {
-  components: { Toolbar, ItemDetails, Stats, ReportHistory },
+  components: {
+    Toolbar,
+    ItemDetails,
+    Stats,
+    ReportHistory,
+    ColumnField,
+  },
   data() {
     return {
       routerProcess: false,
       tests: this.$store.state.tests,
       jsonLoadError: false,
       jsonLoading: true,
-      introTourSteps: [
+      introTourSteps: [ // tolang
         {
           target: '.current-json',
           header: {
@@ -124,13 +142,13 @@ export default {
           offset: -200,
         },
         {
-          target: '.current-columns',
-          content: `Quick remove current table columns.`,
+          target: '.table-stats',
+          content: `Stats by filtered rows: average, non-unique, enum values.`,
           offset: -200,
         },
         {
-          target: '.table-stats',
-          content: `Stats by filtered rows: average, non-unique, enum values.`,
+          target: '.current-columns',
+          content: `Quick remove current table columns.`,
           offset: -200,
         },
         {
@@ -166,6 +184,14 @@ export default {
 
     filteredItems() {
       return this.$store.state.filteredItems;
+    },
+
+    fieldsWithoutComments() {
+      return this.$store.state.fields.map(f => {
+        f = {...f};
+        delete (f.comment);
+        return f;
+      });
     },
 
     tableOptions() {
