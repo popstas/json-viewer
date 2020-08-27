@@ -192,6 +192,13 @@
       vertical-align: top;
     }
 
+    &.secondary {
+      opacity: 0.3;
+      &:hover {
+        opacity: 1;
+      }
+    }
+
     .item-details__value {
       min-width: 75px;
       display: inline-block;

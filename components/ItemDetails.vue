@@ -78,29 +78,37 @@ export default {
           ? field.groups
           : [field.groups];
 
+        field.validateClass = this.getColumnValidateClass(field.value, field.validate);
+
+        // console.log(fieldName + ' validateClass: ', field.validateClass);
+
+        let valueText;
+
+        if (field.type == "boolean") {
+          valueText = parseInt(field.value) ? "yes" : "no"; // tolang
+        }
+
+
+        if (typeof val === 'string' && (field.type === 'image' || val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) && val) {
+          valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
+        }
+
+        field.valueText = valueText;
+
+        // add to groups
         for (let g in groupsList) {
+          console.log('g: ', g);
           let groupName = groupsList[g];
           if (!(groupName in groups)) {
             groups[groupName] = { name: groupName, fields: [] };
           }
 
-          field.validateClass = this.getColumnValidateClass(field.value, field.validate);
+          const f = {...field};
 
-          // console.log(fieldName + ' validateClass: ', field.validateClass);
+          // hide field duplicates
+          if (g != 0) f.validateClass += ' secondary group-'+ groupName;
 
-          let valueText;
-
-          if (field.type == "boolean") {
-            valueText = parseInt(field.value) ? "yes" : "no"; // tolang
-          }
-
-
-          if (typeof val === 'string' && (field.type === 'image' || val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) && val) {
-            valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
-          }
-
-          field.valueText = valueText;
-          groups[groupName].fields.push(field);
+          groups[groupName].fields.push(f);
         }
       }
       // console.log('groups: ', groups);
