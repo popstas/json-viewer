@@ -6,7 +6,7 @@
       <el-radio-button label="used">last used</el-radio-button>
     </el-radio-group>
 
-    <el-select size="mini" class="report-history__select" placeholder="Report URL" v-model="itemsJsonUrl">
+    <el-select size="mini" class="report-history__select" filterable placeholder="Report URL" v-model="itemsJsonUrl">
       <el-option class="report-history__option"
         v-for="option in options" :key="option.url"
         :value="option.url">
