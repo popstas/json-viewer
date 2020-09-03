@@ -1,3 +1,26 @@
+# [2.5.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.4.0...v2.5.0) (2020-09-03)
+
+
+### Bug Fixes
+
+* don't show counter on filters in table stats ([e6a7f48](https://github.com/viasite/site-audit-seo-viewer/commit/e6a7f48))
+* format 12345 as 12 345 ([6c5f594](https://github.com/viasite/site-audit-seo-viewer/commit/6c5f594))
+* items in report history as links, for open in new tab ([e3a18e0](https://github.com/viasite/site-audit-seo-viewer/commit/e3a18e0))
+* move current columns after table stats ([3409e77](https://github.com/viasite/site-audit-seo-viewer/commit/3409e77))
+* never validate empty cells (except zero) ([e07b95a](https://github.com/viasite/site-audit-seo-viewer/commit/e07b95a))
+* pretty stats table: filters and alerts by grid ([d59baf3](https://github.com/viasite/site-audit-seo-viewer/commit/d59baf3))
+* yes/no in table stats for boolean fields ([8214c0c](https://github.com/viasite/site-audit-seo-viewer/commit/8214c0c))
+
+
+### Features
+
+* filterable report select ([e39d868](https://github.com/viasite/site-audit-seo-viewer/commit/e39d868))
+* filters in table stats enum values ([bacb32c](https://github.com/viasite/site-audit-seo-viewer/commit/bacb32c))
+* hide duplicated fields in ItemDetails ([6005cbd](https://github.com/viasite/site-audit-seo-viewer/commit/6005cbd))
+* show human columns ([08d41c8](https://github.com/viasite/site-audit-seo-viewer/commit/08d41c8))
+
+
+
 # [2.4.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.3.0...v2.4.0) (2020-08-24)
 
 
