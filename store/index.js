@@ -89,6 +89,7 @@ export const state = () => ({
   allFields: [],
   defaultField: '',
   openGroups: true,
+  showHumanColumns: true,
   currentJsonSort: 'added',
   q: '',
   columnPresets: {},
@@ -318,6 +319,9 @@ export const mutations = {
   },
   openGroups(state, newValue) {
     state.openGroups = newValue;
+  },
+  showHumanColumns(state, newValue) {
+    state.showHumanColumns = newValue;
   },
   currentJsonSort(state, newValue) {
     state.currentJsonSort = newValue;

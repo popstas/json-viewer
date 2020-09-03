@@ -42,6 +42,10 @@
       </div>
 
       <div class="table-actions">
+        <el-checkbox class="human-columns-switch" v-model="showHumanColumns">
+          Human column names
+        </el-checkbox>
+
         <button class="btn btn-excel" @click="getXlsx">
           <icon name="file-excel"></icon> xlsx
         </button>
@@ -184,6 +188,15 @@ export default {
 
     filteredItems() {
       return this.$store.state.filteredItems;
+    },
+
+    showHumanColumns: {
+      get() {
+        return this.$store.state.showHumanColumns;
+      },
+      set(val) {
+        this.$store.commit('showHumanColumns', val);
+      }
     },
 
     fieldsWithoutComments() {
@@ -351,7 +364,11 @@ export default {
     headings() {
       let h = {};
       this.fields.forEach(field => {
-        h[field.name] = field.title.split("_").join(" ") || field.name;
+        if (this.showHumanColumns) {
+          h[field.name] = field.comment || field.title.split("_").join(" ") || field.name;
+        } else {
+          h[field.name] = field.title.split("_").join(" ") || field.name;
+        }
       });
       return h;
     },
