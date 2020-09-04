@@ -91,6 +91,7 @@ export const state = () => ({
   openGroups: true,
   showHumanColumns: true,
   currentJsonSort: 'added',
+  displayMode: 'view',
   q: '',
   columnPresets: {},
   filterPresets: [],
@@ -325,6 +326,9 @@ export const mutations = {
   },
   currentJsonSort(state, newValue) {
     state.currentJsonSort = newValue;
+  },
+  displayMode(state, newValue) {
+    state.displayMode = newValue;
   },
   q(state, newValue) {
     if (!newValue) newValue = '';

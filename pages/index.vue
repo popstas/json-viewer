@@ -1,9 +1,8 @@
 <template>
-  <section class="container">
+  <section class="container" :class="[ `mode-${displayMode}`]">
     <v-tour name="introTour" :steps="introTourSteps" :options="{ highlight: true }"></v-tour>
 
-    <div class="current-json">
-
+    <header>
       <el-button
         class="help-tour-button"
         :plain="!isNewUser"
@@ -11,10 +10,15 @@
         :size="isNewUser ? '' : 'mini'"
       >Help tour</el-button>
 
+      <el-radio-group class="display-mode-switch" v-model="displayMode" size="mini">
+        <el-radio-button label="view">view</el-radio-button>
+        <el-radio-button label="edit">edit</el-radio-button>
+      </el-radio-group>
+
       <ReportHistory></ReportHistory>
 
-      total: {{ filteredItems.length }}
-    </div>
+      <div class="total">total: {{ filteredItems.length }}</div>
+    </header>
     <br>
 
     <div v-if="jsonLoadError">
@@ -105,7 +109,7 @@ export default {
       jsonLoading: true,
       introTourSteps: [ // tolang
         {
-          target: '.current-json',
+          target: '.report-history',
           header: {
             title: 'Get Started',
           },
@@ -188,6 +192,15 @@ export default {
 
     filteredItems() {
       return this.$store.state.filteredItems;
+    },
+
+    displayMode: {
+      get() {
+        return this.$store.state.displayMode;
+      },
+      set(val) {
+        this.$store.commit('displayMode', val);
+      }
     },
 
     showHumanColumns: {

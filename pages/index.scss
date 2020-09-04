@@ -12,7 +12,8 @@
   }
 }
 
-.help-tour-button {
+.help-tour-button,
+.display-mode-switch {
   float: left;
   margin: 4px 3px 6px 0;
 }
@@ -425,5 +426,15 @@
         z-index: 2;
       }
     }
+  }
+}
+
+// view mode
+.mode-view {
+  .current-json .total,
+  .available-fields,
+  .query-input
+  {
+    display: none;
   }
 }
