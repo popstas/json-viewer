@@ -441,9 +441,11 @@
 
 // view mode
 .mode-view {
-  .current-json .total,
+  header .total,
   .available-fields,
-  .query-input
+  .query-input,
+  .table-toolbar .total,
+  .current-columns
   {
     display: none;
   }

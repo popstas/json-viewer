@@ -654,6 +654,7 @@ export default {
     },
 
     startIntroTour() {
+      this.displayMode = 'edit';
       this.$tours['introTour'].start();
     }
   },

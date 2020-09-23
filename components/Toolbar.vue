@@ -61,7 +61,7 @@
 
     <QueryInput class="filter__query"></QueryInput>
 
-    <div>
+    <div class="total">
       total: {{ filteredItems.length }}
     </div>
 
