@@ -1,3 +1,18 @@
+# [2.6.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.5.0...v2.6.0) (2020-09-23)
+
+
+### Bug Fixes
+
+* limit width of first column (url) ([af2ee72](https://github.com/viasite/site-audit-seo-viewer/commit/af2ee72))
+* view mode fixes ([a2f673c](https://github.com/viasite/site-audit-seo-viewer/commit/a2f673c))
+
+
+### Features
+
+* display mode: view (without fields list) ([ef880e6](https://github.com/viasite/site-audit-seo-viewer/commit/ef880e6))
+
+
+
 # [2.5.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.4.0...v2.5.0) (2020-09-03)
 
 
