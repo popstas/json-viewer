@@ -362,9 +362,9 @@
       margin: 0 -15px;
       width: auto;
     }
-    @media (mix-width: 769px) {
+    /*@media (max-width: 769px) {
       overflow: none;
-    }
+    }*/
   }
 
   &__table {
@@ -421,6 +421,16 @@
         left: 0;
         z-index: 1;
         background: #fff;
+        max-width: 20vw;
+
+        div {
+          z-index: 2;
+          background: #fff;
+          overflow: hidden;
+          &:hover {
+            overflow: visible;
+          }
+        }
       }
       th.col-default {
         z-index: 2;
