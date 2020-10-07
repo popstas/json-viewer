@@ -62,12 +62,12 @@ export default {
 
     groups() {
       let groups = { unnamed: { name: "", fields: [] } };
-      for (let fieldName in this.item) {
-        let val = this.item[fieldName];
+      for (let colName in this.item) {
+        let val = this.item[colName];
         if (typeof val === "object") continue;
         if (val === "") continue;
 
-        const field = this.tests[fieldName];
+        const field = this.tests[colName];
         if (!field || !field.groups) {
           // groups.unnamed.fields.push(val);
           continue;
@@ -80,9 +80,13 @@ export default {
 
         field.validateClass = this.getColumnValidateClass(field.value, field.validate);
 
-        // console.log(fieldName + ' validateClass: ', field.validateClass);
+        // console.log(colName + ' validateClass: ', field.validateClass);
 
         let valueText;
+
+        if (colName.match(/url/i)) {
+          valueText = `<a href="${field.value}" target="_blank">${field.value}</a>`;
+        }
 
         if (field.type == "boolean") {
           valueText = parseInt(field.value) ? "yes" : "no"; // tolang

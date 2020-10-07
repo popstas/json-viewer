@@ -566,7 +566,9 @@ export default {
         valueText = valueText.replace('T', ' ').replace(/\..*/, '')
       }
 
-      if (colName === "url") valueText = `<a href="${valueText}" target="_blank">${valueText}</a>`;
+      if (colName.match(/url/i)) {
+        valueText = `<a href="${valueText}" target="_blank">${valueText}</a>`;
+      }
 
       if (colName === "favicon") {
         valueText = valueText.replace(/^\//, row.url);
