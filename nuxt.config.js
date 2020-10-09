@@ -1,5 +1,5 @@
 module.exports = {
-  mode: 'spa',
+  ssr: false,
 
   modules: [
     'semantic-ui-vue/nuxt',
