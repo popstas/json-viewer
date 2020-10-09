@@ -59,29 +59,11 @@
       </el-autocomplete>
     </div>
 
-    <QueryInput class="filter__query"></QueryInput>
-
     <div class="total">
       total: {{ filteredItems.length }}
     </div>
 
-    <div class="filter-presets">filters:
-      <FilterPresetButton
-        :preset="preset"
-        v-for="preset in filterPresets"
-        :key="preset.name"
-        toggle
-      ></FilterPresetButton>
-    </div>
 
-    <div class="column-presets">columns:
-      <ColumnPresetButton
-        :preset="preset"
-        @click="setPreset(preset);"
-        v-for="preset in columnPresets"
-        :key="preset.name"
-      ></ColumnPresetButton>
-    </div>
   </div>
 </template>
 
@@ -99,20 +81,14 @@
 </style>
 
 <script>
-import FilterPresetButton from "~/components/FilterPresetButton";
-import ColumnPresetButton from "~/components/ColumnPresetButton";
 import FieldGroup from "~/components/FieldGroup";
-import QueryInput from "~/components/QueryInput";
 import "vue-awesome/icons/check-double";
 import "vue-awesome/icons/plus-square";
 import "vue-awesome/icons/minus-square";
 
 export default {
   components: {
-    FilterPresetButton,
-    ColumnPresetButton,
     FieldGroup,
-    QueryInput
   },
   data() {
     return {
@@ -123,14 +99,6 @@ export default {
   },
 
   computed: {
-    columnPresets() {
-      return this.$store.state.columnPresets;
-    },
-
-    filterPresets() {
-      return this.$store.state.filterPresets;
-    },
-
     tests() {
       return this.$store.state.tests;
     },

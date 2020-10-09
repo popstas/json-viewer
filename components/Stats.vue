@@ -1,6 +1,5 @@
 <template>
   <div class="table-stats item-details">
-    <div>filtered stats:</div>
     <ul>
       <li v-for="fStat in stats" :key="fStat.name" :class="['table-stats__field', fStat.class]">
         <span class="table-stats__field-name item-details__label" v-html="fStat.title"></span>

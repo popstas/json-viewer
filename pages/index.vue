@@ -26,14 +26,45 @@
     </div>
     <div v-if="jsonLoading">Loading...</div>
     <div v-if="!jsonLoading && !jsonLoadError">
-      <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
-
       <el-collapse v-model="openedPanels" class="panels">
 
+        <!-- Тулбар -->
+        <el-collapse-item title="columns explorer" name="columns">
+          <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
+        </el-collapse-item>
+
+        <!-- Фильтры -->
+        <el-collapse-item title="filters" name="filter_presets">
+          <QueryInput class="filter__query"></QueryInput>
+
+          <div class="filter-presets">
+            <FilterPresetButton
+              :preset="preset"
+              v-for="preset in filterPresets"
+              :key="preset.name"
+              toggle
+            ></FilterPresetButton>
+          </div>
+        </el-collapse-item>
+
+        <!-- Наборы колонок -->
+        <el-collapse-item title="column presets" name="column_presets">
+          <div class="column-presets">
+            <ColumnPresetButton
+              :preset="preset"
+              @click="setPreset(preset);"
+              v-for="preset in columnPresets"
+              :key="preset.name"
+            ></ColumnPresetButton>
+          </div>
+        </el-collapse-item>
+
+        <!-- Сводка по таблице -->
         <el-collapse-item title="filtered stats" name="stats">
           <Stats></Stats>
         </el-collapse-item>
 
+        <!-- Выбранные колонки -->
         <el-collapse-item class="current-columns" title="current columns" name="current_columns">
           <ColumnField
             :field="field"
@@ -91,6 +122,9 @@
 <script>
 import Toolbar from "~/components/Toolbar";
 import ColumnField from "~/components/ColumnField";
+import QueryInput from "~/components/QueryInput";
+import ColumnPresetButton from "~/components/ColumnPresetButton";
+import FilterPresetButton from "~/components/FilterPresetButton";
 import ItemDetails from "~/components/ItemDetails";
 import Stats from "~/components/Stats";
 import ReportHistory from "~/components/ReportHistory";
@@ -103,9 +137,12 @@ export default {
   components: {
     Toolbar,
     ItemDetails,
+    QueryInput,
     Stats,
     ReportHistory,
     ColumnField,
+    ColumnPresetButton,
+    FilterPresetButton,
   },
   data() {
     return {
@@ -113,7 +150,7 @@ export default {
       tests: this.$store.state.tests,
       jsonLoadError: false,
       jsonLoading: true,
-      openedPanels: [],
+      openedPanels: ['columns', 'filter_presets', 'column_presets'],
       introTourSteps: [ // tolang
         {
           target: '.report-history',
@@ -199,6 +236,14 @@ export default {
 
     filteredItems() {
       return this.$store.state.filteredItems;
+    },
+
+    filterPresets() {
+      return this.$store.state.filterPresets;
+    },
+
+    columnPresets() {
+      return this.$store.state.columnPresets;
     },
 
     displayMode: {
@@ -430,6 +475,11 @@ export default {
 
     async itemsJsonUrl() {
       await this.changeJsonUrl(this.itemsJsonUrl, true);
+    },
+
+    displayMode(val) {
+      if (val == 'view') this.openedPanels = [];
+      if (val == 'edit') this.openedPanels = ['columns', 'filter_presets', 'column_presets'];
     }
   },
 

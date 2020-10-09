@@ -447,10 +447,10 @@
 
 // view mode
 .mode-view {
-  header .total,
-  .available-fields,
-  .query-input,
-  .table-toolbar .total
+  header .total
+  // .available-fields,
+  // .query-input,
+  // .table-toolbar .total
   {
     display: none;
   }
