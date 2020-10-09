@@ -21,7 +21,10 @@ module.exports = {
 
   router: {
     base: '/'
-    // base: '/site-audit-seo-viewer/'
+  },
+
+  env: {
+    itemsJsonUrl: process.env.JSON_URL || 'http://localhost:3001/data.json'
   },
 
   /*

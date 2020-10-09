@@ -74,7 +74,7 @@ export const state = () => ({
   filteredItems: [],
 
   // constants
-  itemsJsonUrl: process.env.JSON_URL || 'http://localhost:3001/data.json', // TODO: process.env.JSON_URL
+  itemsJsonUrl: process.env.itemsJsonUrl || 'http://localhost:3001/data.json',
   jsonUrlHistory: {},
   name: pjson.name,
   version: pjson.version,

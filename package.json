@@ -16,7 +16,7 @@
     "version": "npm run changelog && git add CHANGELOG.md",
     "postversion": "git push --tags && npm run release",
     "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "release": "conventional-github-releaser -p angular && npm run deploy && npm run dev",
+    "release": "conventional-github-releaser -p angular && npm run deploy && npm run deploy-dev && npm run dev",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "precommit": "npm run lint"
   },
