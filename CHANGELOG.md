@@ -1,3 +1,15 @@
+# [2.7.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.6.0...v2.7.0) (2020-10-09)
+
+
+### Features
+
+* collaplible panel, for filtered stats and current columns ([7e4b9f7](https://github.com/viasite/site-audit-seo-viewer/commit/7e4b9f7))
+* define sort with url: &sort=request_time,- ([3b37002](https://github.com/viasite/site-audit-seo-viewer/commit/3b37002))
+* hyperlinks for 'url' fields ('url' in field name) ([c7f18b2](https://github.com/viasite/site-audit-seo-viewer/commit/c7f18b2))
+* move all to collapsible panels ([1f2bc38](https://github.com/viasite/site-audit-seo-viewer/commit/1f2bc38))
+
+
+
 # [2.6.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.5.0...v2.6.0) (2020-09-23)
 
 
