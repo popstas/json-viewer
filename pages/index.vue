@@ -98,6 +98,7 @@
         :data="filteredItems"
         :options="tableOptions"
         @row-click="rowClick"
+        @sorted="updateUrlQuery"
         ref="table"
       >
         <template slot="child_row" slot-scope="props">
@@ -151,6 +152,7 @@ export default {
       jsonLoadError: false,
       jsonLoading: true,
       openedPanels: [],
+      sort: {},
       introTourSteps: [ // tolang
         {
           target: '.report-history',
@@ -555,7 +557,30 @@ export default {
       let query = {};
       if (this.q) query.q = this.q;
       query.fields = this.columns.join(",");
+
+      query.url = this.itemsJsonUrl;
+
+      let order = { column: false, ascending: true };
+      if (this.$refs.table && this.$refs.table.orderBy.column) {
+        order = this.$refs.table.orderBy;
+        this.sort = this.$refs.table.orderBy;
+      }
+      if (!order.column && this.sort.column) {
+        order = this.sort;
+      }
+
+      if (order && order.column) {
+        query.sort = order.column + (order.ascending ? '' : ',-');
+      }
+
       this.$router.push({ query });
+    },
+
+    onTableLoaded() {
+      if (this.$refs.table && this.sort.column) {
+        this.$refs.table.setOrder(this.sort.column, this.sort.ascending);
+        setTimeout(this.updateUrlQuery, 100);
+      }
     },
 
     // переключить поле по имени
@@ -683,9 +708,11 @@ export default {
       if (this.$route.query["sort"]) {
         const parts = this.$route.query["sort"].split(",");
         if (parts.length == 1) parts.push('+');
-        const sortField = parts[0];
-        const sortAsc = parts[1] != '-';
-        this.$refs.table.setOrder(sortField, sortAsc);
+        this.sort = {
+          column: parts[0],
+          ascending: parts[1] != '-'
+        }
+        this.onTableLoaded();
       }
     },
 
