@@ -1,6 +1,6 @@
 <template>
   <button
-    @click="setPreset(preset.q)"
+    @click="setPreset"
     class="filter-presets__button"
     :title="'Filter:\n' + preset.q"
     :class="{
@@ -129,10 +129,12 @@ export default {
       return result;
     },
 
-    setPreset(q) {
-      q = this.mergePreset(q);
+    setPreset() {
+      const q = this.mergePreset(this.preset.q);
       this.$store.dispatch("q", q);
       this.$nuxt.$emit("inputFocus");
+
+      if (this.preset.sort) this.$nuxt.$emit("sort", this.preset.sort);
     },
 
     getFilterCount() {

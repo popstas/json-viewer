@@ -696,6 +696,19 @@ export default {
       this.setFields(fields);
     },
 
+    sortStrToObj(str) {
+      if (!str) return { column: false, ascending: true };
+
+      const parts = str.split(",");
+      if (parts.length == 1) parts.push('+');
+
+      const obj = {
+        column: parts[0] || false,
+        ascending: parts[1] != '-'
+      };
+      return obj;
+    },
+
     fieldsInit() {
       // fields init
       if (this.$route.query["fields"]) {
@@ -706,12 +719,7 @@ export default {
 
       // &sort=meta_client_value,-
       if (this.$route.query["sort"]) {
-        const parts = this.$route.query["sort"].split(",");
-        if (parts.length == 1) parts.push('+');
-        this.sort = {
-          column: parts[0],
-          ascending: parts[1] != '-'
-        }
+        this.sort = this.sortStrToObj(this.$route.query["sort"]);
         this.onTableLoaded();
       }
     },
@@ -752,6 +760,18 @@ export default {
       this.displayMode = 'edit';
       this.$tours['introTour'].start();
     }
+  },
+
+  created() {
+    // приходит из FilterPresetButton
+    this.$nuxt.$on("inputFocus", () => {
+      if (!this.openedPanels.includes('filter_presets')) this.openedPanels.push('filter_presets');
+    });
+
+    this.$nuxt.$on("sort", (sort) => {
+      this.sort = this.sortStrToObj(sort);
+      this.onTableLoaded();
+    });
   },
 
   async mounted() {
