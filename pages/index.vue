@@ -678,6 +678,15 @@ export default {
       } else {
         this.setDefaultFields();
       }
+
+      // &sort=meta_client_value,-
+      if (this.$route.query["sort"]) {
+        const parts = this.$route.query["sort"].split(",");
+        if (parts.length == 1) parts.push('+');
+        const sortField = parts[0];
+        const sortAsc = parts[1] != '-';
+        this.$refs.table.setOrder(sortField, sortAsc);
+      }
     },
 
     async changeJsonUrl(itemsJsonUrl, forceDefaultColumns) {
