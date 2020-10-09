@@ -1,3 +1,17 @@
+## [2.7.1](https://github.com/viasite/site-audit-seo-viewer/compare/v2.7.0...v2.7.1) (2020-10-09)
+
+
+### Bug Fixes
+
+* view mode fixes ([ffe27f7](https://github.com/viasite/site-audit-seo-viewer/commit/ffe27f7))
+
+
+### Features
+
+* store json url and sort in url ([1540ee4](https://github.com/viasite/site-audit-seo-viewer/commit/1540ee4))
+
+
+
 # [2.7.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.6.0...v2.7.0) (2020-10-09)
 
 
