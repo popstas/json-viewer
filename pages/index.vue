@@ -35,8 +35,6 @@
 
         <!-- Фильтры -->
         <el-collapse-item title="filters" name="filter_presets">
-          <QueryInput class="filter__query"></QueryInput>
-
           <div class="filter-presets">
             <FilterPresetButton
               :preset="preset"
@@ -45,6 +43,8 @@
               toggle
             ></FilterPresetButton>
           </div>
+
+          <QueryInput class="filter__query"></QueryInput>
         </el-collapse-item>
 
         <!-- Наборы колонок -->
@@ -150,7 +150,7 @@ export default {
       tests: this.$store.state.tests,
       jsonLoadError: false,
       jsonLoading: true,
-      openedPanels: ['columns', 'filter_presets', 'column_presets'],
+      openedPanels: [],
       introTourSteps: [ // tolang
         {
           target: '.report-history',
@@ -479,7 +479,7 @@ export default {
 
     displayMode(val) {
       if (val == 'view') this.openedPanels = [];
-      if (val == 'edit') this.openedPanels = ['columns', 'filter_presets', 'column_presets'];
+      if (val == 'edit') this.openedPanels = ['columns', 'filter_presets', 'column_presets', 'stats'];
     }
   },
 

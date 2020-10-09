@@ -60,6 +60,13 @@
 
 .panels {
   margin-top: 15px;
+  .el-collapse-item__header {
+    height: 32px;
+    line-height: 32px;
+    &.is-active {
+      font-weight: bold;
+    }
+  }
   .el-collapse-item__arrow {
     margin: 0 8px 0 15px;
   }
@@ -133,11 +140,11 @@
 }
 
 .filter-presets {
-  margin-top: 15px;
+  // margin-top: 15px;
 }
 
 .column-presets {
-  margin-top: 15px;
+  // margin-top: 15px;
   &__button {
     background: none;
     border: none;
@@ -170,7 +177,7 @@
 
 // ItemDetails and Stats components use it
 .item-details {
-  padding: 15px;
+  // padding: 15px;
   max-width: 100vw;
   overflow-x: auto;
 
