@@ -29,12 +29,12 @@
       <el-collapse v-model="openedPanels" class="panels">
 
         <!-- Тулбар -->
-        <el-collapse-item title="columns explorer" name="columns">
+        <Panel title="columns explorer" icon="el-icon-folder-opened" name="columns">
           <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
-        </el-collapse-item>
+        </Panel>
 
         <!-- Фильтры -->
-        <el-collapse-item title="filters" name="filter_presets">
+        <Panel title="filters" icon="el-icon-search" name="filter_presets">
           <div class="filter-presets">
             <FilterPresetButton
               :preset="preset"
@@ -45,10 +45,10 @@
           </div>
 
           <QueryInput class="filter__query"></QueryInput>
-        </el-collapse-item>
+        </Panel>
 
         <!-- Наборы колонок -->
-        <el-collapse-item title="column presets" name="column_presets">
+        <Panel title="column presets" icon="el-icon-menu" name="column_presets">
           <div class="column-presets">
             <ColumnPresetButton
               :preset="preset"
@@ -57,15 +57,15 @@
               :key="preset.name"
             ></ColumnPresetButton>
           </div>
-        </el-collapse-item>
+        </Panel>
 
         <!-- Сводка по таблице -->
-        <el-collapse-item title="filtered stats" name="stats">
+        <Panel title="filtered stats" icon="el-icon-s-data" name="stats">
           <Stats></Stats>
-        </el-collapse-item>
+        </Panel>
 
         <!-- Выбранные колонки -->
-        <el-collapse-item class="current-columns" title="current columns" name="current_columns">
+        <Panel title="current columns" icon="el-icon-caret-right" name="current_columns" class="current-columns">
           <ColumnField
             :field="field"
             :checked="$store.getters.fieldExists(field)"
@@ -74,7 +74,7 @@
             v-for="field of fieldsWithoutComments"
             :key="field.name"
           ></ColumnField>
-        </el-collapse-item>
+        </Panel>
 
       </el-collapse>
 
@@ -127,6 +127,7 @@ import QueryInput from "~/components/QueryInput";
 import ColumnPresetButton from "~/components/ColumnPresetButton";
 import FilterPresetButton from "~/components/FilterPresetButton";
 import ItemDetails from "~/components/ItemDetails";
+import Panel from "~/components/Panel";
 import Stats from "~/components/Stats";
 import ReportHistory from "~/components/ReportHistory";
 import "vue-awesome/icons/file-excel";
@@ -140,6 +141,7 @@ export default {
     ItemDetails,
     QueryInput,
     Stats,
+    Panel,
     ReportHistory,
     ColumnField,
     ColumnPresetButton,
