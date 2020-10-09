@@ -154,7 +154,7 @@ export default {
       openedPanels: [],
       sort: {},
       introTourSteps: [ // tolang
-        {
+        /* {
           target: '.report-history',
           header: {
             title: 'Get Started',
@@ -164,7 +164,7 @@ export default {
             placement: 'top' // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
           },
           offset: -150,
-        },
+        }, */
         {
           target: '.column-presets__button_expand-all',
           content: `Show all fields list.`,

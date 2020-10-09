@@ -1,5 +1,5 @@
 <template>
-  <div class="report-history">
+  <div class="report-history" v-if="jsonUrlHistoryCount > 1">
     <el-radio-group class="report-history__sort" v-model="currentJsonSort" size="mini">
       <el-radio-button label="url">name</el-radio-button>
       <el-radio-button label="added">date</el-radio-button>
@@ -122,6 +122,10 @@ export default {
 
     jsonUrlHistory() {
       return this.$store.state.jsonUrlHistory;
+    },
+
+    jsonUrlHistoryCount() {
+      return Object.entries(this.jsonUrlHistory).length;
     },
 
     isCurrentJsonInHistory() {
