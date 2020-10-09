@@ -58,6 +58,13 @@
   padding: 0 0;
 }
 
+.panels {
+  margin-top: 15px;
+  .el-collapse-item__arrow {
+    margin: 0 8px 0 15px;
+  }
+}
+
 .available-fields {
   margin: 0 auto;
   text-align: left;
@@ -155,7 +162,6 @@
 }
 
 .current-columns {
-  margin-top: 15px;
   .available-fields__field {
     display: inline-block;
     margin: 0 5px;
@@ -444,8 +450,7 @@
   header .total,
   .available-fields,
   .query-input,
-  .table-toolbar .total,
-  .current-columns
+  .table-toolbar .total
   {
     display: none;
   }

@@ -28,18 +28,24 @@
     <div v-if="!jsonLoading && !jsonLoadError">
       <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
 
-      <Stats></Stats>
+      <el-collapse v-model="openedPanels" class="panels">
 
-      <div class="current-columns"><span style="margin-right:18px;">current:</span>
-        <ColumnField
-          :field="field"
-          :checked="$store.getters.fieldExists(field)"
-          @click="toggleField(field)"
-          :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
-          v-for="field of fieldsWithoutComments"
-          :key="field.name"
-        ></ColumnField>
-      </div>
+        <el-collapse-item title="filtered stats" name="stats">
+          <Stats></Stats>
+        </el-collapse-item>
+
+        <el-collapse-item class="current-columns" title="current columns" name="current_columns">
+          <ColumnField
+            :field="field"
+            :checked="$store.getters.fieldExists(field)"
+            @click="toggleField(field)"
+            :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
+            v-for="field of fieldsWithoutComments"
+            :key="field.name"
+          ></ColumnField>
+        </el-collapse-item>
+
+      </el-collapse>
 
       <div><br>
         total: {{ filteredItems.length }}
@@ -107,6 +113,7 @@ export default {
       tests: this.$store.state.tests,
       jsonLoadError: false,
       jsonLoading: true,
+      openedPanels: [],
       introTourSteps: [ // tolang
         {
           target: '.report-history',
