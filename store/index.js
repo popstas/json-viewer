@@ -1,7 +1,5 @@
 import pjson from '~/package.json';
 import jsonQuery from 'json-query';
-import dateformat from 'dateformat';
-import moment from 'moment';
 
 const fieldsByItems = (items, tests) => {
   let excludedFields = [
