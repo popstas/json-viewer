@@ -78,22 +78,23 @@ export default {
           ? field.groups
           : [field.groups];
 
-        field.validateClass = this.getColumnValidateClass(field.value, field.validate);
+        field.validateClass = this.getColumnValidateClass(val, field.validate);
 
         // console.log(colName + ' validateClass: ', field.validateClass);
 
         let valueText;
 
         if (colName.match(/url/i)) {
-          valueText = `<a href="${field.value}" target="_blank">${field.value}</a>`;
+          valueText = `<a href="${val}" target="_blank">${val}</a>`;
         }
 
         if (field.type == "boolean") {
-          valueText = parseInt(field.value) ? "yes" : "no"; // tolang
+          valueText = parseInt(val) ? "yes" : "no"; // tolang
         }
 
 
         if (typeof val === 'string' && (field.type === 'image' || val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) && val) {
+          // const src = val.replace(/^\//, this.tests.url);
           valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
         }
 
