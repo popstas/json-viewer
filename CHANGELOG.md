@@ -1,3 +1,19 @@
+## [2.7.2](https://github.com/viasite/site-audit-seo-viewer/compare/v2.7.1...v2.7.2) (2020-11-10)
+
+
+### Bug Fixes
+
+* hide report history if < 2 in history ([31f478e](https://github.com/viasite/site-audit-seo-viewer/commit/31f478e))
+
+
+### Features
+
+* add icons to panels ([ef65fb6](https://github.com/viasite/site-audit-seo-viewer/commit/ef65fb6))
+* default filter ([5f2bca0](https://github.com/viasite/site-audit-seo-viewer/commit/5f2bca0))
+* store sort in filter preset.sort ([689f0e9](https://github.com/viasite/site-audit-seo-viewer/commit/689f0e9))
+
+
+
 ## [2.7.1](https://github.com/viasite/site-audit-seo-viewer/compare/v2.7.0...v2.7.1) (2020-10-09)
 
 
