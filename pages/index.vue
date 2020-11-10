@@ -739,6 +739,12 @@ export default {
         this.$store.commit("filterPresets", itemsJson.filters);
         this.$store.commit("tests", itemsJson.fields);
         this.$store.dispatch("items", itemsJson.items);
+
+        const defaultFilter = itemsJson.filters.find(filter => filter.default);
+        if (defaultFilter && !this.$route.query["q"]) {
+          this.$route.query["q"] = defaultFilter.q;
+        }
+
         this.$store.dispatch("q", this.$route.query["q"]);
 
         if (forceDefaultColumns) {
