@@ -2,12 +2,12 @@
   <div>
     <nuxt/>
 
-    <div>
+    <footer>
       <a
         target="_blank"
         :href="$store.state.homepage"
       >{{ $store.state.name }} {{ $store.state.version }}</a>
-    </div>
+    </footer>
   </div>
 </template>
 
@@ -24,6 +24,9 @@ html {
 }
 body {
   overflow-x: auto;
+}
+footer {
+  padding: 15px;
 }
 
 *, *:before, *:after {
