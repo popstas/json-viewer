@@ -4,6 +4,7 @@ module.exports = {
   modules: [
     'semantic-ui-vue/nuxt',
     '@nuxtjs/axios',
+    'nuxt-socket-io',
   ],
 
   css: [
@@ -27,6 +28,13 @@ module.exports = {
     itemsJsonUrl: process.env.JSON_URL || 'http://localhost:3001/data.json'
   },
 
+  io: {
+    sockets: [{
+      name: 'main',
+      url: 'http://localhost:3001'
+    }]
+  },
+  
   /*
   ** Headers of the page
   */
