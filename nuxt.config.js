@@ -26,13 +26,14 @@ module.exports = {
   },
 
   env: {
-    itemsJsonUrl: process.env.JSON_URL || 'http://localhost:3001/data.json'
+    itemsJsonUrl: process.env.JSON_URL || 'http://localhost:3001/data.json',
+    SERVER_URL: process.env.SERVER_URL
   },
 
   io: {
     sockets: [{
       name: 'main',
-      url: 'http://localhost:3001'
+      url: process.env.SERVER_URL || 'http://localhost:3001'
     }]
   },
   

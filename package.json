@@ -6,7 +6,7 @@
   "homepage": "https://github.com/viasite/site-audit-seo-viewer",
   "private": true,
   "scripts": {
-    "dev": "cross-env HOST=0.0.0.0 PORT=3000 nuxt",
+    "dev": "cross-env SERVER_URL=http://localhost:3001 HOST=0.0.0.0 PORT=3000 nuxt",
     "build": "nuxt build",
     "deploy": "bash scripts/deploy.sh",
     "deploy-dev": "bash data/deploy-dev.sh",

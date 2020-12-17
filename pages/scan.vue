@@ -48,7 +48,7 @@
 </style>
 
 <script>
-const apiUrl = 'http://localhost:3001';
+const apiUrl = process.env.SERVER_URL || 'http://localhost:3001';
 
 export default {
   components: {},
