@@ -1,6 +1,6 @@
 <template>
   <section class="container scan__container">
-    <el-form class="scan__form" ref="form" v-model="form" label-width="120px">
+    <el-form :inline="true" class="scan__form" ref="form" v-model="form">
       <el-form-item label="URL">
         <el-input v-model="form.url"></el-input>
       </el-form-item>
@@ -12,7 +12,7 @@
       </el-form-item>
     </el-form>
 
-    <ul class="scan__log">
+    <ul class="scan__log" v-chat-scroll>
       <li v-for="line of log" :key="line" v-html="line"></li>
     </ul>
   </section>
@@ -21,7 +21,12 @@
 <style lang="scss">
   .scan__form {
     margin-top: 30px;
-    max-width: 640px;
+    max-width: 800px;
+
+    input {
+      padding: 0 10px;
+      min-width: 270px;
+    }
   }
 
   .scan__log {
@@ -31,6 +36,8 @@
     list-style: none;
     margin: 0;
     padding: 5px 10px;
+    max-height: calc(100vh - 150px);
+    overflow-x: auto;
 
     a {
       color: #9ec8f0;
@@ -49,7 +56,7 @@ export default {
     return {
       form: {
         url: "https://blog.popstas.ru",
-        args: '--max-requests 10 --upload'
+        args: '--max-requests 100 --upload'
       },
       log: []
     };
