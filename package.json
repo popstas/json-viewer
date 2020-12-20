@@ -6,8 +6,8 @@
   "homepage": "https://github.com/viasite/site-audit-seo-viewer",
   "private": true,
   "scripts": {
-    "dev": "cross-env SERVER_URL=http://localhost:5301 HOST=0.0.0.0 nuxt",
-    "dev-popstas": "cross-env SERVER_URL=http://popstas-server:5301 HOST=0.0.0.0 nuxt",
+    "dev": "cross-env SERVER_URL=http://localhost:5301 HOST=0.0.0.0 PORT=5302 nuxt",
+    "dev-popstas": "cross-env SERVER_URL=http://popstas-server:5301 HOST=0.0.0.0 PORT=5302 nuxt",
     "dev-clean": "nuxt",
     "build": "nuxt build",
     "deploy": "bash scripts/deploy.sh",

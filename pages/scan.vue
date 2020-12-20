@@ -7,6 +7,9 @@
       <el-form-item label="Arguments">
         <el-input v-model="form.args"></el-input>
       </el-form-item>
+      <el-form-item label="Server URL" class="form__server-url">
+        <el-input v-model="form.serverUrl"></el-input>
+      </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="sendTask">Scan</el-button>
       </el-form-item>
@@ -21,11 +24,15 @@
 <style lang="scss">
   .scan__form {
     margin-top: 30px;
-    max-width: 800px;
+    max-width: 1200px;
 
     input {
       padding: 0 10px;
       min-width: 270px;
+    }
+
+    .form__server-url input {
+      min-width: 120px;
     }
   }
 
@@ -44,19 +51,27 @@
       text-decoration: underline;
       &:hover { color: #fff; }
     }
+
+    pre {
+      color: inherit;
+      background: inherit;
+      margin: 0;
+      padding: 0;
+      background: none;
+      border: none;
+    }
   }
 </style>
 
 <script>
-const apiUrl = process.env.SERVER_URL || 'http://localhost:5301';
-
 export default {
   components: {},
   data() {
     return {
       form: {
         url: "https://blog.popstas.ru",
-        args: '--max-requests 10'
+        args: '--max-requests 10',
+        serverUrl: process.env.SERVER_URL || 'http://localhost:5301'
       },
       log: []
     };
@@ -70,7 +85,7 @@ export default {
         args: this.form.args
       };
       console.log("scan:", opts);
-      const res = await this.$axios.$post(`${apiUrl}/scan`, opts);
+      const res = await this.$axios.$post(`${this.form.serverUrl}/scan`, opts);
       console.log('res: ', res);
     },
   },
@@ -93,7 +108,7 @@ export default {
         this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
       }
       if (data.name) {
-        const url = `${viewerUrl}?url=${apiUrl}/reports/${data.name}`;
+        const url = `${viewerUrl}?url=${this.form.serverUrl}/reports/${data.name}`;
         this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
       }
     });
