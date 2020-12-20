@@ -48,7 +48,7 @@
 </style>
 
 <script>
-const apiUrl = process.env.SERVER_URL || 'http://localhost:3001';
+const apiUrl = process.env.SERVER_URL || 'http://localhost:5301';
 
 export default {
   components: {},
@@ -56,7 +56,7 @@ export default {
     return {
       form: {
         url: "https://blog.popstas.ru",
-        args: '--max-requests 100 --upload'
+        args: '--max-requests 10'
       },
       log: []
     };
@@ -79,10 +79,23 @@ export default {
     this.socket = this.$nuxtSocket({
       channel: "/",
     });
+
     /* Listen for events: */
     this.socket.on("status", (msg, cb) => {
-      console.log('msg: ', msg);
+      // console.log('msg: ', msg);
       this.log.push(msg);
+    });
+
+    this.socket.on("result", (data, cb) => {
+      const viewerUrl = window.location.origin + this.$router.options.base;
+      if (data.json) {
+        const url = viewerUrl + '?url=' + data.json;
+        this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
+      }
+      if (data.name) {
+        const url = `${viewerUrl}?url=${apiUrl}/reports/${data.name}`;
+        this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
+      }
     });
   }
 };
