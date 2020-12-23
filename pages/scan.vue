@@ -25,6 +25,7 @@
         <li>running: {{ running }}</li>
         <!-- <li>available: {{ available }}</li> -->
         <li>pending: {{ pending }}</li>
+        <li>total scanned: {{ scansTotal }}</li>
       </ul>
     </template>
 
@@ -88,6 +89,7 @@ export default {
       running: '',
       available: '',
       pending: '',
+      scansTotal: '',
     };
   },
 
