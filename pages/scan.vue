@@ -152,10 +152,13 @@ export default {
         if (data.json) {
           const url = viewerUrl + '?url=' + data.json;
           this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
+          this.$store.commit('itemsJsonUrl', data.json);
         }
         if (data.name) {
-          const url = `${viewerUrl}?url=${this.serverUrl}/reports/${data.name}`;
+          const jsonUrl = `${this.serverUrl}/reports/${data.name}`;
+          const url = `${viewerUrl}?url=${jsonUrl}`;
           this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
+          this.$store.commit('itemsJsonUrl', jsonUrl);
         }
       });
     },

@@ -1,8 +1,18 @@
 <template>
   <div>
     <div id="panel">
-      <el-header height="42px">
-        <Profile></Profile>
+      <el-header height="64px">
+        <el-row>
+          <el-col :span="12">
+            <el-menu :default-active="activeIndex" class="" mode="horizontal" @select="handleSelect">
+              <el-menu-item v-if="$store.state.serverUrl" index="1">Scan</el-menu-item>
+              <el-menu-item index="2">Results</el-menu-item>
+            </el-menu>
+          </el-col>
+          <el-col :span="12">
+            <Profile></Profile>
+          </el-col>
+        </el-row>
       </el-header>
 
       <el-main>
@@ -95,6 +105,21 @@ firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 
 export default {
-  components: {Profile}
+  components: {Profile},
+  computed: {
+    activeIndex() {
+      return $nuxt.$route.name === 'scan' ? '1' : '2';
+    }
+  },
+  methods: {
+    handleSelect(index) {
+      const dict = {
+        1: '/scan',
+        2: '/',
+      };
+      const path = dict[index];
+      if (path) this.$router.push({path: path});
+    }
+  }
 };
 </script>
