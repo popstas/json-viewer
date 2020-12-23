@@ -31,6 +31,8 @@ module.exports = {
   },
 
   io: {
+    reconnection: true,
+    reconnectionDelayMax: 10000,
     sockets: [{
       name: 'main',
       url: process.env.SERVER_URL || 'http://localhost:5301'

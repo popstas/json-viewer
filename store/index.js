@@ -1,5 +1,6 @@
 import pjson from '~/package.json';
 import jsonQuery from 'json-query';
+import firebase from "firebase";
 
 const fieldsByItems = (items, tests) => {
   let excludedFields = [
@@ -93,6 +94,8 @@ export const state = () => ({
   q: '',
   columnPresets: {},
   filterPresets: [],
+  user: false,
+  uid: '', // only for anonymous
 });
 
 export const getters = {
@@ -345,6 +348,13 @@ export const mutations = {
 
   removeFieldByIndex(state, index) {
     state.fields.splice(index, 1);
+  },
+
+  setUser(state, newValue) {
+    state.user = newValue;
+  },
+  setUid(state, newValue) {
+    state.uid = newValue;
   }
 };
 
@@ -399,7 +409,37 @@ export const actions = {
     } else if (index == -1) {
       commit('addField', field);
     }
-  }
+  },
+
+  setUser({ commit, state }, user) {
+    if(user) {
+      commit("setUser", {
+        uid: user.uid,
+        photoURL: user.photoURL,
+        displayName: user.displayName,
+        email: user.email,
+      });
+
+      if (!user.email) return;
+
+      firebase
+        .database()
+        .ref("users/" + state.user.uid)
+        .once("value")
+        .then(snapshot => {
+          const settings = (snapshot.val() && snapshot.val().settings) || false;
+          if (settings) {
+            console.log('Update settings from firebase:', settings);
+            /* if (settings.webhookShow && state.webhookShow !== settings.webhookShow) {
+              console.log('Update webhookShow from firebase:', settings);
+              commit('webhookShow', settings.webhookShow);
+            } */
+          }
+        });
+    } else {
+      commit("setUser", false);
+    }
+  },
 };
 
 export const strict = true;

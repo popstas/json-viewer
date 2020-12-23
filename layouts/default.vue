@@ -1,13 +1,21 @@
 <template>
   <div>
-    <nuxt/>
+    <div id="panel">
+      <el-header height="42px">
+        <Profile></Profile>
+      </el-header>
 
-    <footer>
-      <a
-        target="_blank"
-        :href="$store.state.homepage"
-      >{{ $store.state.name }} {{ $store.state.version }}</a>
-    </footer>
+      <el-main>
+        <nuxt />
+      </el-main>
+
+      <footer>
+        <a
+          target="_blank"
+          :href="$store.state.homepage"
+        >{{ $store.state.name }} {{ $store.state.version }}</a>
+      </footer>
+    </div>
   </div>
 </template>
 
@@ -26,7 +34,7 @@ body {
   overflow-x: auto;
 }
 footer {
-  padding: 15px;
+  padding: 20px;
 }
 
 *, *:before, *:after {
@@ -69,3 +77,24 @@ footer {
 }
 </style>
 
+
+<script>
+import Profile from "~/components/Profile";
+
+import firebase from "firebase";
+const firebaseConfig = {
+  apiKey: "AIzaSyCdKjLhrXLHy46sYfx3qpHTqIE7w5-ew9w",
+  authDomain: "site-audit-seo-1597591908441.firebaseapp.com",
+  projectId: "site-audit-seo-1597591908441",
+  storageBucket: "site-audit-seo-1597591908441.appspot.com",
+  messagingSenderId: "416232515295",
+  appId: "1:416232515295:web:82f6bee07c6b76f3b2eb6a",
+  measurementId: "G-ZKXVHXZL2R"
+};
+firebase.initializeApp(firebaseConfig);
+firebase.analytics();
+
+export default {
+  components: {Profile}
+};
+</script>

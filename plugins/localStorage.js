@@ -8,6 +8,7 @@ export default ({store}) => {
       'visitCount',
       'openGroups',
       'showHumanColumns',
-      'currentJsonSort'],
+      'currentJsonSort',
+      'uid'],
   })(store);
 };

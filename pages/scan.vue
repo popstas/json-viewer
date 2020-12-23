@@ -1,5 +1,5 @@
 <template>
-  <section class="container scan__container">
+  <section class="scan__container">
     <el-form :inline="true" class="scan__form" ref="form" v-model="form">
       <el-form-item label="URL">
         <el-input v-model="form.url"></el-input>
@@ -16,14 +16,24 @@
     </el-form>
 
     <ul class="scan__log" v-chat-scroll>
-      <li v-for="line of log" :key="line" v-html="line"></li>
+      <li v-for="(line, index) in log" :key="index" v-html="line"></li>
     </ul>
+
+    <template v-if="running !== ''">
+      <h3>Server state:</h3>
+      <ul class="server-state">
+        <li>running: {{ running }}</li>
+        <!-- <li>available: {{ available }}</li> -->
+        <li>pending: {{ pending }}</li>
+      </ul>
+    </template>
+
   </section>
 </template>
 
 <style lang="scss">
   .scan__form {
-    margin-top: 30px;
+    // margin-top: 30px;
     max-width: 1200px;
 
     input {
@@ -64,17 +74,24 @@
 </style>
 
 <script>
+import firebase from "firebase";
 export default {
   components: {},
   data() {
     return {
       form: {
         url: "https://blog.popstas.ru",
-        args: '--max-requests 10',
+        args: '--max-requests 1000',
         serverUrl: process.env.SERVER_URL || 'http://localhost:5301'
       },
-      log: []
+      log: [],
+      running: '',
+      available: '',
+      pending: '',
     };
+  },
+
+  computed: {
   },
 
   methods: {
@@ -85,8 +102,41 @@ export default {
         args: this.form.args
       };
       console.log("scan:", opts);
-      const res = await this.$axios.$post(`${this.form.serverUrl}/scan`, opts);
-      console.log('res: ', res);
+      this.socket.emit('scan', opts);
+      // const res = await this.$axios.$post(`${this.form.serverUrl}/scan`, opts);
+      // console.log('res: ', res);
+    },
+
+    submitEvents(key) {
+      console.log('this.socket: ', this.socket);
+      this.socket.on("status" + key, (msg, cb) => {
+        console.log(`msg ${key}: ${msg}`);
+        this.log.push(msg);
+      });
+      this.socket.on("status", (msg, cb) => {
+        console.log('msg: ', msg);
+        this.log.push(msg);
+      });
+
+      this.socket.on("serverState" + key, (serverState, cb) => {
+        // console.log('msg: ', msg);
+        for (let name in serverState) {
+          if (this[name] !== undefined) this[name] = serverState[name];
+          // this.serverState[name] = serverState[name];
+        }
+      });
+
+      this.socket.on("result" + key, (data, cb) => {
+        const viewerUrl = window.location.origin + this.$router.options.base;
+        if (data.json) {
+          const url = viewerUrl + '?url=' + data.json;
+          this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
+        }
+        if (data.name) {
+          const url = `${viewerUrl}?url=${this.form.serverUrl}/reports/${data.name}`;
+          this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
+        }
+      });
     },
   },
 
@@ -96,22 +146,27 @@ export default {
     });
 
     /* Listen for events: */
-    this.socket.on("status", (msg, cb) => {
-      // console.log('msg: ', msg);
-      this.log.push(msg);
+
+    /* this.socket.on("disconnect", () => {
+      this.log.push('server disconnected');
     });
 
-    this.socket.on("result", (data, cb) => {
-      const viewerUrl = window.location.origin + this.$router.options.base;
-      if (data.json) {
-        const url = viewerUrl + '?url=' + data.json;
-        this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
-      }
-      if (data.name) {
-        const url = `${viewerUrl}?url=${this.form.serverUrl}/reports/${data.name}`;
-        this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
-      }
+    this.socket.on("reconnect_attempt", () => {
+      this.log.push('server reconnected');
     });
+
+    this.socket.on("reconnect", () => {
+      this.log.push('server reconnected');
+    }); */
+
+    firebase.auth().onAuthStateChanged(user => {
+      // if (!user) user = { uid: 'anon' + Math.random() * 100000}
+      this.socket.emit('auth', this.$store.state.user);
+      this.submitEvents(this.$store.state.user?.uid || '');
+    });
+
+    // submitEvents(user.uid);
+
   }
 };
 </script>
