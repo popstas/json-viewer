@@ -9,6 +9,9 @@ export default ({store}) => {
       'openGroups',
       'showHumanColumns',
       'currentJsonSort',
-      'uid'],
+      'uid',
+      'url',
+      'args',
+      'serverUrl'],
   })(store);
 };

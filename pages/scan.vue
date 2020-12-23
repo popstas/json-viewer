@@ -1,14 +1,14 @@
 <template>
   <section class="scan__container">
-    <el-form :inline="true" class="scan__form" ref="form" v-model="form">
+    <el-form :inline="true" class="scan__form" ref="form">
       <el-form-item label="URL">
-        <el-input v-model="form.url"></el-input>
+        <el-input v-model="url"></el-input>
       </el-form-item>
       <el-form-item label="Arguments">
-        <el-input v-model="form.args"></el-input>
+        <el-input v-model="args"></el-input>
       </el-form-item>
       <el-form-item label="Server URL" class="form__server-url">
-        <el-input v-model="form.serverUrl"></el-input>
+        <el-input v-model="serverUrl"></el-input>
       </el-form-item>
       <el-form-item>
         <el-button type="primary" @click="sendTask">Scan</el-button>
@@ -80,11 +80,6 @@ export default {
   components: {},
   data() {
     return {
-      form: {
-        url: "https://blog.popstas.ru",
-        args: '--max-requests 1000',
-        serverUrl: process.env.SERVER_URL || 'http://localhost:5301'
-      },
       log: [],
       running: '',
       available: '',
@@ -94,18 +89,42 @@ export default {
   },
 
   computed: {
+    url: {
+      get() {
+        return this.$store.state.url;
+      },
+      set(val) {
+        this.$store.commit('url', val);
+      }
+    },
+    args: {
+      get() {
+        return this.$store.state.args;
+      },
+      set(val) {
+        this.$store.commit('args', val);
+      }
+    },
+    serverUrl: {
+      get() {
+        return this.$store.state.serverUrl;
+      },
+      set(val) {
+        this.$store.commit('serverUrl', val);
+      }
+    },
   },
 
   methods: {
     async sendTask() {
       this.log.splice(0, this.log.length);
       const opts = {
-        url: this.form.url,
-        args: this.form.args
+        url: this.url,
+        args: this.args
       };
       console.log("scan:", opts);
       this.socket.emit('scan', opts);
-      // const res = await this.$axios.$post(`${this.form.serverUrl}/scan`, opts);
+      // const res = await this.$axios.$post(`${this.serverUrl}/scan`, opts);
       // console.log('res: ', res);
     },
 
@@ -135,7 +154,7 @@ export default {
           this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
         }
         if (data.name) {
-          const url = `${viewerUrl}?url=${this.form.serverUrl}/reports/${data.name}`;
+          const url = `${viewerUrl}?url=${this.serverUrl}/reports/${data.name}`;
           this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
         }
       });

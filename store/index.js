@@ -96,6 +96,9 @@ export const state = () => ({
   filterPresets: [],
   user: false,
   uid: '', // only for anonymous
+  url: 'https://blog.popstas.ru',
+  args: '-m 1000',
+  serverUrl: process.env.SERVER_URL || 'http://localhost:5301'
 });
 
 export const getters = {
@@ -268,6 +271,10 @@ export const getters = {
   }
 };
 
+/* export const computed = {
+  scanForm: state => state.scanForm
+}; */
+
 export const mutations = {
   itemsJsonUrl(state, newValue) {
     state.itemsJsonUrl = newValue;
@@ -355,7 +362,17 @@ export const mutations = {
   },
   setUid(state, newValue) {
     state.uid = newValue;
-  }
+  },
+
+  url(state, newValue) {
+    state.url = newValue;
+  },
+  args(state, newValue) {
+    state.args = newValue;
+  },
+  serverUrl(state, newValue) {
+    state.serverUrl = newValue;
+  },
 };
 
 export const actions = {
@@ -443,3 +460,4 @@ export const actions = {
 };
 
 export const strict = true;
+// export const strict = false;
