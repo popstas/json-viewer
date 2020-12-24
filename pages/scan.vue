@@ -172,7 +172,7 @@ export default {
     },
 
     submitEvents(key) {
-      console.log('this.socket: ', this.socket);
+      // console.log('this.socket: ', this.socket);
 
       // log to "terminal"
       this.socket.on("status" + key, (msg, cb) => {
@@ -219,21 +219,25 @@ export default {
   async mounted() {
     this.socket = this.$nuxtSocket({
       channel: "/",
+      reconnection: true,
+      reconnectionDelayMax: 10000,
+      teardown: false,
     });
 
     /* Listen for events: */
 
-    /* this.socket.on("disconnect", () => {
+    this.socket.on("connect", () => {
+      this.socket.emit('auth', this.$store.state.user);
+    });
+
+    this.socket.on("disconnect", () => {
       this.log.push('server disconnected');
+      this.running = '';
     });
 
     this.socket.on("reconnect_attempt", () => {
-      this.log.push('server reconnected');
+      this.log.push('try to connect ' + this.serverUrl + '...');
     });
-
-    this.socket.on("reconnect", () => {
-      this.log.push('server reconnected');
-    }); */
 
     firebase.auth().onAuthStateChanged(user => {
       // if (!user) user = { uid: 'anon' + Math.random() * 100000}
