@@ -13,6 +13,7 @@ export default ({store}) => {
       'uid',
       'url',
       'args',
-      'serverUrl'],
+      'serverUrl',
+      'log'],
   })(store);
 };

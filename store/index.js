@@ -99,6 +99,7 @@ export const state = () => ({
   url: 'https://blog.popstas.ru',
   args: '-m 50',
   serverUrl: process.env.SERVER_URL || false,
+  log: [],
 
   introTourSteps: [ // tolang
     /* {
@@ -441,6 +442,9 @@ export const mutations = {
   },
   serverUrl(state, newValue) {
     state.serverUrl = newValue;
+  },
+  log(state, newValue) {
+    state.log = newValue;
   },
 };
 

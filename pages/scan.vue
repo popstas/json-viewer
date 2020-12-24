@@ -114,7 +114,6 @@ export default {
   data() {
     return {
       routerProcess: false,
-      log: [],
       running: '',
       available: '',
       pending: '',
@@ -125,6 +124,10 @@ export default {
   },
 
   computed: {
+    log(){
+      return this.$store.state.log;
+    },
+
     url: {
       get() {
         return this.$store.state.url;
@@ -160,6 +163,12 @@ export default {
   },
 
   methods: {
+    logPush(msg) {
+      const log = [...this.log, ...[msg]];
+      if (log.length > 10000) log.shift();
+      this.$store.commit('log', log);
+    },
+
     // form state to GET params
     updateUrlQuery(push = false) {
       if (this.routerProcess) return;
@@ -193,7 +202,7 @@ export default {
     },
 
     async sendTask() {
-      this.log.splice(0, this.log.length);
+      this.$store.commit('log', []); // clear log
       const opts = {
         url: this.url,
         args: this.args
@@ -220,11 +229,11 @@ export default {
       // log to "terminal"
       this.socket.on("status" + key, (msg, cb) => {
         console.log(`msg ${key}: ${msg}`);
-        this.log.push(msg);
+        this.logPush(msg);
       });
       this.socket.on("status", (msg, cb) => {
         console.log('msg: ', msg);
-        this.log.push(msg);
+        this.logPush(msg);
       });
 
       // server queue info
@@ -241,7 +250,7 @@ export default {
         const viewerUrl = window.location.origin + this.$router.options.base;
         if (data.json) {
           const url = viewerUrl + '?url=' + data.json;
-          this.log.push(`result: <a href="${url}">${url}</a>`);
+          this.logPush(`result: <a href="${url}">${url}</a>`);
           this.$store.commit('itemsJsonUrl', data.json);
         }
         if (data.name) {
@@ -252,7 +261,7 @@ export default {
           }
           const jsonUrl = `${baseUrl}/${data.name}`;
           const url = `${viewerUrl}?url=${jsonUrl}`;
-          this.log.push(`result: <a href="${url}">${url}</a>`);
+          this.logPush(`result: <a href="${url}">${url}</a>`);
           this.$store.commit('itemsJsonUrl', jsonUrl);
         }
       });
@@ -274,13 +283,13 @@ export default {
     });
 
     this.socket.on("disconnect", () => {
-      this.log.push('server disconnected');
+      this.logPush('server disconnected');
       this.isNeedAuth = true;
       this.running = '';
     });
 
     this.socket.on("reconnect_attempt", () => {
-      this.log.push('try to connect ' + this.serverUrl + '...');
+      this.logPush('try to connect ' + this.serverUrl + '...');
     });
 
     firebase.auth().onAuthStateChanged(user => {
