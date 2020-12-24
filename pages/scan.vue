@@ -15,7 +15,10 @@
       </el-form-item>
     </el-form>
 
-    <ul class="scan__log" v-chat-scroll>
+    <ul class="scan__log"
+      v-chat-scroll="{always: false, smooth: false}"
+      v-if="log.length > 0"
+    >
       <li v-for="(line, index) in log" :key="index" v-html="line"></li>
     </ul>
 
