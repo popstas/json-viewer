@@ -157,7 +157,9 @@ export default {
       return url.
         replace('https://site-audit.viasite.ru/reports/', '').
         replace(this.$store.state.serverUrl + '/reports/', '').
-        replace(userDir + '/', '');
+        replace(userDir + '/', '').
+        replace(/__/g, ' ').
+        replace(/\.json$/, '');
     }
   },
 };
