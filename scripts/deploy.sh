@@ -2,7 +2,7 @@
 set -eu
 
 rm -rf dist
-npm run generate
+SERVER_URL="https://site-audit-server.popstas.ru" npm run generate
 cd dist
 git init
 git add -A
