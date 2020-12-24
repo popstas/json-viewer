@@ -1,3 +1,32 @@
+# [3.0.0](https://github.com/viasite/site-audit-seo-viewer/compare/v2.7.2...v3.0.0) (2020-12-24)
+
+
+### Bug Fixes
+
+* **view:** remove default json url from GET params ([512b67d](https://github.com/viasite/site-audit-seo-viewer/commit/512b67d))
+* better report filename ([ab3c892](https://github.com/viasite/site-audit-seo-viewer/commit/ab3c892))
+* **scan:** better auth on connect/reconnect ([5771a27](https://github.com/viasite/site-audit-seo-viewer/commit/5771a27))
+* footer paddings ([9b98c0a](https://github.com/viasite/site-audit-seo-viewer/commit/9b98c0a))
+* terminal output not always autoscroll ([2b33ae6](https://github.com/viasite/site-audit-seo-viewer/commit/2b33ae6))
+
+
+### Features
+
+* Multiple UI improvements ([e630fb5](https://github.com/viasite/site-audit-seo-viewer/commit/e630fb5))
+* **scan:** autoreconnect to server ([09ed24d](https://github.com/viasite/site-audit-seo-viewer/commit/09ed24d))
+* better url history for viewer and scan ([7aef86d](https://github.com/viasite/site-audit-seo-viewer/commit/7aef86d))
+* save reports to user directories ([9a39031](https://github.com/viasite/site-audit-seo-viewer/commit/9a39031))
+* **scan:** add menu, add scanned results to history ([923edc0](https://github.com/viasite/site-audit-seo-viewer/commit/923edc0))
+* **scan:** add server url to form ([150b4c7](https://github.com/viasite/site-audit-seo-viewer/commit/150b4c7))
+* **scan:** google auth, server state ([992c687](https://github.com/viasite/site-audit-seo-viewer/commit/992c687))
+* **scan:** SERVER_URL env ([60ea490](https://github.com/viasite/site-audit-seo-viewer/commit/60ea490))
+* **scan:** store form values in local storage ([030e30d](https://github.com/viasite/site-audit-seo-viewer/commit/030e30d))
+* **scan:** total scanned ([13070de](https://github.com/viasite/site-audit-seo-viewer/commit/13070de))
+* scan: autoscroll chat, oneline form ([47185fb](https://github.com/viasite/site-audit-seo-viewer/commit/47185fb))
+* working docker-compose ([87a1faa](https://github.com/viasite/site-audit-seo-viewer/commit/87a1faa))
+
+
+
 ## [2.7.2](https://github.com/viasite/site-audit-seo-viewer/compare/v2.7.1...v2.7.2) (2020-11-10)
 
 

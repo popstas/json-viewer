@@ -1,6 +1,6 @@
 {
   "name": "site-audit-seo-viewer",
-  "version": "2.7.2",
+  "version": "3.0.0",
   "description": "Display audit.json as table",
   "author": "Stanislav Popov <popstas@gmail.com>",
   "homepage": "https://github.com/viasite/site-audit-seo-viewer",
