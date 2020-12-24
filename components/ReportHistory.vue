@@ -153,9 +153,11 @@ export default {
     },
 
     shortReportUrl(url) {
+      const userDir = (this.$store.state.user?.uid || '').slice(0, 5);
       return url.
         replace('https://site-audit.viasite.ru/reports/', '').
-        replace(this.$store.state.serverUrl + '/reports/', '');
+        replace(this.$store.state.serverUrl + '/reports/', '').
+        replace(userDir + '/', '');
     }
   },
 };

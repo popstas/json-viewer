@@ -199,7 +199,12 @@ export default {
           this.$store.commit('itemsJsonUrl', data.json);
         }
         if (data.name) {
-          const jsonUrl = `${this.serverUrl}/reports/${data.name}`;
+          let baseUrl = `${this.serverUrl}/reports`;
+          if (this.$store.state.user?.uid) {
+            const userDir = this.$store.state.user.uid.slice(0, 5);
+            baseUrl += '/' + userDir;
+          }
+          const jsonUrl = `${baseUrl}/${data.name}`;
           const url = `${viewerUrl}?url=${jsonUrl}`;
           this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
           this.$store.commit('itemsJsonUrl', jsonUrl);
