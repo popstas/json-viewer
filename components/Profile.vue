@@ -1,7 +1,7 @@
 <template>
   <div class="profile">
     <a class="profile-logout" v-if="user.email" title="Click to logout" @click.prevent="logout" href="#" v-html="user.email"></a>
-    <a class="profile-login" v-if="isLogin" href="/login">Login</a>
+    <NuxtLink class="profile-login" v-if="isLogin" to="/login">Login</NuxtLink>
   </div>
 </template>
 

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div id="panel">
-      <el-header height="65px">
+      <el-header height="66px">
         <el-row>
           <el-col :span="12">
             <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" class="header__menu">
@@ -22,7 +22,7 @@
       <footer>
         <a
           target="_blank"
-          :href="$store.state.homepage"
+          href="https://github.com/viasite/site-audit-seo-viewer/releases"
         >{{ $store.state.name }} {{ $store.state.version }}</a>
       </footer>
     </div>

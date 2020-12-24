@@ -25,7 +25,7 @@ export default {
       ui = new firebaseui.auth.AuthUI(firebase.auth());
     }
     var uiConfig = {
-      signInSuccessUrl: "/", // This redirect can be achived by route using callback.
+      signInSuccessUrl: this.$router.options.base, // This redirect can be achived by route using callback.
       signInFlow: "popup",
       signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID]
     };
