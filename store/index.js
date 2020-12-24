@@ -73,7 +73,7 @@ export const state = () => ({
   filteredItems: [],
 
   // constants
-  itemsJsonUrl: process.env.itemsJsonUrl || 'http://localhost:3001/data.json',
+  itemsJsonUrl: process.env.itemsJsonUrl || '',
   jsonUrlHistory: {},
   name: pjson.name,
   version: pjson.version,
@@ -97,7 +97,7 @@ export const state = () => ({
   user: false,
   uid: '', // only for anonymous
   url: 'https://blog.popstas.ru',
-  args: '-m 1000',
+  args: '-m 50',
   serverUrl: process.env.SERVER_URL || false
 });
 

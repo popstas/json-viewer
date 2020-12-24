@@ -26,7 +26,7 @@ module.exports = {
   },
 
   env: {
-    itemsJsonUrl: process.env.JSON_URL || 'http://localhost:3001/data.json',
+    itemsJsonUrl: process.env.JSON_URL,
     SERVER_URL: process.env.SERVER_URL
   },
 

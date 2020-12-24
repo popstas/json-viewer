@@ -21,10 +21,16 @@
     </header>
     <br>
 
-    <div v-if="jsonLoadError">
-      <div class="msg danger">Failed to load {{ itemsJsonUrl}}</div>
+    <div v-if="itemsJsonUrl">
+      <div v-if="jsonLoadError">
+        <div class="msg danger">Failed to load {{ itemsJsonUrl}}</div>
+      </div>
+      <div v-if="jsonLoading">Loading...</div>
     </div>
-    <div v-if="jsonLoading">Loading...</div>
+    <div v-else>
+      No reports, start <NuxtLink class="el-button el-button--primary" to="/scan">Scan</NuxtLink>
+    </div>
+
     <div v-if="!jsonLoading && !jsonLoadError">
       <el-collapse v-model="openedPanels" class="panels">
 
@@ -568,7 +574,10 @@ export default {
       if (this.q) query.q = this.q;
       if (updateFields) query.fields = this.columns.join(",");
 
-      query.url = this.itemsJsonUrl;
+      // don't add default json url
+      if (this.itemsJsonUrl !== process.env.itemsJsonUrl) {
+        query.url = this.itemsJsonUrl;
+      }
 
       let order = { column: false, ascending: true };
       if (this.$refs.table && this.$refs.table.orderBy.column) {
@@ -763,16 +772,22 @@ export default {
         this.$store.commit("tests", itemsJson.fields);
         this.$store.dispatch("items", itemsJson.items);
 
+        // filter
         const defaultFilter = itemsJson.filters.find(filter => filter.default);
         if (defaultFilter && !this.$route.query["q"]) {
           this.$route.query["q"] = defaultFilter.q;
         }
 
+        // q
         this.$store.dispatch("q", this.$route.query["q"]);
 
+        // columns
         if (forceDefaultColumns) {
           this.setDefaultFields();
         }
+
+        // update url
+        this.updateUrlQuery();
 
         this.jsonLoadError = false;
         this.jsonLoading = false;
