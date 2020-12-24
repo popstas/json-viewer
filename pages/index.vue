@@ -193,6 +193,10 @@ export default {
       return this.$store.state.filterPresets;
     },
 
+    defaultFilter() {
+      return this.filterPresets.find(filter => filter.default) || {};
+    },
+
     columnPresets() {
       return this.$store.state.columnPresets;
     },
@@ -531,8 +535,12 @@ export default {
       // disable on `scan` route
       if ($nuxt.$route.name !== 'index') return;
 
+      // don't add default filter
       let query = {};
-      if (this.q) query.q = this.q;
+      if (this.q && this.q !== this.defaultFilter.q){
+        query.q = this.q;
+      }
+
       if (updateFields) query.fields = this.columns.join(",");
 
       // don't add default json url
@@ -734,9 +742,8 @@ export default {
         this.$store.dispatch("items", itemsJson.items);
 
         // filter
-        const defaultFilter = itemsJson.filters.find(filter => filter.default);
-        if (defaultFilter && !this.$route.query["q"]) {
-          this.$route.query["q"] = defaultFilter.q;
+        if (this.defaultFilter && !this.$route.query["q"]) {
+          this.$route.query["q"] = this.defaultFilter.q;
         }
 
         // q
