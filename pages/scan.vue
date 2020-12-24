@@ -89,6 +89,7 @@ export default {
       available: '',
       pending: '',
       scansTotal: '',
+      isNeedAuth: true,
     };
   },
 
@@ -171,6 +172,13 @@ export default {
       // console.log('res: ', res);
     },
 
+    auth() {
+      if (this.socket.connected && this.$store.state.user?.uid && this.isNeedAuth) {
+        this.isNeedAuth = false;
+        this.socket.emit('auth', this.$store.state.user);
+      }
+    },
+
     submitEvents(key) {
       // console.log('this.socket: ', this.socket);
 
@@ -227,11 +235,12 @@ export default {
     /* Listen for events: */
 
     this.socket.on("connect", () => {
-      this.socket.emit('auth', this.$store.state.user);
+      this.auth();
     });
 
     this.socket.on("disconnect", () => {
       this.log.push('server disconnected');
+      this.isNeedAuth = true;
       this.running = '';
     });
 
@@ -241,7 +250,7 @@ export default {
 
     firebase.auth().onAuthStateChanged(user => {
       // if (!user) user = { uid: 'anon' + Math.random() * 100000}
-      this.socket.emit('auth', this.$store.state.user);
+      this.auth();
       this.submitEvents(this.$store.state.user?.uid || '');
     });
 
