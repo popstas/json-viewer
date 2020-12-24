@@ -1,5 +1,5 @@
 <template>
-  <div class="report-history" v-if="jsonUrlHistoryCount > 1">
+  <div class="report-history" v-if="jsonUrlHistoryCount > 0">
     <el-select class="report-history__sort" v-model="currentJsonSort" size="mini">
       <el-option value="url" label="sort by name">name</el-option>
       <el-option value="added" label="sort by date">date</el-option>
@@ -9,7 +9,7 @@
     <el-select size="mini" class="report-history__select" filterable placeholder="Report URL" v-model="itemsJsonUrl">
       <el-option class="report-history__option"
         v-for="option in options" :key="option.url"
-        :value="option.url">
+        :value="option.url" :label="shortReportUrl(option.url)">
         <a @click.prevent="" class="report-history__value-name" :href="getShareUrl(option.url)">{{ shortReportUrl(option.url) }}</a>
         <span class="report-history__value-date">{{ new Date(option.added).toLocaleString() }}</span>
       </el-option>
