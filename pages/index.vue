@@ -69,7 +69,7 @@
           <ColumnField
             :field="field"
             :checked="$store.getters.fieldExists(field)"
-            @click="toggleField(field)"
+            @click="toggleField(field, false, true)"
             :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
             v-for="field of fieldsWithoutComments"
             :key="field.name"
@@ -454,9 +454,14 @@ export default {
     },
 
     pageTitle() {
-      let title = ["site-audit-seo"];
+      let title = [];
       if (this.q) title.push("q: " + this.q);
-      if (this.fields.length > 0) title.push("fields: " + this.columns);
+
+      if (this.fields.length > 0 && !this.isDefaultFields(this.columns)) {
+        title.push("Fields: " + this.columns);
+      }
+
+      title.push('Results - site-audit-seo');
       return title.join(", ");
     },
 
@@ -543,22 +548,25 @@ export default {
     },
 
     // переключает поле в таблице по клику
-    toggleField(field, add) {
+    toggleField(field, add, updateQuery = false) {
       this.$store.dispatch("toggleField", { field, add });
-      this.updateUrlQuery();
+      if (updateQuery) this.updateUrlQuery(true);
     },
 
     // обновляет выбранные фильтры и колонки в урле
-    updateUrlQuery() {
+    updateUrlQuery(updateFields = false) {
       if (this.routerProcess) return;
       this.routerProcess = true;
       setTimeout(() => {
         this.routerProcess = false;
       }, 100);
 
+      // disable on `scan` route
+      if ($nuxt.$route.name !== 'index') return;
+
       let query = {};
       if (this.q) query.q = this.q;
-      query.fields = this.columns.join(",");
+      if (updateFields) query.fields = this.columns.join(",");
 
       query.url = this.itemsJsonUrl;
 
@@ -575,6 +583,7 @@ export default {
         query.sort = order.column + (order.ascending ? '' : ',-');
       }
 
+      // console.log('route index: updateUrlQuery:', query);
       this.$router.push({ query });
     },
 
@@ -609,12 +618,16 @@ export default {
       }
       // console.log('fields: ', fields);
       this.$store.commit("fields", fields);
-      this.updateUrlQuery();
+      // this.updateUrlQuery();
     },
 
     // поставить из пресета полей
     setPreset(preset) {
+      // console.log('setPreset: ', preset);
       this.setFields(preset.columns);
+
+      const isDefaultPreset = preset.name === 'default';
+      this.updateUrlQuery(!isDefaultPreset);
     },
 
     // индекс поля в массиве по объекту
@@ -680,6 +693,16 @@ export default {
       }
 
       return valueText;
+    },
+
+    arraysEqual(a,b) { return !!a && !!b && !(a<b || b<a); },
+    // TODO: not detect default preset
+    isDefaultFields(columns) {
+      const presets = this.$store.state.columnPresets;
+      const defaultColumns = presets.default ? this.columns.columns : false;
+      if (!defaultColumns) return false;
+
+      return this.arraysEqual(columns, defaultColumns)
     },
 
     setDefaultFields() {
@@ -796,7 +819,8 @@ export default {
 
     // router change event
     this.$router.afterEach((to, from) => {
-      if (!this.routerProcess) {
+      const isIndexRoute = $nuxt.$route.name === 'index';
+      if (!this.routerProcess && isIndexRoute) {
         if (this.$route.query["q"]) {
           this.$store.dispatch("q", this.$route.query["q"]);
         } else this.$store.dispatch("q", "");
@@ -804,6 +828,8 @@ export default {
         this.fieldsInit();
       }
     });
+
+    this.updateUrlQuery();
   },
 
   head() {

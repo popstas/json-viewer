@@ -2,10 +2,10 @@
   <section class="scan__container">
     <el-form :inline="true" class="scan__form" ref="form">
       <el-form-item label="URL">
-        <el-input v-model="url"></el-input>
+        <el-input v-model="url" @keydown.enter.native="sendTask" autofocus></el-input>
       </el-form-item>
       <el-form-item label="Arguments">
-        <el-input v-model="args"></el-input>
+        <el-input v-model="args" @keydown.enter.native="sendTask"></el-input>
       </el-form-item>
       <el-form-item label="Server URL" class="form__server-url">
         <el-input v-model="serverUrl"></el-input>
@@ -80,6 +80,7 @@ export default {
   components: {},
   data() {
     return {
+      routerProcess: false,
       log: [],
       running: '',
       available: '',
@@ -113,15 +114,54 @@ export default {
         this.$store.commit('serverUrl', val);
       }
     },
+
+    pageTitle() {
+      return `Scan url: ${this.url}, args: ${this.args} - site-audit-seo`;
+    },
   },
 
   methods: {
+    // form state to GET params
+    updateUrlQuery(push = false) {
+      if (this.routerProcess) return;
+      this.routerProcess = true;
+      setTimeout(() => {
+        this.routerProcess = false;
+      }, 100);
+
+      let query = {};
+      if (this.url) query.url = this.url;
+      if (this.args) query.args = this.args;
+
+      // console.log('route scan: updateUrlQuery:', query);
+      if (push) this.$router.push({ query });
+      else this.$router.replace({ query });
+    },
+
+    // GET params to form state
+    updateFormFromQuery() {
+      // console.log('updateFormFromQuery: ', this.$route.query);
+      if (this.routerProcess) return;
+      if (this.$route.query["fields"]) return; // ignore params from viewer
+
+      for (let paramName of ['url', 'args', 'serverUrl']) {
+        const val = this.$route.query[paramName];
+        if (val) {
+          if (paramName === 'url' && val.includes('/reports/')) continue;
+          this[paramName] = val;
+        }
+      }
+    },
+
     async sendTask() {
       this.log.splice(0, this.log.length);
       const opts = {
         url: this.url,
         args: this.args
       };
+
+      this.updateUrlQuery(true); // set in url only scanned
+
       console.log("scan:", opts);
       this.socket.emit('scan', opts);
       // const res = await this.$axios.$post(`${this.serverUrl}/scan`, opts);
@@ -130,6 +170,8 @@ export default {
 
     submitEvents(key) {
       console.log('this.socket: ', this.socket);
+
+      // log to "terminal"
       this.socket.on("status" + key, (msg, cb) => {
         console.log(`msg ${key}: ${msg}`);
         this.log.push(msg);
@@ -139,6 +181,7 @@ export default {
         this.log.push(msg);
       });
 
+      // server queue info
       this.socket.on("serverState" + key, (serverState, cb) => {
         // console.log('msg: ', msg);
         for (let name in serverState) {
@@ -147,6 +190,7 @@ export default {
         }
       });
 
+      // scan result
       this.socket.on("result" + key, (data, cb) => {
         const viewerUrl = window.location.origin + this.$router.options.base;
         if (data.json) {
@@ -189,8 +233,20 @@ export default {
       this.submitEvents(this.$store.state.user?.uid || '');
     });
 
-    // submitEvents(user.uid);
+    // router change event
+    this.$router.afterEach((to, from) => {
+      this.updateFormFromQuery();
+    });
 
+    this.updateFormFromQuery(); // update form after localStorage
+  },
+
+  
+  head() {
+    return {
+      title: this.pageTitle
+    }
   }
+
 };
 </script>

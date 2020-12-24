@@ -10,7 +10,7 @@
       <el-option class="report-history__option"
         v-for="option in options" :key="option.url"
         :value="option.url">
-        <a @click.prevent="" class="report-history__value-name" :href="getShareUrl(option.url)">{{ shortReportUrl(option.url) }}}</a>
+        <a @click.prevent="" class="report-history__value-name" :href="getShareUrl(option.url)">{{ shortReportUrl(option.url) }}</a>
         <span class="report-history__value-date">{{ new Date(option.added).toLocaleString() }}</span>
       </el-option>
     </el-select>
