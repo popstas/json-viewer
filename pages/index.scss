@@ -1,8 +1,20 @@
 header {
   min-height: 37px;
+  text-align: left;
+}
+
+.header__menu {
+  display: inline-block;
+}
+.el-header {
+  padding: 0;
+}
+.el-main {
+  padding: 25px 0 0;
 }
 
 .container {
+  padding: 0 8px;
   min-height: 100vh;
   display: block;
   justify-content: center;
@@ -18,8 +30,21 @@ header {
 
 .help-tour-button,
 .display-mode-switch {
-  float: left;
-  margin: 4px 3px 6px 0;
+  // float: left;
+  margin: 0 15px 0 0;
+}
+.display-mode-switch .el-switch__label--left {
+  color: inherit;
+}
+
+.human-columns-switch {
+  .el-checkbox__input.is-checked+.el-checkbox__label{
+    color: inherit;
+  }
+  .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+    background-color: #aaa;
+    border-color: #aaa;
+  }
 }
 
 .filter {
@@ -376,7 +401,7 @@ header {
 
   .table-responsive {
     @media (max-width: 768px) {
-      margin: 0 -15px;
+      margin: 0 -8px;
       width: auto;
     }
     /*@media (max-width: 769px) {

@@ -1,125 +1,129 @@
 <template>
   <section class="container" :class="[ `mode-${displayMode}`]">
-    <v-tour name="introTour" :steps="introTourSteps" :options="{ highlight: true }"></v-tour>
+    <div v-if="!itemsJsonUrl">
+      No reports<br><br>
+      <NuxtLink class="el-button el-button--primary" to="/scan">Scan</NuxtLink>
+    </div>
 
-    <header>
-      <el-button
-        class="help-tour-button"
-        :plain="!isNewUser"
-        :type="isNewUser ? 'primary' : ''" @click="startIntroTour"
-        :size="isNewUser ? '' : 'mini'"
-      >Help tour</el-button>
+    <div v-else>
+      <v-tour name="introTour" :steps="introTourSteps" :options="{ highlight: true }"></v-tour>
 
-      <el-radio-group class="display-mode-switch" v-model="displayMode" size="mini">
-        <el-radio-button label="view">view</el-radio-button>
-        <el-radio-button label="edit">edit</el-radio-button>
-      </el-radio-group>
+      <header>
+        <el-button
+          class="help-tour-button"
+          :plain="!isNewUser"
+          :type="isNewUser ? 'primary' : ''" @click="startIntroTour"
+          :size="isNewUser ? '' : 'mini'"
+        >Help tour</el-button>
 
-      <ReportHistory></ReportHistory>
+        <el-switch class="display-mode-switch"
+          v-model="isEditMode"
+          active-text="edit"
+          inactive-text="view"
+        >
+        </el-switch>
 
-      <div class="total">total: {{ filteredItems.length }}</div>
-    </header>
-    <br>
+        <ReportHistory></ReportHistory>
 
-    <div v-if="itemsJsonUrl">
+        <div class="total">total: {{ filteredItems.length }}</div>
+      </header>
+      <br>
+
       <div v-if="jsonLoadError">
         <div class="msg danger">Failed to load {{ itemsJsonUrl}}</div>
       </div>
       <div v-if="jsonLoading">Loading...</div>
-    </div>
-    <div v-else>
-      No reports, start <NuxtLink class="el-button el-button--primary" to="/scan">Scan</NuxtLink>
-    </div>
 
-    <div v-if="!jsonLoading && !jsonLoadError">
-      <el-collapse v-model="openedPanels" class="panels">
+      <div v-if="!jsonLoading && !jsonLoadError">
+        <el-collapse v-model="openedPanels" class="panels">
 
-        <!-- Тулбар -->
-        <Panel title="columns explorer" icon="el-icon-folder-opened" name="columns">
-          <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
-        </Panel>
+          <!-- Тулбар -->
+          <Panel title="columns explorer" icon="el-icon-folder-opened" name="columns">
+            <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
+          </Panel>
 
-        <!-- Фильтры -->
-        <Panel title="filters" icon="el-icon-search" name="filter_presets">
-          <div class="filter-presets">
-            <FilterPresetButton
-              :preset="preset"
-              v-for="preset in filterPresets"
-              :key="preset.name"
-              toggle
-            ></FilterPresetButton>
-          </div>
+          <!-- Фильтры -->
+          <Panel title="filters" icon="el-icon-search" name="filter_presets">
+            <div class="filter-presets">
+              <FilterPresetButton
+                :preset="preset"
+                v-for="preset in filterPresets"
+                :key="preset.name"
+                toggle
+              ></FilterPresetButton>
+            </div>
 
-          <QueryInput class="filter__query"></QueryInput>
-        </Panel>
+            <QueryInput class="filter__query"></QueryInput>
+          </Panel>
 
-        <!-- Наборы колонок -->
-        <Panel title="column presets" icon="el-icon-menu" name="column_presets">
-          <div class="column-presets">
-            <ColumnPresetButton
-              :preset="preset"
-              @click="setPreset(preset);"
-              v-for="preset in columnPresets"
-              :key="preset.name"
-            ></ColumnPresetButton>
-          </div>
-        </Panel>
+          <!-- Наборы колонок -->
+          <Panel title="column presets" icon="el-icon-menu" name="column_presets">
+            <div class="column-presets">
+              <ColumnPresetButton
+                :preset="preset"
+                @click="setPreset(preset);"
+                v-for="preset in columnPresets"
+                :key="preset.name"
+              ></ColumnPresetButton>
+            </div>
+          </Panel>
 
-        <!-- Сводка по таблице -->
-        <Panel title="filtered stats" icon="el-icon-s-data" name="stats">
-          <Stats></Stats>
-        </Panel>
+          <!-- Сводка по таблице -->
+          <Panel title="filtered stats" icon="el-icon-s-data" name="stats">
+            <Stats></Stats>
+          </Panel>
 
-        <!-- Выбранные колонки -->
-        <Panel title="current columns" icon="el-icon-caret-right" name="current_columns" class="current-columns">
-          <ColumnField
-            :field="field"
-            :checked="$store.getters.fieldExists(field)"
-            @click="toggleField(field, false, true)"
-            :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
-            v-for="field of fieldsWithoutComments"
-            :key="field.name"
-          ></ColumnField>
-        </Panel>
+          <!-- Выбранные колонки -->
+          <Panel title="current columns" icon="el-icon-caret-right" name="current_columns" class="current-columns">
+            <ColumnField
+              :field="field"
+              :checked="$store.getters.fieldExists(field)"
+              @click="toggleField(field, false, true)"
+              :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
+              v-for="field of fieldsWithoutComments"
+              :key="field.name"
+            ></ColumnField>
+          </Panel>
 
-      </el-collapse>
+        </el-collapse>
 
-      <div><br>
-        total: {{ filteredItems.length }}
+        <div><br>
+          total: {{ filteredItems.length }}
+        </div>
+
+        <div class="table-actions">
+          <el-checkbox class="human-columns-switch" v-model="showHumanColumns">
+            Human column names
+          </el-checkbox>
+
+          <button class="btn btn-excel" @click="getXlsx">
+            <icon name="file-excel"></icon> xlsx
+          </button>
+        </div>
+
+        <v-client-table
+          v-if="filteredItems.length > 0"
+          :columns="columns"
+          :data="filteredItems"
+          :options="tableOptions"
+          @row-click="rowClick"
+          @sorted="updateUrlQuery"
+          ref="table"
+        >
+          <template slot="child_row" slot-scope="props">
+            <ItemDetails :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
+          </template>
+
+          <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
+          <div
+            v-for="colName in columns /*['url', 'domain_idn', 'favicon', 'updated_time']*/"
+            :key="colName"
+            :slot="colName"
+            slot-scope="props"
+            v-html="getColumnValue(props.row, colName)"
+          ></div>
+        </v-client-table>
       </div>
-
-      <div class="table-actions">
-        <el-checkbox class="human-columns-switch" v-model="showHumanColumns">
-          Human column names
-        </el-checkbox>
-
-        <button class="btn btn-excel" @click="getXlsx">
-          <icon name="file-excel"></icon> xlsx
-        </button>
-      </div>
-
-      <v-client-table
-        v-if="filteredItems.length > 0"
-        :columns="columns"
-        :data="filteredItems"
-        :options="tableOptions"
-        @row-click="rowClick"
-        @sorted="updateUrlQuery"
-        ref="table"
-      >
-        <template slot="child_row" slot-scope="props">
-          <ItemDetails :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
-        </template>
-
-        <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
-        <div
-          v-for="colName in columns /*['url', 'domain_idn', 'favicon', 'updated_time']*/"
-          :key="colName"
-          :slot="colName"
-          slot-scope="props"
-          v-html="getColumnValue(props.row, colName)"
-        ></div>
-      </v-client-table>
     </div>
   </section>
 </template>
@@ -161,69 +165,6 @@ export default {
       jsonLoading: true,
       openedPanels: [],
       sort: {},
-      introTourSteps: [ // tolang
-        /* {
-          target: '.report-history',
-          header: {
-            title: 'Get Started',
-          },
-          content: `Current loaded report's JSON file, history of last reports. Sort by name, added date or used date`,
-          params: {
-            placement: 'top' // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
-          },
-          offset: -150,
-        }, */
-        {
-          target: '.column-presets__button_expand-all',
-          content: `Show all fields list.`,
-          offset: -100,
-        },
-        {
-          target: '.column-presets__button_show-all',
-          content: `Add all fields to table (or remove).`,
-          offset: -200,
-        },
-        {
-          target: '.field-add-input',
-          content: `Search field by name and add to table.`,
-          offset: -200,
-        },
-        {
-          target: '.filter__query',
-          content: `Query filter, with autocomplete, regexp, and/or conditionals.`,
-          offset: -200,
-        },
-        {
-          target: '.filter-presets',
-          content: `Use filters to quick get needed data.`,
-          offset: -200,
-        },
-        {
-          target: '.column-presets',
-          content: `Use column presets for get scoped columns.`,
-          offset: -200,
-        },
-        {
-          target: '.table-stats',
-          content: `Stats by filtered rows: average, non-unique, enum values.`,
-          offset: -200,
-        },
-        {
-          target: '.current-columns',
-          content: `Quick remove current table columns.`,
-          offset: -200,
-        },
-        {
-          target: '.VueTables__search-field',
-          content: `Search by main column`,
-          offset: -200,
-        },
-        {
-          target: '.VueTables__row ',
-          content: `Click to row for open item details `,
-          offset: -200,
-        },
-      ]
     };
   },
 
@@ -256,12 +197,32 @@ export default {
       return this.$store.state.columnPresets;
     },
 
+    introTourSteps() {
+      let i = 1;
+      let total = this.$store.state.introTourSteps.length;
+
+      return this.$store.state.introTourSteps.map(step => {
+        step.header = { title: `${i} / ${total}` };
+        i++;
+        return step;
+      });
+    },
+
     displayMode: {
       get() {
         return this.$store.state.displayMode;
       },
       set(val) {
         this.$store.commit('displayMode', val);
+      }
+    },
+
+    isEditMode: {
+      get() {
+        return this.$store.state.displayMode === 'edit';
+      },
+      set(val) {
+        this.displayMode = val ? 'edit' : 'view';
       }
     },
 
@@ -477,8 +438,9 @@ export default {
   },
 
   watch: {
-    q() {
+    q(q) {
       this.updateUrlQuery();
+      if (q) this.openFilterPanelIfNeed();
 
       // добавление колонок, которые есть в фильтре
       const parts = this.q.split("&");
@@ -493,8 +455,7 @@ export default {
     },
 
     displayMode(val) {
-      if (val == 'view') this.openedPanels = [];
-      if (val == 'edit') this.openedPanels = ['columns', 'filter_presets', 'column_presets', 'stats'];
+      this.changeDisplayMode(val);
     }
   },
 
@@ -798,6 +759,15 @@ export default {
       }
     },
 
+    changeDisplayMode(val) {
+      if (val == 'view') this.openedPanels = [];
+      if (val == 'edit') this.openedPanels = ['columns', 'filter_presets', 'column_presets', 'stats'];
+    },
+
+    openFilterPanelIfNeed() {
+      if (!this.openedPanels.includes('filter_presets')) this.openedPanels.push('filter_presets');
+    },
+
     rowClick(event) {
       this.$refs.table.toggleChildRow(event.row.id);
     },
@@ -810,9 +780,7 @@ export default {
 
   created() {
     // приходит из FilterPresetButton
-    this.$nuxt.$on("inputFocus", () => {
-      if (!this.openedPanels.includes('filter_presets')) this.openedPanels.push('filter_presets');
-    });
+    this.$nuxt.$on("inputFocus", this.openFilterPanelIfNeed);
 
     this.$nuxt.$on("sort", (sort) => {
       this.sort = this.sortStrToObj(sort);
@@ -844,6 +812,8 @@ export default {
       }
     });
 
+    this.changeDisplayMode(this.displayMode);
+    if (this.q) this.openFilterPanelIfNeed(); // after displayMode
     this.updateUrlQuery();
   },
 

@@ -1,10 +1,10 @@
 <template>
   <div>
     <div id="panel">
-      <el-header height="64px">
+      <el-header height="65px">
         <el-row>
           <el-col :span="12">
-            <el-menu :default-active="activeIndex" class="" mode="horizontal" @select="handleSelect">
+            <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" class="header__menu">
               <el-menu-item v-if="$store.state.serverUrl" index="1">Scan</el-menu-item>
               <el-menu-item index="2">Results</el-menu-item>
             </el-menu>
@@ -44,7 +44,7 @@ body {
   overflow-x: auto;
 }
 footer {
-  padding: 20px;
+  padding: 20px 8px;
 }
 
 *, *:before, *:after {
@@ -108,7 +108,12 @@ export default {
   components: {Profile},
   computed: {
     activeIndex() {
-      return $nuxt.$route.name === 'scan' ? '1' : '2';
+      const dict = {
+        scan: '1',
+        index: '2'
+      }
+      const val = dict[$nuxt.$route.name] || '0';
+      return val;
     }
   },
   methods: {

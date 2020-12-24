@@ -1,18 +1,31 @@
 <template>
   <section class="scan__container">
-    <el-form :inline="true" class="scan__form" ref="form">
+    <el-form :inline="isInlineForm" class="scan__form" ref="form">
+
       <el-form-item label="URL">
         <el-input v-model="url" @keydown.enter.native="sendTask" autofocus></el-input>
       </el-form-item>
+
       <el-form-item label="Arguments">
         <el-input v-model="args" @keydown.enter.native="sendTask"></el-input>
       </el-form-item>
-      <el-form-item label="Server URL" class="form__server-url">
-        <el-input v-model="serverUrl"></el-input>
-      </el-form-item>
+
       <el-form-item>
         <el-button type="primary" @click="sendTask">Scan</el-button>
       </el-form-item>
+
+      <el-collapse v-model="openedPanels" class="panels">
+        <Panel
+          name="settings"
+          title="Settings"
+          icon="el-icon-setting"
+        >
+          <el-form-item label="Server URL" class="form__server-url">
+            <el-input v-model="serverUrl"></el-input>
+          </el-form-item>
+        </Panel>
+      </el-collapse>
+      
     </el-form>
 
     <ul class="scan__log"
@@ -22,7 +35,7 @@
       <li v-for="(line, index) in log" :key="index" v-html="line"></li>
     </ul>
 
-    <template v-if="running !== ''">
+    <div class="scan__server-state" v-if="running !== ''">
       <h3>Server state:</h3>
       <ul class="server-state">
         <li>running: {{ running }}</li>
@@ -30,23 +43,29 @@
         <li>pending: {{ pending }}</li>
         <li>total scanned: {{ scansTotal }}</li>
       </ul>
-    </template>
+    </div>
 
   </section>
 </template>
 
 <style lang="scss">
+  .scan__container {
+    padding: 0 8px;
+
+    .el-collapse {
+      border: none;
+      margin-top: -25px;
+    }
+  }
+
   .scan__form {
+    // padding: 0 8px;
     // margin-top: 30px;
     max-width: 1200px;
 
     input {
       padding: 0 10px;
       min-width: 270px;
-    }
-
-    .form__server-url input {
-      min-width: 120px;
     }
   }
 
@@ -57,8 +76,14 @@
     list-style: none;
     margin: 0;
     padding: 5px 10px;
-    max-height: calc(100vh - 150px);
+    max-height: calc(100vh - 170px);
     overflow-x: auto;
+
+    @media (max-width: 768px) {
+      margin: 0 -8px;
+      font-size: 10px;
+      line-height: 1em;
+    }
 
     a {
       color: #9ec8f0;
@@ -75,12 +100,17 @@
       border: none;
     }
   }
+
+  .scan__server-state {
+    padding: 8px 0;
+  }
 </style>
 
 <script>
+import Panel from "~/components/Panel";
 import firebase from "firebase";
 export default {
-  components: {},
+  components: { Panel },
   data() {
     return {
       routerProcess: false,
@@ -90,6 +120,7 @@ export default {
       pending: '',
       scansTotal: '',
       isNeedAuth: true,
+      openedPanels: [],
     };
   },
 
@@ -122,6 +153,10 @@ export default {
     pageTitle() {
       return `Scan url: ${this.url}, args: ${this.args} - site-audit-seo`;
     },
+
+    isInlineForm() {
+      return window.innerWidth > 768;
+    }
   },
 
   methods: {
@@ -206,7 +241,7 @@ export default {
         const viewerUrl = window.location.origin + this.$router.options.base;
         if (data.json) {
           const url = viewerUrl + '?url=' + data.json;
-          this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
+          this.log.push(`result: <a href="${url}">${url}</a>`);
           this.$store.commit('itemsJsonUrl', data.json);
         }
         if (data.name) {
@@ -217,7 +252,7 @@ export default {
           }
           const jsonUrl = `${baseUrl}/${data.name}`;
           const url = `${viewerUrl}?url=${jsonUrl}`;
-          this.log.push(`result: <a target="_blank" href="${url}">${url}</a>`);
+          this.log.push(`result: <a href="${url}">${url}</a>`);
           this.$store.commit('itemsJsonUrl', jsonUrl);
         }
       });

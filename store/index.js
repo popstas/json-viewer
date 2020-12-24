@@ -98,7 +98,76 @@ export const state = () => ({
   uid: '', // only for anonymous
   url: 'https://blog.popstas.ru',
   args: '-m 50',
-  serverUrl: process.env.SERVER_URL || false
+  serverUrl: process.env.SERVER_URL || false,
+
+  introTourSteps: [ // tolang
+    /* {
+      target: '.report-history',
+      header: {
+        title: 'Get Started',
+      },
+      content: `Current loaded report's JSON file, history of last reports. Sort by name, added date or used date`,
+      params: {
+        placement: 'top' // Any valid Popper.js placement. See https://popper.js.org/popper-documentation.html#Popper.placements
+      },
+      offset: -150,
+    }, */
+    {
+      target: '.display-mode-switch',
+      content: `Open all panels below.`,
+      offset: -300,
+    },
+    {
+      target: '.column-presets__button_expand-all',
+      content: `Show all fields list.`,
+      offset: -200,
+    },
+    {
+      target: '.column-presets__button_show-all',
+      content: `Add all fields to table (or remove).`,
+      offset: -200,
+    },
+    {
+      target: '.field-add-input',
+      content: `Search field by name and add to table.`,
+      offset: -200,
+    },
+    {
+      target: '.filter-presets',
+      content: `Use filters to quick get needed data.`,
+      offset: -200,
+    },
+    {
+      target: '.filter__query',
+      content: `Query filter, with autocomplete, regexp, and/or conditionals.`,
+      offset: -200,
+    },
+    {
+      target: '.column-presets',
+      content: `Use column presets for get scoped columns.`,
+      offset: -200,
+    },
+    {
+      target: '.table-stats',
+      content: `Stats by filtered rows: average, non-unique, enum values.`,
+      offset: -200,
+    },
+    {
+      target: '.current-columns',
+      content: `Quick remove current table columns.`,
+      offset: -200,
+    },
+    {
+      target: '.VueTables__search-field',
+      content: `Search by main column`,
+      offset: -200,
+    },
+    {
+      target: '.VueTables__row ',
+      content: `Click to row for open item details `,
+      offset: -200,
+    },
+  ],
 });
 
 export const getters = {

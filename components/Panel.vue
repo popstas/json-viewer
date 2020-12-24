@@ -23,11 +23,7 @@
 export default {
   components: {},
   props: ["icon", "title", "name"],
-  computed: {
-    tests() {
-      return this.$store.state.tests;
-    },
-  },
+  computed: {},
   methods: {},
 };
 </script>

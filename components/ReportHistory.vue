@@ -1,10 +1,10 @@
 <template>
   <div class="report-history" v-if="jsonUrlHistoryCount > 1">
-    <el-radio-group class="report-history__sort" v-model="currentJsonSort" size="mini">
-      <el-radio-button label="url">name</el-radio-button>
-      <el-radio-button label="added">date</el-radio-button>
-      <el-radio-button label="used">last used</el-radio-button>
-    </el-radio-group>
+    <el-select class="report-history__sort" v-model="currentJsonSort" size="mini">
+      <el-option value="url" label="sort by name">name</el-option>
+      <el-option value="added" label="sort by date">date</el-option>
+      <el-option value="used" label="sort by last used">last used</el-option>
+    </el-select>
 
     <el-select size="mini" class="report-history__select" filterable placeholder="Report URL" v-model="itemsJsonUrl">
       <el-option class="report-history__option"
@@ -17,8 +17,8 @@
 
     <button :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
 
-    <a :href="itemsJsonUrl" target="_blank">json</a>,
-    <a :href="getShareUrl(itemsJsonUrl)" target="_blank">share</a>
+    <a :href="getShareUrl(itemsJsonUrl)" target="_blank">share</a>,
+    <a :href="itemsJsonUrl" target="_blank">json</a>
     <template v-if="$router.options.base == '/'">
       , <a  :href="shareProdUrl" target="_blank">prod</a>
     </template>
@@ -27,14 +27,21 @@
 
 <style lang="scss">
 .report-history {
+  display: inline-block;
+
   &__sort {
+    width: 128px;
     margin: 4px 3px 0 0;
 
-    .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+    input {
+      padding-left: 5px;
+    }
+
+    /* .el-radio-button__orig-radio:checked+.el-radio-button__inner {
       background-color: #ccc;
       border-color: #ccc;
       box-shadow: -1px 0 0 0 #ccc;
-    }
+    } */
   }
 
   &__select {

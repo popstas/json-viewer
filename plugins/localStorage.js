@@ -9,6 +9,7 @@ export default ({store}) => {
       'openGroups',
       'showHumanColumns',
       'currentJsonSort',
+      'displayMode',
       'uid',
       'url',
       'args',

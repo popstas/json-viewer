@@ -22,6 +22,11 @@
         @click="setPreset({name: 'none', columns: [$store.state.defaultField]});"
       >✖ <span>remove all columns</span></button>
 
+      <button v-if="$store.state.columnPresets.default"
+        class="column-presets__button column-presets__button_icon"
+        @click="setPreset($store.state.columnPresets.default);"
+      ><span>default columns</span></button>
+
       <!-- <button
         class="column-presets__button"
         @click="getCSV"

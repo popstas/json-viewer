@@ -5,11 +5,18 @@ module.exports = {
     'semantic-ui-vue/nuxt',
     '@nuxtjs/axios',
     'nuxt-socket-io',
+    '@nuxtjs/style-resources',
   ],
 
   css: [
     'element-ui/lib/theme-chalk/index.css'
   ],
+
+  styleResources: {
+    scss: [
+        '~/pages/index.scss',
+    ]
+  },
 
   plugins: [
     '@/plugins/element-ui',
