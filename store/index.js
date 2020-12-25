@@ -97,6 +97,7 @@ export const state = () => ({
   user: false,
   uid: '', // only for anonymous
   url: 'https://blog.popstas.ru',
+  urls: '',
   args: '-m 50',
   serverUrl: process.env.SERVER_URL || false,
   log: [],
@@ -436,6 +437,9 @@ export const mutations = {
 
   url(state, newValue) {
     state.url = newValue;
+  },
+  urls(state, newValue) {
+    state.urls = newValue;
   },
   args(state, newValue) {
     state.args = newValue;

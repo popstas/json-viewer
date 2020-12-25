@@ -12,6 +12,7 @@ export default ({store}) => {
       'displayMode',
       'uid',
       'url',
+      'urls',
       'args',
       'serverUrl',
       'log'],

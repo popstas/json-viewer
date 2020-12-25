@@ -2,7 +2,28 @@
   <section class="scan__container">
     <el-form :inline="isInlineForm" class="scan__form" ref="form">
 
-      <el-form-item label="URL">
+      <el-form-item>
+        <el-switch class="urls-mode-switch"
+          v-model="isUrls"
+          active-text="urls"
+          inactive-text="site"
+        >
+        </el-switch>
+      </el-form-item>
+
+      <el-form-item v-if="isUrls">
+        <el-link
+          type="primary" v-if="!urlsShow"
+          @click.native.prevent="urlsShow = !urlsShow"
+          v-html="`show urls (${urlList.length})`"
+          :title="urlList.join('\n')"
+        ></el-link>
+
+        <el-input v-if="urlsShow" v-model="urls" type="textarea" :rows="10" wrap="soft" autofocus :autosize="{ minRows: 1, maxRows: 10}"
+          placeholder="One line - one URL"
+        ></el-input>
+      </el-form-item>
+      <el-form-item v-if="!isUrls">
         <el-input v-model="url" @keydown.enter.native="sendTask" autofocus></el-input>
       </el-form-item>
 
@@ -67,6 +88,12 @@
       padding: 0 10px;
       min-width: 270px;
     }
+
+    textarea {
+      min-width: 270px;
+      white-space: nowrap;
+      overflow-x: auto;
+    }
   }
 
   .scan__log {
@@ -120,6 +147,8 @@ export default {
       scansTotal: '',
       isNeedAuth: true,
       openedPanels: [],
+      isUrls: false,
+      urlsShow: false,
     };
   },
 
@@ -134,6 +163,14 @@ export default {
       },
       set(val) {
         this.$store.commit('url', val);
+      }
+    },
+    urls: {
+      get() {
+        return this.$store.state.urls;
+      },
+      set(val) {
+        this.$store.commit('urls', val);
       }
     },
     args: {
@@ -159,6 +196,20 @@ export default {
 
     isInlineForm() {
       return window.innerWidth > 768;
+    },
+
+    urlList() {
+      return this.urls.
+        split(/[,\s]/).
+        map(url => url.trim()).
+        filter(url => url);
+    },
+  },
+
+  watch: {
+    isUrls(val) {
+      // console.log('val: ', val);
+      if (!val) this.urlsShow = true;
     }
   },
 
@@ -178,7 +229,14 @@ export default {
       }, 100);
 
       let query = {};
-      if (this.url) query.url = this.url;
+
+      if (this.isUrls) {
+        if (this.urlList.length > 0) query.urls = this.urlList.join(',');
+        if (query.urls.length > 5000) delete(query.urls);
+      } else {
+        if (this.url) query.url = this.url;
+      }
+
       if (this.args) query.args = this.args;
 
       // console.log('route scan: updateUrlQuery:', query);
@@ -192,10 +250,16 @@ export default {
       if (this.routerProcess) return;
       if (this.$route.query["fields"]) return; // ignore params from viewer
 
-      for (let paramName of ['url', 'args', 'serverUrl']) {
-        const val = this.$route.query[paramName];
+      for (let paramName of ['url', 'urls', 'args', 'serverUrl']) {
+        let val = this.$route.query[paramName];
         if (val) {
           if (paramName === 'url' && val.includes('/reports/')) continue;
+          if (paramName === 'urls') {
+            val = val.split(',').join('\n');
+            this.isUrls = true;
+            this.urlsShow = false;
+          }
+
           this[paramName] = val;
         }
       }
@@ -203,15 +267,22 @@ export default {
 
     async sendTask() {
       this.$store.commit('log', []); // clear log
+      this.urlsShow = false;
+
       const opts = {
         url: this.url,
         args: this.args
       };
 
+      if (this.isUrls && this.urlList.length > 0) {
+        opts.args += ' --urls ' + this.urlList.join(',');
+      }
+
       this.updateUrlQuery(true); // set in url only scanned
 
       console.log("scan:", opts);
       this.socket.emit('scan', opts);
+
       // const res = await this.$axios.$post(`${this.serverUrl}/scan`, opts);
       // console.log('res: ', res);
     },
