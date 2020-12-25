@@ -1,3 +1,19 @@
+## [3.0.2](https://github.com/viasite/site-audit-seo-viewer/compare/v3.0.1...v3.0.2) (2020-12-25)
+
+
+### Bug Fixes
+
+* link to changelog in footer, fix login link, fix header on mobile ([5b6d4ed](https://github.com/viasite/site-audit-seo-viewer/commit/5b6d4ed3c8c3a7b01f9fc62c402cf79bc9e11981))
+* persistent scan log ([32b4841](https://github.com/viasite/site-audit-seo-viewer/commit/32b4841505be90edd81eaf2309a04d02fa401a4c))
+
+
+### Features
+
+* **scan:** add main scan settings to ui ([fc41d6f](https://github.com/viasite/site-audit-seo-viewer/commit/fc41d6fbfc2735eec886552a7bc7c547a8c8b9cf))
+* **scan:** scan url list, --urls ([d2db4a3](https://github.com/viasite/site-audit-seo-viewer/commit/d2db4a36b26cbdba83316e10be7c8e6f3906e62d))
+
+
+
 ## [3.0.1](https://github.com/viasite/site-audit-seo-viewer/compare/v3.0.0...v3.0.1) (2020-12-24)
 
 
