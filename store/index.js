@@ -98,7 +98,7 @@ export const state = () => ({
   uid: '', // only for anonymous
   url: 'https://blog.popstas.ru',
   urls: '',
-  args: '-m 50',
+  args: '--lang en',
   serverUrl: process.env.SERVER_URL || false,
   log: [],
 

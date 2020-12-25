@@ -24,26 +24,57 @@
         ></el-input>
       </el-form-item>
       <el-form-item v-if="!isUrls">
-        <el-input v-model="url" @keydown.enter.native="sendTask" autofocus></el-input>
-      </el-form-item>
-
-      <el-form-item label="Arguments">
-        <el-input v-model="args" @keydown.enter.native="sendTask"></el-input>
+        <el-input v-model="url" @keydown.enter.native="sendTask" autofocus class="form__url"></el-input>
       </el-form-item>
 
       <el-form-item>
         <el-button type="primary" @click="sendTask">Scan</el-button>
       </el-form-item>
+    </el-form>
 
+    <el-form class="scan__form-settings">
       <el-collapse v-model="openedPanels" class="panels">
         <Panel
           name="settings"
           title="Settings"
           icon="el-icon-setting"
         >
-          <el-form-item label="Server URL" class="form__server-url">
+          <el-form-item label="Preset">
+            <el-select v-model="form.preset">
+              <el-option
+                v-for="preset of ['minimal', 'seo', 'headers', 'parse', 'lighthouse', 'lighthouse-all']" :key="preset"
+                :value="preset"></el-option>
+            </el-select>
+          </el-form-item>
+
+          <el-form-item label="Scan Lighthouse">
+            <el-switch v-model="form.lighthouse"></el-switch>
+          </el-form-item>
+
+          <el-form-item label="Max depth">
+            <el-input-number v-model="form.depth" :min="1" :max="100"></el-input-number>
+          </el-form-item>
+
+          <el-form-item label="Max requests">
+            <el-input-number v-model="form.maxRequests" :min="0"></el-input-number>
+          </el-form-item>
+
+          <el-form-item label="Ignore robots.txt">
+            <el-switch v-model="form.ignoreRobotsTxt"></el-switch>
+          </el-form-item>
+
+          <el-form-item label="Follow sitemap.xml">
+            <el-switch v-model="form.followXmlSitemap"></el-switch>
+          </el-form-item>
+
+          <el-form-item label="Arguments">
+            <el-input v-model="args" @keydown.enter.native="sendTask"></el-input>
+          </el-form-item>
+
+          <el-form-item label="Server URL">
             <el-input v-model="serverUrl"></el-input>
           </el-form-item>
+
         </Panel>
       </el-collapse>
       
@@ -86,13 +117,17 @@
 
     input {
       padding: 0 10px;
-      min-width: 270px;
+      // min-width: 270px;
     }
 
     textarea {
-      min-width: 270px;
+      min-width: 360px;
       white-space: nowrap;
       overflow-x: auto;
+    }
+
+    .form__url {
+      min-width: 360px;
     }
   }
 
@@ -136,6 +171,40 @@
 <script>
 import Panel from "~/components/Panel";
 import firebase from "firebase";
+
+const defaultForm = {
+  preset: 'seo',
+  depth: 10,
+  maxRequests: 50,
+  ignoreRobotsTxt: false,
+  followXmlSitemap: false,
+  lighthouse: false,
+};
+
+const controlsMap = {
+  preset: {
+    arg: '--preset',
+  },
+  depth: {
+    arg: '-d'
+  },
+  maxRequests: {
+    arg: '-m'
+  },
+  ignoreRobotsTxt: {
+    arg: '--ignore-robots-txt',
+    type: 'boolean',
+  },
+  followXmlSitemap: {
+    arg: '--follow-xml-sitemap',
+    type: 'boolean',
+  },
+  lighthouse: {
+    arg: '--lighthouse',
+    type: 'boolean',
+  },
+};
+
 export default {
   components: { Panel },
   data() {
@@ -149,6 +218,7 @@ export default {
       openedPanels: [],
       isUrls: false,
       urlsShow: false,
+      form: {...defaultForm},
     };
   },
 
@@ -237,7 +307,8 @@ export default {
         if (this.url) query.url = this.url;
       }
 
-      if (this.args) query.args = this.args;
+      const args = this.buildArgs(false);
+      if (args) query.args = args;
 
       // console.log('route scan: updateUrlQuery:', query);
       if (push) this.$router.push({ query });
@@ -259,10 +330,90 @@ export default {
             this.isUrls = true;
             this.urlsShow = false;
           }
+          if (paramName === 'args') {
+            const unknownArgs = this.parseKnownArgs(val);
+            // console.log('unknownArgs: ', unknownArgs);
+            val = unknownArgs.join(' ');
+          }
 
           this[paramName] = val;
         }
       }
+    },
+
+    // update this.form, return unknown args array
+    parseKnownArgs(args) {
+      args = args.trim();
+      const argNameMap = {};
+      for (let name in controlsMap) {
+        const conf = controlsMap[name];
+        // console.log('name: ', name);
+        // console.log('conf: ', conf);
+        argNameMap[conf.arg] = name;
+      }
+
+      const unknownArgs = [];
+      const result = {};
+      const parts = args.split(' ');
+      let lastVal = false;
+
+      for (let i in parts) {
+        if (lastVal) {
+          lastVal = false;
+          continue;
+        }
+
+        const part = parts[i];
+        const formItemName = argNameMap[part];
+        if (!formItemName) {
+          unknownArgs.push(part);
+          continue;
+        }
+        const defaultVal = defaultForm[formItemName];
+
+        const conf = controlsMap[formItemName];
+
+        // --lighthouse
+        if (conf.type === 'boolean') this.form[formItemName] = true;
+        else {
+          const val = parts[parseInt(i) + 1];
+          // console.log('formItemName: ', formItemName);
+          // console.log('val: ', val);
+          if (val) {
+            this.form[formItemName] = val;
+            lastVal = true;
+          }
+        }
+      }
+
+      return unknownArgs;
+    },
+
+    buildArgs(withDefault = true) {
+      let args = this.args;
+
+      if (this.isUrls && this.urlList.length > 0) {
+        args += ' --urls ' + this.urlList.join(',');
+      }
+
+      // args from form
+      for (let name in controlsMap) {
+        const conf = controlsMap[name];
+        const val = this.form[name];
+
+        // ignore default
+        if (!withDefault && val === defaultForm[name]) continue;
+
+        if (conf.type === 'boolean') {
+          if (!val) continue;
+          args += ' ' + conf.arg;
+        }
+        else {
+          args += ` ${conf.arg} ${val}`;
+        }
+      }
+
+      return args;
     },
 
     async sendTask() {
@@ -271,12 +422,9 @@ export default {
 
       const opts = {
         url: this.url,
-        args: this.args
+        args: this.buildArgs()
       };
 
-      if (this.isUrls && this.urlList.length > 0) {
-        opts.args += ' --urls ' + this.urlList.join(',');
-      }
 
       this.updateUrlQuery(true); // set in url only scanned
 
