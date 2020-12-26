@@ -29,6 +29,7 @@
 
       <el-form-item>
         <el-button :disabled="!connected" type="primary" @click="sendTask">Scan</el-button>
+        <el-button :disabled="!connected" type="primary" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
       </el-form-item>
     </el-form>
 
@@ -155,6 +156,10 @@
       margin: 0 -8px;
       font-size: 10px;
       line-height: 1em;
+    }
+
+    @media (min-height: 768px) {
+      max-height: 600px;
     }
 
     a {
@@ -422,7 +427,7 @@ export default {
       return unknownArgs;
     },
 
-    buildArgs(withDefault = true) {
+    buildArgs(withDefault = true, overrides = {}) {
       let args = this.args;
 
       if (this.isUrls && this.urlList.length > 0) {
@@ -432,7 +437,7 @@ export default {
       // args from form
       for (let name in controlsMap) {
         const conf = controlsMap[name];
-        const val = this.form[name];
+        const val = overrides[name] || this.form[name];
 
         // ignore default
         if (!withDefault && val === defaultForm[name]) continue;
@@ -454,14 +459,14 @@ export default {
       if (pindex !== -1) this.openedPanels.splice(pindex, 1);
     },
 
-    async sendTask() {
+    async sendTask(overrides = {}) {
       this.$store.commit('log', []); // clear log
       this.urlsShow = false;
       this.closeSettings();
 
       const opts = {
         url: this.url,
-        args: this.buildArgs()
+        args: this.buildArgs(true, overrides)
       };
 
 
