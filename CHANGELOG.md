@@ -1,3 +1,12 @@
+# [3.1.0](https://github.com/viasite/site-audit-seo-viewer/compare/v3.0.2...v3.1.0) (2020-12-26)
+
+
+### Bug Fixes
+
+* **scan:** close settings on scan ([e29880a](https://github.com/viasite/site-audit-seo-viewer/commit/e29880a7ad42c5c2f7814fc8f20db5f9743fce4b))
+
+
+
 ## [3.0.2](https://github.com/viasite/site-audit-seo-viewer/compare/v3.0.1...v3.0.2) (2020-12-25)
 
 
