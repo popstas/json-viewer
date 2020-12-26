@@ -28,7 +28,7 @@
       </el-form-item>
 
       <el-form-item>
-        <el-button type="primary" @click="sendTask">Scan</el-button>
+        <el-button :disabled="!connected" type="primary" @click="sendTask">Scan</el-button>
       </el-form-item>
     </el-form>
 
@@ -87,15 +87,24 @@
       <li v-for="(line, index) in log" :key="index" v-html="line"></li>
     </ul>
 
-    <div class="scan__server-state" v-if="running !== ''">
+    <el-row class="scan__server-state" v-if="running !== ''">
       <h3>Server state:</h3>
-      <ul class="server-state">
-        <li>running: {{ running }}</li>
-        <!-- <li>available: {{ available }}</li> -->
-        <li>pending: {{ pending }}</li>
-        <li>total scanned: {{ scansTotal }}</li>
-      </ul>
-    </div>
+      <el-col :span="12">
+        <ul class="server-state">
+          <li>running: {{ running }}</li>
+          <!-- <li>available: {{ available }}</li> -->
+          <li>pending: {{ pending }}</li>
+        </ul>
+      </el-col>
+      <el-col :span="12">
+        <ul class="server-state">
+          <li>total scans: {{ scansTotal }} (all time: {{ scansTotalAll }})</li>
+          <li>total pages: {{ pagesTotal }} (all time: {{ pagesTotalAll }})</li>
+          <li>uptime: {{ uptimeHuman }}</li>
+          <li>reboots: {{ reboots }}</li>
+        </ul>
+      </el-col>
+    </el-row>
 
   </section>
 </template>
@@ -214,10 +223,16 @@ export default {
       available: '',
       pending: '',
       scansTotal: '',
+      pagesTotal: '',
+      scansTotalAll: '',
+      pagesTotalAll: '',
+      uptime: '',
+      reboots: '',
       isNeedAuth: true,
       openedPanels: [],
       isUrls: false,
       urlsShow: false,
+      connected: false,
       form: {...defaultForm},
     };
   },
@@ -273,6 +288,22 @@ export default {
         split(/[,\s]/).
         map(url => url.trim()).
         filter(url => url);
+    },
+
+    uptimeHuman() {
+      if (!this.uptime) return '';
+      const delta = this.uptime;
+      let mins = Math.floor(delta / 60); // s to min
+      let hours = Math.floor(mins / 60);
+      const days = Math.floor(mins / 1440);
+      mins = mins % 60;
+      hours = hours % 24;
+
+      const parts = [];
+      if (days) parts.push(`${days}d`);
+      if (hours) parts.push(`${hours}m`);
+      parts.push(`${mins}m`);
+      return parts.join(', ');
     },
   },
 
@@ -504,12 +535,14 @@ export default {
     /* Listen for events: */
 
     this.socket.on("connect", () => {
+      this.connected = true;
       this.auth();
     });
 
     this.socket.on("disconnect", () => {
       this.logPush('server disconnected');
       this.isNeedAuth = true;
+      this.connected = false;
       this.running = '';
     });
 
