@@ -1,3 +1,12 @@
+## [3.1.1](https://github.com/viasite/site-audit-seo-viewer/compare/v3.1.0...v3.1.1) (2020-12-26)
+
+
+### Features
+
+* **scan:** more server stats: reboots, uptime, all time scans, pages ([abeef2e](https://github.com/viasite/site-audit-seo-viewer/commit/abeef2ee8d3f30d1942e935a4ebbb95cac9187cc))
+
+
+
 # [3.1.0](https://github.com/viasite/site-audit-seo-viewer/compare/v3.0.2...v3.1.0) (2020-12-26)
 
 
