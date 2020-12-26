@@ -94,6 +94,7 @@
           <li>running: {{ running }}</li>
           <!-- <li>available: {{ available }}</li> -->
           <li>pending: {{ pending }}</li>
+          <li>connections: {{ connections }}</li>
         </ul>
       </el-col>
       <el-col :span="12">
@@ -222,6 +223,7 @@ export default {
       running: '',
       available: '',
       pending: '',
+      connections: '',
       scansTotal: '',
       pagesTotal: '',
       scansTotalAll: '',
