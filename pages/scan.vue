@@ -416,9 +416,15 @@ export default {
       return args;
     },
 
+    closeSettings() {
+      const pindex = this.openedPanels.indexOf('settings');
+      if (pindex !== -1) this.openedPanels.splice(pindex, 1);
+    },
+
     async sendTask() {
       this.$store.commit('log', []); // clear log
       this.urlsShow = false;
+      this.closeSettings();
 
       const opts = {
         url: this.url,
