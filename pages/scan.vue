@@ -30,6 +30,7 @@
       <el-form-item>
         <el-button :disabled="!connected" type="primary" @click="sendTask">Scan</el-button>
         <el-button :disabled="!connected" type="primary" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
+        <!-- <el-button :disabled="!connected" type="primary" @click="sendTask({preset: 'minimal', maxRequests: 0, lighthouse: false})">Warm</el-button> -->
       </el-form-item>
     </el-form>
 
@@ -308,9 +309,9 @@ export default {
 
       const parts = [];
       if (days) parts.push(`${days}d`);
-      if (hours) parts.push(`${hours}m`);
+      if (hours) parts.push(`${hours}h`);
       parts.push(`${mins}m`);
-      return parts.join(', ');
+      return parts.join(' ');
     },
   },
 

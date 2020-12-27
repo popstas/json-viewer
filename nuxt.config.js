@@ -4,6 +4,7 @@ module.exports = {
   modules: [
     'semantic-ui-vue/nuxt',
     '@nuxtjs/axios',
+    '@nuxtjs/pwa',
     'nuxt-socket-io',
     '@nuxtjs/style-resources',
   ],
@@ -47,15 +48,17 @@ module.exports = {
   /*
   ** Headers of the page
   */
+  pwa: {
+    meta: {
+      name: 'site-audit-seo',
+      ogHost: process.env.FRONTEND_URL || '/',
+      ogImage: '/og_image.png',
+    }
+  },
+
   head: {
-    title: 'site-audit-seo viewer',
-    meta: [
-      { charset: 'utf-8' },
-      { name: 'viewport', content: 'width=device-width, initial-scale=1' },
-      { hid: 'description', name: 'description', content: 'Display json as table' }
-    ],
     link: [
-      { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      // { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' }
     ]
   },

@@ -1,14 +1,14 @@
 {
   "name": "site-audit-seo-viewer",
   "version": "3.1.1",
-  "description": "Display audit.json as table",
+  "description": "Web service for SEO site audit: crawl site, Lighthouse all pages, view public reports in browser. 100+ metrics for each page.",
   "author": "Stanislav Popov <popstas@gmail.com>",
   "homepage": "https://github.com/viasite/site-audit-seo-viewer",
   "private": true,
   "scripts": {
     "dev": "cross-env SERVER_URL=http://localhost:5301 HOST=0.0.0.0 PORT=5302 nuxt",
     "dev-popstas": "cross-env SERVER_URL=http://popstas-server:5301 HOST=0.0.0.0 PORT=5302 nuxt",
-    "dev-popstas-prod": "cross-env SERVER_URL=https://site-audit-server.popstas.ru HOST=0.0.0.0 PORT=5302 nuxt",
+    "dev-popstas-prod": "cross-env FRONTEND_URL=https://site-audit.popstas.ru SERVER_URL=https://site-audit-server.popstas.ru HOST=0.0.0.0 PORT=5302 nuxt",
     "dev-clean": "nuxt",
     "build": "nuxt build",
     "deploy-prod": "bash scripts/deploy.sh",
@@ -27,6 +27,7 @@
   },
   "dependencies": {
     "@nuxtjs/axios": "^5.3.6",
+    "@nuxtjs/pwa": "^3.3.3",
     "element-ui": "^2.13.2",
     "firebase": "^8.2.1",
     "firebaseui": "^4.7.1",
