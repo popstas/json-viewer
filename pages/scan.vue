@@ -24,7 +24,9 @@
         ></el-input>
       </el-form-item>
       <el-form-item v-if="!isUrls">
-        <el-input v-model="url" @keydown.enter.native="sendTask" autofocus class="form__url"></el-input>
+        <el-autocomplete v-model="url" @keydown.enter.native.prevent="sendTask" autofocus class="form__url"
+          :fetch-suggestions="historySearch"
+        ></el-autocomplete>
       </el-form-item>
 
       <el-form-item>
@@ -187,6 +189,7 @@
 <script>
 import Panel from "~/components/Panel";
 import firebase from "firebase";
+import _ from "lodash";
 
 const defaultForm = {
   preset: 'seo',
@@ -248,6 +251,11 @@ export default {
   computed: {
     log(){
       return this.$store.state.log;
+    },
+
+
+    scanUrlHistory(){
+      return this.$store.state.scanUrlHistory;
     },
 
     url: {
@@ -473,6 +481,11 @@ export default {
 
       this.updateUrlQuery(true); // set in url only scanned
 
+      // save url scan history
+      if (!this.isUrls) {
+        this.$store.commit('addUrlHistory', this.url);
+      }
+
       console.log("scan:", opts);
       this.socket.emit('scan', opts);
 
@@ -529,6 +542,31 @@ export default {
           this.$store.commit('itemsJsonUrl', jsonUrl);
         }
       });
+    },
+
+    // url history autocomplete
+    historySearch(q, cb) {
+      let res = [];
+      let all = [];
+
+      for (let url in this.scanUrlHistory) {
+        all.push(url);
+        if (url.includes(q)) res.push(url);
+      }
+
+      if (res.length <= 1) {
+        res = [...res, ...all];
+      }
+
+      res = _.uniq(res);
+
+      // limit 20
+      if (res.length > 20) res = res.slice(0, 20);
+
+      res = res.map(value => {
+        return { value }
+      });
+      cb(res);
     },
   },
 

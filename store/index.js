@@ -75,6 +75,7 @@ export const state = () => ({
   // constants
   itemsJsonUrl: process.env.itemsJsonUrl || '',
   jsonUrlHistory: {},
+  scanUrlHistory: {},
   name: pjson.name,
   version: pjson.version,
   description: pjson.description,
@@ -368,6 +369,19 @@ export const mutations = {
   jsonUrlHistory(state, newValue) {
     state.jsonUrlHistory = newValue;
   },
+  scanUrlHistory(state, newValue) {
+    state.scanUrlHistory = newValue;
+  },
+  addUrlHistory(state, url) {
+    if (!state.scanUrlHistory[url]) {
+      state.scanUrlHistory[url] = {
+        added: Date.now(),
+        used: Date.now(),
+      };
+    } else {
+      state.scanUrlHistory[url].used = Date.now();
+    }
+  },
   fields(state, newValue) {
     state.fields = newValue;
   },
@@ -437,7 +451,7 @@ export const mutations = {
 
   url(state, newValue) {
     state.url = newValue;
-  },
+ },
   urls(state, newValue) {
     state.urls = newValue;
   },
