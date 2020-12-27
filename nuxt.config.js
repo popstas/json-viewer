@@ -53,6 +53,7 @@ module.exports = {
       name: 'site-audit-seo',
       ogHost: process.env.FRONTEND_URL || '/',
       ogImage: '/og_image.png',
+      favicon: false,
     }
   },
 
