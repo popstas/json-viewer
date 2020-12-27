@@ -1,3 +1,14 @@
+# [3.2.0](https://github.com/viasite/site-audit-seo-viewer/compare/v3.1.1...v3.2.0) (2020-12-27)
+
+
+### Features
+
+* PWA, change icon and meta ([6e53596](https://github.com/viasite/site-audit-seo-viewer/commit/6e535960114ce4de0b7038a5e12083d5226634cb))
+* **scan:** "Lighthouse one page" button ([685401f](https://github.com/viasite/site-audit-seo-viewer/commit/685401fba5f73012a1938f7b6dcde2e797ec1be6))
+* **scan:** connections stats ([0b9203a](https://github.com/viasite/site-audit-seo-viewer/commit/0b9203aa04eb84e124f29edbe6c8e47e99de592b))
+
+
+
 ## [3.1.1](https://github.com/viasite/site-audit-seo-viewer/compare/v3.1.0...v3.1.1) (2020-12-26)
 
 

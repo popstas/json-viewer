@@ -2,7 +2,7 @@
 set -eu
 
 rm -rf dist
-SERVER_URL="https://site-audit-server.popstas.ru" npm run generate
+SERVER_URL="https://site-audit-server.popstas.ru" FRONTEND_URL="https://viasite.github.io/site-audit-seo-viewer" npm run generate
 cd dist
 git init
 git add -A
