@@ -34,8 +34,9 @@ module.exports = {
   },
 
   env: {
-    itemsJsonUrl: process.env.JSON_URL,
-    SERVER_URL: process.env.SERVER_URL
+    JSON_URL: process.env.JSON_URL,
+    SERVER_URL: process.env.SERVER_URL,
+    SCAN_DEFAULT_MAX_REQUESTS: parseInt(process.env.SCAN_DEFAULT_MAX_REQUESTS),
   },
 
   io: {

@@ -73,7 +73,7 @@ export const state = () => ({
   filteredItems: [],
 
   // constants
-  itemsJsonUrl: process.env.itemsJsonUrl || '',
+  itemsJsonUrl: process.env.JSON_URL || '',
   jsonUrlHistory: {},
   scanUrlHistory: {},
   name: pjson.name,
@@ -81,6 +81,15 @@ export const state = () => ({
   description: pjson.description,
   homepage: pjson.homepage,
   newUserVisits: 5, // highlisht tour for new users
+
+  scanDefaultForm: {
+    preset: 'seo',
+    depth: 10,
+    maxRequests: process.env.SCAN_DEFAULT_MAX_REQUESTS || 0,
+    ignoreRobotsTxt: false,
+    followXmlSitemap: false,
+    lighthouse: false,
+  },
 
   // app state
   visitCount: 0,

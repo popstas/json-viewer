@@ -544,7 +544,7 @@ export default {
       if (updateFields) query.fields = this.columns.join(",");
 
       // don't add default json url
-      if (this.itemsJsonUrl !== process.env.itemsJsonUrl) {
+      if (this.itemsJsonUrl !== process.env.JSON_URL) {
         query.url = this.itemsJsonUrl;
       }
 

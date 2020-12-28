@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "cross-env SERVER_URL=http://localhost:5301 HOST=0.0.0.0 PORT=5302 nuxt",
     "dev-popstas": "cross-env SERVER_URL=http://popstas-server:5301 HOST=0.0.0.0 PORT=5302 nuxt",
-    "dev-popstas-prod": "cross-env FRONTEND_URL=https://site-audit.popstas.ru SERVER_URL=https://site-audit-server.popstas.ru HOST=0.0.0.0 PORT=5302 nuxt",
+    "dev-popstas-prod": "cross-env SCAN_DEFAULT_MAX_REQUESTS=10 FRONTEND_URL=https://site-audit.popstas.ru SERVER_URL=https://site-audit-server.popstas.ru HOST=0.0.0.0 PORT=5302 nuxt",
     "dev-clean": "nuxt",
     "build": "nuxt build",
     "deploy-prod": "bash scripts/deploy.sh",

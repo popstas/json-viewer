@@ -191,15 +191,6 @@ import Panel from "~/components/Panel";
 import firebase from "firebase";
 import _ from "lodash";
 
-const defaultForm = {
-  preset: 'seo',
-  depth: 10,
-  maxRequests: 50,
-  ignoreRobotsTxt: false,
-  followXmlSitemap: false,
-  lighthouse: false,
-};
-
 const controlsMap = {
   preset: {
     arg: '--preset',
@@ -244,7 +235,7 @@ export default {
       isUrls: false,
       urlsShow: false,
       connected: false,
-      form: {...defaultForm},
+      form: {},
     };
   },
 
@@ -253,6 +244,9 @@ export default {
       return this.$store.state.log;
     },
 
+    scanDefaultForm(){
+      return this.$store.state.scanDefaultForm;
+    },
 
     scanUrlHistory(){
       return this.$store.state.scanUrlHistory;
@@ -420,7 +414,7 @@ export default {
           unknownArgs.push(part);
           continue;
         }
-        const defaultVal = defaultForm[formItemName];
+        const defaultVal = this.scanDefaultForm[formItemName];
 
         const conf = controlsMap[formItemName];
 
@@ -453,7 +447,7 @@ export default {
         const val = overrides[name] || this.form[name];
 
         // ignore default
-        if (!withDefault && val === defaultForm[name]) continue;
+        if (!withDefault && val === this.scanDefaultForm[name]) continue;
 
         if (conf.type === 'boolean') {
           if (!val) continue;
@@ -582,6 +576,7 @@ export default {
       teardown: false,
     });
 
+    this.form = {...this.scanDefaultForm};
     /* Listen for events: */
 
     this.socket.on("connect", () => {
