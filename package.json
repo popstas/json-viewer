@@ -1,6 +1,6 @@
 {
   "name": "site-audit-seo-viewer",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "Web service for SEO site audit: crawl site, Lighthouse all pages, view public reports in browser. 100+ metrics for each page.",
   "author": "Stanislav Popov <popstas@gmail.com>",
   "homepage": "https://github.com/viasite/site-audit-seo-viewer",

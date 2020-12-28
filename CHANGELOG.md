@@ -1,3 +1,12 @@
+## [3.2.2](https://github.com/viasite/site-audit-seo-viewer/compare/v3.2.1...v3.2.2) (2020-12-28)
+
+
+### Features
+
+* show not default args ([17e4441](https://github.com/viasite/site-audit-seo-viewer/commit/17e44419519d0881b7533a1dc46e34e401f5e759))
+
+
+
 ## [3.2.1](https://github.com/viasite/site-audit-seo-viewer/compare/v3.1.1...v3.2.1) (2020-12-27)
 
 
