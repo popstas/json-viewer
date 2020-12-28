@@ -38,11 +38,7 @@
 
     <el-form class="scan__form-settings">
       <el-collapse v-model="openedPanels" class="panels">
-        <Panel
-          name="settings"
-          title="Settings"
-          icon="el-icon-setting"
-        >
+        <Panel name="settings" icon="el-icon-setting" title="Settings" :subtitle="argsWithoutDefault" >
           <el-form-item label="Preset">
             <el-select v-model="form.preset">
               <el-option
@@ -145,6 +141,10 @@
     }
   }
 
+  .scan__args {
+    font-weight: normal;
+  }
+
   .scan__log {
     font-family: monospace;
     background: #2d2d2d;
@@ -205,10 +205,10 @@ const controlsMap = {
     arg: '--preset',
   },
   depth: {
-    arg: '-d'
+    arg: '--max-depth'
   },
   maxRequests: {
-    arg: '-m'
+    arg: '--max-requests'
   },
   ignoreRobotsTxt: {
     arg: '--ignore-robots-txt',
@@ -274,6 +274,7 @@ export default {
         this.$store.commit('urls', val);
       }
     },
+
     args: {
       get() {
         return this.$store.state.args;
@@ -282,6 +283,10 @@ export default {
         this.$store.commit('args', val);
       }
     },
+    argsWithoutDefault() {
+      return this.buildArgs(false);
+    },
+
     serverUrl: {
       get() {
         return this.$store.state.serverUrl;
@@ -317,7 +322,7 @@ export default {
 
       const parts = [];
       if (days) parts.push(`${days}d`);
-      if (hours) parts.push(`${hours}h`);
+      if (hours || days) parts.push(`${hours}h`);
       parts.push(`${mins}m`);
       return parts.join(' ');
     },
@@ -354,8 +359,7 @@ export default {
         if (this.url) query.url = this.url;
       }
 
-      const args = this.buildArgs(false);
-      if (args) query.args = args;
+      if (this.argsWithoutDefault) query.args = this.argsWithoutDefault;
 
       // console.log('route scan: updateUrlQuery:', query);
       if (push) this.$router.push({ query });
