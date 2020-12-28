@@ -426,14 +426,18 @@ export default {
 
     pageTitle() {
       let title = [];
+
+      const reportName = this.$store.getters.shortReportUrl(this.itemsJsonUrl);
+      title.push(reportName);
+
       if (this.q) title.push("q: " + this.q);
 
-      if (this.fields.length > 0 && !this.isDefaultFields(this.columns)) {
+      /* if (this.fields.length > 0 && !this.isDefaultFields(this.columns)) {
         title.push("Fields: " + this.columns);
-      }
+      } */
 
       title.push('Results - site-audit-seo');
-      return title.join(", ");
+      return title.join(" - ");
     },
 
     isNewUser() {
@@ -464,6 +468,7 @@ export default {
   },
 
   methods: {
+
     formatExcelCols(json) {
       let widthArr = Object.keys(json[0]).map(key => {
         return { width: key.length + 2 }; // plus 2 to account for short object keys

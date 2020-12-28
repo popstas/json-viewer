@@ -216,6 +216,18 @@ export const getters = {
     };
   },
 
+  shortReportUrl(state) {
+    return url => {
+      const userDir = (state.user?.uid || '').slice(0, 5);
+      return url.
+        replace('https://site-audit.viasite.ru/reports/', '').
+        replace(state.serverUrl + '/reports/', '').
+        replace(userDir + '/', '').
+        replace(/__/g, ' ').
+        replace(/\.json$/, '');
+    }
+  },
+
   getItemByDefaultField(state) {
     return val => {
       return state.filteredItems.find(item => item[state.defaultField] == val);

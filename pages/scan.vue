@@ -80,6 +80,13 @@
       
     </el-form>
 
+    <NuxtLink :to="'/?url='+itemsJsonUrl" v-if="itemsJsonUrl" 
+      class="scan__report-link el-button el-button--secondary"
+    >
+      Report: {{ $store.getters.shortReportUrl(itemsJsonUrl) }}
+    </NuxtLink>
+    <span class="scan__report-updated" v-if="lastUpdatedHuman">{{ lastUpdatedHuman }} ago</span>
+
     <ul class="scan__log"
       v-chat-scroll="{always: false, smooth: false}"
       v-if="log.length > 0"
@@ -145,6 +152,15 @@
     font-weight: normal;
   }
 
+  .scan__report-link {
+    margin: 15px 0;
+  }
+
+  .scan__report-updated {
+    margin-left: 15px;
+    color: #999;
+  }
+
   .scan__log {
     font-family: monospace;
     background: #2d2d2d;
@@ -190,6 +206,7 @@
 import Panel from "~/components/Panel";
 import firebase from "firebase";
 import _ from "lodash";
+const url = require('url');
 
 const controlsMap = {
   preset: {
@@ -235,6 +252,8 @@ export default {
       isUrls: false,
       urlsShow: false,
       connected: false,
+      lastUpdated: '',
+      lastUpdatedHuman: '',
       form: {},
     };
   },
@@ -250,6 +269,10 @@ export default {
 
     scanUrlHistory(){
       return this.$store.state.scanUrlHistory;
+    },
+
+    itemsJsonUrl(){
+      return this.$store.state.itemsJsonUrl;
     },
 
     url: {
@@ -291,7 +314,10 @@ export default {
     },
 
     pageTitle() {
-      return `Scan url: ${this.url}, args: ${this.args} - site-audit-seo`;
+      const domain = url.parse((this.url)).hostname;
+      return `Audit ${domain}`
+        + (this.argsWithoutDefault ? ` - args: ${this.argsWithoutDefault}` : '')
+        + ` - site-audit-seo`;
     },
 
     isInlineForm() {
@@ -319,7 +345,7 @@ export default {
       if (hours || days) parts.push(`${hours}h`);
       parts.push(`${mins}m`);
       return parts.join(' ');
-    },
+    }
   },
 
   watch: {
@@ -513,6 +539,9 @@ export default {
 
       // server queue info
       this.socket.on("serverState" + key, (serverState, cb) => {
+        // update last report date
+        this.lastUpdatedHuman = this.getLastUpdatedHuman();
+
         // console.log('msg: ', msg);
         for (let name in serverState) {
           if (this[name] !== undefined) this[name] = serverState[name];
@@ -527,6 +556,7 @@ export default {
           const url = viewerUrl + '?url=' + data.json;
           this.logPush(`result: <a href="${url}">${url}</a>`);
           this.$store.commit('itemsJsonUrl', data.json);
+          this.lastUpdated = Date.now();
         }
         if (data.name) {
           let baseUrl = `${this.serverUrl}/reports`;
@@ -538,6 +568,7 @@ export default {
           const url = `${viewerUrl}?url=${jsonUrl}`;
           this.logPush(`result: <a href="${url}">${url}</a>`);
           this.$store.commit('itemsJsonUrl', jsonUrl);
+          this.lastUpdated = Date.now();
         }
       });
     },
@@ -566,6 +597,22 @@ export default {
       });
       cb(res);
     },
+
+    getLastUpdatedHuman() {
+      if (!this.lastUpdated) return '';
+      const delta = (Date.now() - this.lastUpdated) / 1000;
+      let mins = Math.floor(delta / 60); // s to min
+      let hours = Math.floor(mins / 60);
+      const days = Math.floor(mins / 1440);
+      mins = mins % 60;
+      hours = hours % 24;
+
+      const parts = [];
+      if (days) parts.push(`${days}d`);
+      if (hours || days) parts.push(`${hours}h`);
+      parts.push(`${mins}m`);
+      return parts.join(' ');
+    }
   },
 
   async mounted() {

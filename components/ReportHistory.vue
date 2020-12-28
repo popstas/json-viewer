@@ -9,8 +9,8 @@
     <el-select size="mini" class="report-history__select" filterable placeholder="Report URL" v-model="itemsJsonUrl">
       <el-option class="report-history__option"
         v-for="option in options" :key="option.url"
-        :value="option.url" :label="shortReportUrl(option.url)">
-        <a @click.prevent="" class="report-history__value-name" :href="getShareUrl(option.url)">{{ shortReportUrl(option.url) }}</a>
+        :value="option.url" :label="$store.getters.shortReportUrl(option.url)">
+        <a @click.prevent="" class="report-history__value-name" :href="getShareUrl(option.url)">{{ $store.getters.shortReportUrl(option.url) }}</a>
         <span class="report-history__value-date">{{ new Date(option.added).toLocaleString() }}</span>
       </el-option>
     </el-select>
@@ -158,16 +158,6 @@ export default {
     getShareUrl(url) {
       return this.$router.options.base + `?url=${url}`;
     },
-
-    shortReportUrl(url) {
-      const userDir = (this.$store.state.user?.uid || '').slice(0, 5);
-      return url.
-        replace('https://site-audit.viasite.ru/reports/', '').
-        replace(this.$store.state.serverUrl + '/reports/', '').
-        replace(userDir + '/', '').
-        replace(/__/g, ' ').
-        replace(/\.json$/, '');
-    }
   },
 };
 </script>
