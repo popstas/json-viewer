@@ -1,3 +1,12 @@
+## [3.2.3](https://github.com/viasite/site-audit-seo-viewer/compare/v3.2.2...v3.2.3) (2020-12-28)
+
+
+### Features
+
+* **scan:** show last report link, fix titles ([ff9b854](https://github.com/viasite/site-audit-seo-viewer/commit/ff9b854bb24a52b69583813d4b9cbfacef62bbdb))
+
+
+
 ## [3.2.2](https://github.com/viasite/site-audit-seo-viewer/compare/v3.2.1...v3.2.2) (2020-12-28)
 
 
