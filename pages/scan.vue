@@ -86,6 +86,11 @@
         
       </el-form>
 
+      <div class="scan__buttons-secondary" v-if="openedPanels.includes('settings')">
+        <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
+        <el-button :disabled="!isScanEnabled" type="primary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
+      </div>
+
       <div class="scan__current">
         <!-- {{ currentScanPage }} / {{ currentScanQueue }} -->
         <el-progress :percentage="currentScanPercent" :format="showCurrentScan"></el-progress>
@@ -186,6 +191,10 @@
     }
   }
 
+  .scan__buttons-secondary {
+    clear: both;
+  }
+
   .scan__current {
     padding-top: 10px;
     // margin-left: 10px;
@@ -216,8 +225,13 @@
     max-width: 615px;
     margin: 0 auto;
 
-    .el-collapse-item__header {
+    .el-collapse-item__header,
+    .el-collapse-item__wrap {
       border: none;
+    }
+
+    .el-collapse-item__content {
+      padding-bottom: 0;
     }
   }
 
