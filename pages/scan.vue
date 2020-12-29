@@ -3,7 +3,7 @@
     <div :inline="isInlineForm" class="scan__form" ref="form">
 
       <el-row>
-        <el-col :span="4" style="text-align:right;padding: 10px 10px 0 0">
+        <el-col :span="4" :xs="24" class="form__urls-switch-col">
           <el-switch class="urls-mode-switch"
             v-model="isUrls"
             active-text="urls"
@@ -12,7 +12,7 @@
           </el-switch>
         </el-col>
 
-        <el-col :span="16">
+        <el-col :span="16" :xs="24">
           <div class="scan__urls" v-if="isUrls">
             <el-link
               type="primary" v-if="!urlsShow"
@@ -32,11 +32,11 @@
           </span>
 
           <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
-          <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
+          <el-button :disabled="!isScanEnabled" type="primary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
           <!-- <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask({preset: 'minimal', maxRequests: 0, lighthouse: false})">Warm</el-button> -->
         </el-col>
 
-        <el-col :span="4" style="text-align:left">
+        <el-col :span="4" :xs="24" style="text-align:left">
         </el-col>
       </el-row>
     </div>
@@ -97,7 +97,7 @@
     >
       Report: {{ $store.getters.shortReportUrl(itemsJsonUrl) }}
     </NuxtLink>
-    <span class="scan__report-updated" v-if="lastUpdatedHuman && !currentScanPage">{{ lastUpdatedHuman }} ago</span>
+    <div class="scan__report-updated" v-if="lastUpdatedHuman && !currentScanPage">{{ lastUpdatedHuman }} ago</div>
 
     
 
@@ -162,12 +162,27 @@
       overflow-x: auto;
     }
 
+    .form__urls-switch-col {
+      padding: 10px 0;
+      @media (min-width: 640px) {
+        text-align: right;
+        margin-right: 10px;
+      }
+    }
+
     .form__url {
       min-width: 380px;
+      @media (max-width: 640px) {
+        padding-bottom: 10px;
+      }
     }
 
     .scan__urls {
       padding-bottom: 10px;
+    }
+
+    .scan__lighthouse-button {
+      margin-left: 0;
     }
   }
 
@@ -198,7 +213,7 @@
 
   .scan__form-settings {
     text-align: right;
-    max-width: 640px;
+    max-width: 615px;
     margin: 0 auto;
 
     .el-collapse-item__header {
