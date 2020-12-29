@@ -29,7 +29,7 @@
           <span class="item-details__value" v-html="field.valueText || field.value"></span>
 
           <FilterPresetButton
-            v-if="field.type == 'boolean' || true"
+            v-if="itemsLength > 1"
             class="field-preset"
             :preset="{ q: field.name + '=' + field.value }"
             append
@@ -58,6 +58,9 @@ export default {
   computed: {
     tests() {
       return this.$store.state.tests;
+    },
+    itemsLength() {
+      return this.$store.state.items.length;
     },
 
     groups() {
@@ -102,7 +105,7 @@ export default {
 
         // add to groups
         for (let g in groupsList) {
-          console.log('g: ', g);
+          // console.log('g: ', g);
           let groupName = groupsList[g];
           if (!(groupName in groups)) {
             groups[groupName] = { name: groupName, fields: [] };

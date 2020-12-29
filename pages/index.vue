@@ -185,6 +185,10 @@ export default {
       return this.$store.state.availableFields;
     },
 
+    itemsLength() {
+      return this.$store.state.items.length;
+    },
+
     filteredItems() {
       return this.$store.state.filteredItems;
     },
@@ -759,6 +763,15 @@ export default {
         this.$store.commit("filterPresets", itemsJson.filters);
         this.$store.commit("tests", itemsJson.fields);
         this.$store.dispatch("items", itemsJson.items);
+
+        // open details when single row
+        if (this.itemsLength === 1) {
+          const row = this.filteredItems[0];
+          // console.log('row: ', row);
+          setTimeout(() => {
+            this.rowClick({row});
+          }, 1000);
+        }
 
         // filter
         if (this.defaultFilter && !this.$route.query["q"]) {
