@@ -29,8 +29,8 @@
           ></el-autocomplete>
         </span>
 
-        <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
-        <el-button :disabled="!isScanEnabled" type="primary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
+        <el-button :disabled="!isScanEnabled" :type="isReportSuccess ? 'secondary' : 'primary'" @click="sendTask">Scan</el-button>
+        <el-button :disabled="!isScanEnabled" type="secondary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
         <!-- <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask({preset: 'minimal', maxRequests: 0, lighthouse: false})">Warm</el-button> -->
       </el-col>
 
@@ -96,7 +96,7 @@
     </el-row>
 
     <NuxtLink :to="'/?url='+itemsJsonUrl" v-if="itemsJsonUrl" 
-      :class="{'scan__report-link': true, 'el-button': true, 'is-round': true, 'el-button--success': lastUpdated && !currentScanPage}"
+      :class="{'scan__report-link': true, 'el-button': true, 'is-round': true, 'el-button--success': isReportSuccess}"
     >
       Report: {{ $store.getters.shortReportUrl(itemsJsonUrl) }}
     </NuxtLink>
@@ -409,6 +409,10 @@ export default {
       return window.innerWidth > 768;
     },
 
+    isReportSuccess() {
+      return this.lastUpdated && !this.currentScanPage;
+    },
+
     urlList() {
       return this.urls.
         split(/[,\s]/).
@@ -639,11 +643,13 @@ export default {
           this.currentScanPercent = Math.round(this.currentScanPage / this.currentScanQueue * 100);
           if (this.currentScanQueue < 10) this.currentScanPercent = 0; // in begin
           this.currentScanPercent = Math.min(100, this.currentScanPercent); // when overscan
+          // if (this.currentScanPercent === 100) this.currentScanPercent = 0; // 100% -> 0%
           if (!this.currentScanPage && this.lastUpdated) this.currentScanPercent = 100; // when finished
         }
 
         if (msg.includes('Finish audit')) {
           this.currentScanPage = '';
+          this.currentScanPercent = 0;
         }
 
         if (msg.includes('Pending...')) {
