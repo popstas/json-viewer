@@ -690,15 +690,29 @@ export default {
 
     setDefaultFields() {
       let fields = [];
+
+      // find default preset
+      let defaultPreset;
       for (let i in this.$store.state.columnPresets) {
         const preset = this.$store.state.columnPresets[i];
-        if (preset.default) {
-          fields = preset.columns;
+        if (preset.default || preset.name === 'default') {
+          defaultPreset = preset;
           break;
         }
       }
-      if (fields.length === 0 && this.$store.state.columnPresets.default) {
-        fields = this.$store.state.columnPresets.default.columns;
+      if (!defaultPreset) return;
+
+      fields = [...defaultPreset.columns];
+
+      // remove og:image on mobile
+      if (window.screen.width < 640) {
+        const index = fields.indexOf('og_image');
+        if (index !== -1) fields.splice(index, 1);
+      }
+
+      // default if no fields
+      if (fields.length === 0) {
+        fields = defaultPreset.columns;
       }
 
       this.setFields(fields);
