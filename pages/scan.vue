@@ -1,45 +1,42 @@
 <template>
   <section class="scan__container">
-    <div :inline="isInlineForm" class="scan__form" ref="form">
+    <el-row class="scan__form">
+      <el-col :span="4" :xs="24" class="form__urls-switch-col">
+        <el-switch class="urls-mode-switch"
+          v-model="isUrls"
+          active-text="urls"
+          inactive-text="site"
+        >
+        </el-switch>
+      </el-col>
 
-      <el-row>
-        <el-col :span="4" :xs="24" class="form__urls-switch-col">
-          <el-switch class="urls-mode-switch"
-            v-model="isUrls"
-            active-text="urls"
-            inactive-text="site"
-          >
-          </el-switch>
-        </el-col>
+      <el-col :span="16" :xs="24">
+        <div class="scan__urls" v-if="isUrls">
+          <el-link
+            type="primary" v-if="!urlsShow"
+            @click.native.prevent="urlsShow = !urlsShow"
+            v-html="`show urls (${urlList.length})`"
+            :title="urlList.join('\n')"
+          ></el-link>
 
-        <el-col :span="16" :xs="24">
-          <div class="scan__urls" v-if="isUrls">
-            <el-link
-              type="primary" v-if="!urlsShow"
-              @click.native.prevent="urlsShow = !urlsShow"
-              v-html="`show urls (${urlList.length})`"
-              :title="urlList.join('\n')"
-            ></el-link>
+          <el-input v-if="urlsShow" v-model="urls" type="textarea" :rows="10" wrap="soft" autofocus :autosize="{ minRows: 1, maxRows: 10}"
+            placeholder="One line - one URL"
+          ></el-input>
+        </div>
+        <span v-if="!isUrls">
+          <el-autocomplete v-model="url" @keydown.enter.native.prevent="sendTask" autofocus class="form__url"
+            :fetch-suggestions="historySearch"
+          ></el-autocomplete>
+        </span>
 
-            <el-input v-if="urlsShow" v-model="urls" type="textarea" :rows="10" wrap="soft" autofocus :autosize="{ minRows: 1, maxRows: 10}"
-              placeholder="One line - one URL"
-            ></el-input>
-          </div>
-          <span v-if="!isUrls">
-            <el-autocomplete v-model="url" @keydown.enter.native.prevent="sendTask" autofocus class="form__url"
-              :fetch-suggestions="historySearch"
-            ></el-autocomplete>
-          </span>
+        <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
+        <el-button :disabled="!isScanEnabled" type="primary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
+        <!-- <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask({preset: 'minimal', maxRequests: 0, lighthouse: false})">Warm</el-button> -->
+      </el-col>
 
-          <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
-          <el-button :disabled="!isScanEnabled" type="primary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
-          <!-- <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask({preset: 'minimal', maxRequests: 0, lighthouse: false})">Warm</el-button> -->
-        </el-col>
-
-        <el-col :span="4" :xs="24" style="text-align:left">
-        </el-col>
-      </el-row>
-    </div>
+      <el-col :span="4" :xs="24" style="text-align:left">
+      </el-col>
+    </el-row>
 
     <el-row style="clear:both">
       <el-form class="scan__form-settings">
@@ -83,7 +80,6 @@
 
           </Panel>
         </el-collapse>
-        
       </el-form>
 
       <div class="scan__buttons-secondary" v-if="openedPanels.includes('settings')">
@@ -95,6 +91,7 @@
         <!-- {{ currentScanPage }} / {{ currentScanQueue }} -->
         <el-progress :percentage="currentScanPercent" :format="showCurrentScan"></el-progress>
       </div>
+
     </el-row>
 
     <NuxtLink :to="'/?url='+itemsJsonUrl" v-if="itemsJsonUrl" 
@@ -104,7 +101,6 @@
     </NuxtLink>
     <div class="scan__report-updated" v-if="lastUpdatedHuman && !currentScanPage">{{ lastUpdatedHuman }} ago</div>
 
-    
 
     <div class="scan__log-container">
       <el-link @click="showLog = !showLog">{{ showLog ? 'hide log' : 'show log' }}</el-link>
@@ -163,6 +159,7 @@
 
     textarea {
       min-width: 380px;
+      min-height: 40px !important;
       white-space: nowrap;
       overflow-x: auto;
     }
