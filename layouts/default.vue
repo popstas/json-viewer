@@ -18,7 +18,7 @@
       <nuxt />
     </el-main>
 
-    <el-footer :height="36">
+    <el-footer height="36px">
       <a 
         target="_blank"
         href="https://github.com/viasite/site-audit-seo-viewer/releases"
