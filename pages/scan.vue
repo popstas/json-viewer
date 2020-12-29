@@ -55,11 +55,11 @@
             </el-form-item>
 
             <el-form-item label="Max depth">
-              <el-input-number v-model="form.depth" :min="1" :max="100"></el-input-number>
+              <el-input-number v-model="form.depth" :min="1" :max="100" @keydown.enter.native="sendTask"></el-input-number>
             </el-form-item>
 
             <el-form-item label="Max requests">
-              <el-input-number v-model="form.maxRequests" :min="0"></el-input-number>
+              <el-input-number v-model="form.maxRequests" :min="0" @keydown.enter.native.prevent="sendTask"></el-input-number>
             </el-form-item>
 
             <el-form-item label="Ignore robots.txt">
@@ -90,6 +90,7 @@
       <div class="scan__current">
         <!-- {{ currentScanPage }} / {{ currentScanQueue }} -->
         <el-progress :percentage="currentScanPercent" :format="showCurrentScan"></el-progress>
+        <i v-if="currentScanPage" class="el-icon-loading"></i>
       </div>
 
     </el-row>
