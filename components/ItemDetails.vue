@@ -12,7 +12,7 @@
     </div>
 
     <div
-      class="item-details__group"
+      :class="{'item-details__group': true, 'item-details__group_lighthouse': group.name.match(/Lighthouse/)}"
       v-for="group in groups"
       :key="group.name"
       :id="item[$store.state.defaultField] + '-' + group.name"

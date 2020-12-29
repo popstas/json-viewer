@@ -71,7 +71,7 @@
             </el-form-item>
 
             <el-form-item label="Arguments">
-              <el-input v-model="args" @keydown.enter.native="sendTask"></el-input>
+              <el-input class="scan__args" v-model="args" @keydown.enter.native="sendTask"></el-input>
             </el-form-item>
 
             <el-form-item label="Server URL">
@@ -203,8 +203,8 @@
     }
   }
 
-  .scan__args {
-    font-weight: normal;
+  .scan__args input {
+    font-family: monospace;
   }
 
   .scan__report-link {
