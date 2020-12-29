@@ -1,3 +1,22 @@
+# [4.1.0](https://github.com/viasite/site-audit-seo-viewer/compare/v4.0.0...v4.1.0) (2020-12-29)
+
+
+### Bug Fixes
+
+* monospace font for args input ([02c0399](https://github.com/viasite/site-audit-seo-viewer/commit/02c039912cb6608a01b160e15f380566f6b8875b))
+* **reports:** fix sticky table header ([9ea05bd](https://github.com/viasite/site-audit-seo-viewer/commit/9ea05bd8c30ea66fff8d95ac9ee39acfe0460a05))
+* **reports:** remove og:image column on mobile by default ([6863da7](https://github.com/viasite/site-audit-seo-viewer/commit/6863da7de4185f3edc132875d34db5cb34c02304))
+* **scan:** fix mobile styles ([81a6be2](https://github.com/viasite/site-audit-seo-viewer/commit/81a6be2d373f2952857fb99ddf03aa0b371c6bce))
+
+
+### Features
+
+* **reports:** show item details when 1 item in table ([f257109](https://github.com/viasite/site-audit-seo-viewer/commit/f257109008bc68fbcf342c62b70705308a4ee76b))
+* **scan:** add secondary scan buttons after settings ([277d96a](https://github.com/viasite/site-audit-seo-viewer/commit/277d96ac77c2731138d22c990ed4d96235ecf1ca))
+* **scan:** show pending status in progress ([a3df690](https://github.com/viasite/site-audit-seo-viewer/commit/a3df690b145983745267a02d0bc92ecbccd413de))
+
+
+
 # [4.0.0](https://github.com/viasite/site-audit-seo-viewer/compare/v3.2.3...v4.0.0) (2020-12-29)
 
 
