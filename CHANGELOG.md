@@ -1,3 +1,12 @@
+# [4.0.0](https://github.com/viasite/site-audit-seo-viewer/compare/v3.2.3...v4.0.0) (2020-12-29)
+
+
+### Features
+
+* **scan:** new UI, more user friendly ([3aaf219](https://github.com/viasite/site-audit-seo-viewer/commit/3aaf219d9f8dc3ce2786ecf33ab584f94f6220b4))
+
+
+
 ## [3.2.3](https://github.com/viasite/site-audit-seo-viewer/compare/v3.2.2...v3.2.3) (2020-12-28)
 
 
