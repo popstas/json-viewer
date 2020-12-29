@@ -448,6 +448,7 @@ export default {
 
     showCurrentScan(percentage) {
       if (!this.currentScanPage && !this.currentScanQueue) return '';
+      if (this.currentScanPage == 'Pending...') return this.currentScanPage;
       return `${this.currentScanPage || this.currentScanQueue} / ${this.currentScanQueue || '?'}`;
     },
 
@@ -642,6 +643,10 @@ export default {
 
         if (msg.includes('Finish audit')) {
           this.currentScanPage = '';
+        }
+
+        if (msg.includes('Pending...')) {
+          this.currentScanPage = 'Pending...';
         }
 
         this.logPush(msg);
