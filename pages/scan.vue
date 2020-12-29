@@ -1,100 +1,117 @@
 <template>
   <section class="scan__container">
-    <el-form :inline="isInlineForm" class="scan__form" ref="form">
+    <div :inline="isInlineForm" class="scan__form" ref="form">
 
-      <el-form-item>
-        <el-switch class="urls-mode-switch"
-          v-model="isUrls"
-          active-text="urls"
-          inactive-text="site"
-        >
-        </el-switch>
-      </el-form-item>
+      <el-row>
+        <el-col :span="4" style="text-align:right;padding: 10px 10px 0 0">
+          <el-switch class="urls-mode-switch"
+            v-model="isUrls"
+            active-text="urls"
+            inactive-text="site"
+          >
+          </el-switch>
+        </el-col>
 
-      <el-form-item v-if="isUrls">
-        <el-link
-          type="primary" v-if="!urlsShow"
-          @click.native.prevent="urlsShow = !urlsShow"
-          v-html="`show urls (${urlList.length})`"
-          :title="urlList.join('\n')"
-        ></el-link>
+        <el-col :span="16">
+          <div class="scan__urls" v-if="isUrls">
+            <el-link
+              type="primary" v-if="!urlsShow"
+              @click.native.prevent="urlsShow = !urlsShow"
+              v-html="`show urls (${urlList.length})`"
+              :title="urlList.join('\n')"
+            ></el-link>
 
-        <el-input v-if="urlsShow" v-model="urls" type="textarea" :rows="10" wrap="soft" autofocus :autosize="{ minRows: 1, maxRows: 10}"
-          placeholder="One line - one URL"
-        ></el-input>
-      </el-form-item>
-      <el-form-item v-if="!isUrls">
-        <el-autocomplete v-model="url" @keydown.enter.native.prevent="sendTask" autofocus class="form__url"
-          :fetch-suggestions="historySearch"
-        ></el-autocomplete>
-      </el-form-item>
+            <el-input v-if="urlsShow" v-model="urls" type="textarea" :rows="10" wrap="soft" autofocus :autosize="{ minRows: 1, maxRows: 10}"
+              placeholder="One line - one URL"
+            ></el-input>
+          </div>
+          <span v-if="!isUrls">
+            <el-autocomplete v-model="url" @keydown.enter.native.prevent="sendTask" autofocus class="form__url"
+              :fetch-suggestions="historySearch"
+            ></el-autocomplete>
+          </span>
 
-      <el-form-item>
-        <el-button :disabled="!connected" type="primary" @click="sendTask">Scan</el-button>
-        <el-button :disabled="!connected" type="primary" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
-        <!-- <el-button :disabled="!connected" type="primary" @click="sendTask({preset: 'minimal', maxRequests: 0, lighthouse: false})">Warm</el-button> -->
-      </el-form-item>
-    </el-form>
+          <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
+          <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
+          <!-- <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask({preset: 'minimal', maxRequests: 0, lighthouse: false})">Warm</el-button> -->
+        </el-col>
 
-    <el-form class="scan__form-settings">
-      <el-collapse v-model="openedPanels" class="panels">
-        <Panel name="settings" icon="el-icon-setting" title="Settings" :subtitle="argsWithoutDefault" >
-          <el-form-item label="Preset">
-            <el-select v-model="form.preset">
-              <el-option
-                v-for="preset of ['minimal', 'seo', 'headers', 'parse', 'lighthouse', 'lighthouse-all']" :key="preset"
-                :value="preset"></el-option>
-            </el-select>
-          </el-form-item>
+        <el-col :span="4" style="text-align:left">
+        </el-col>
+      </el-row>
+    </div>
 
-          <el-form-item label="Scan Lighthouse">
-            <el-switch v-model="form.lighthouse"></el-switch>
-          </el-form-item>
+    <el-row style="clear:both">
+      <el-form class="scan__form-settings">
+        <el-collapse v-model="openedPanels" class="panels">
+          <Panel name="settings" icon="el-icon-setting" title="Settings" :subtitle="argsWithoutDefault" >
+            <el-form-item label="Preset">
+              <el-select v-model="form.preset">
+                <el-option
+                  v-for="preset of ['minimal', 'seo', 'headers', 'parse', 'lighthouse', 'lighthouse-all']" :key="preset"
+                  :value="preset"></el-option>
+              </el-select>
+            </el-form-item>
 
-          <el-form-item label="Max depth">
-            <el-input-number v-model="form.depth" :min="1" :max="100"></el-input-number>
-          </el-form-item>
+            <el-form-item label="Scan Lighthouse">
+              <el-switch v-model="form.lighthouse"></el-switch>
+            </el-form-item>
 
-          <el-form-item label="Max requests">
-            <el-input-number v-model="form.maxRequests" :min="0"></el-input-number>
-          </el-form-item>
+            <el-form-item label="Max depth">
+              <el-input-number v-model="form.depth" :min="1" :max="100"></el-input-number>
+            </el-form-item>
 
-          <el-form-item label="Ignore robots.txt">
-            <el-switch v-model="form.ignoreRobotsTxt"></el-switch>
-          </el-form-item>
+            <el-form-item label="Max requests">
+              <el-input-number v-model="form.maxRequests" :min="0"></el-input-number>
+            </el-form-item>
 
-          <el-form-item label="Follow sitemap.xml">
-            <el-switch v-model="form.followXmlSitemap"></el-switch>
-          </el-form-item>
+            <el-form-item label="Ignore robots.txt">
+              <el-switch v-model="form.ignoreRobotsTxt"></el-switch>
+            </el-form-item>
 
-          <el-form-item label="Arguments">
-            <el-input v-model="args" @keydown.enter.native="sendTask"></el-input>
-          </el-form-item>
+            <el-form-item label="Follow sitemap.xml">
+              <el-switch v-model="form.followXmlSitemap"></el-switch>
+            </el-form-item>
 
-          <el-form-item label="Server URL">
-            <el-input v-model="serverUrl"></el-input>
-          </el-form-item>
+            <el-form-item label="Arguments">
+              <el-input v-model="args" @keydown.enter.native="sendTask"></el-input>
+            </el-form-item>
 
-        </Panel>
-      </el-collapse>
-      
-    </el-form>
+            <el-form-item label="Server URL">
+              <el-input v-model="serverUrl"></el-input>
+            </el-form-item>
+
+          </Panel>
+        </el-collapse>
+        
+      </el-form>
+
+      <div class="scan__current">
+        <!-- {{ currentScanPage }} / {{ currentScanQueue }} -->
+        <el-progress :percentage="currentScanPercent" :format="showCurrentScan"></el-progress>
+      </div>
+    </el-row>
 
     <NuxtLink :to="'/?url='+itemsJsonUrl" v-if="itemsJsonUrl" 
-      class="scan__report-link el-button el-button--secondary"
+      :class="{'scan__report-link': true, 'el-button': true, 'is-round': true, 'el-button--success': lastUpdated && !currentScanPage}"
     >
       Report: {{ $store.getters.shortReportUrl(itemsJsonUrl) }}
     </NuxtLink>
-    <span class="scan__report-updated" v-if="lastUpdatedHuman">{{ lastUpdatedHuman }} ago</span>
+    <span class="scan__report-updated" v-if="lastUpdatedHuman && !currentScanPage">{{ lastUpdatedHuman }} ago</span>
 
-    <ul class="scan__log"
-      v-chat-scroll="{always: false, smooth: false}"
-      v-if="log.length > 0"
-    >
-      <li v-for="(line, index) in log" :key="index" v-html="line"></li>
-    </ul>
+    
 
-    <el-row class="scan__server-state" v-if="running !== ''">
+    <div class="scan__log-container">
+      <el-link @click="showLog = !showLog">{{ showLog ? 'hide log' : 'show log' }}</el-link>
+      <ul class="scan__log"
+        v-chat-scroll="{always: false, smooth: false}"
+        v-if="showLog && log.length > 0"
+      >
+        <li v-for="(line, index) in log" :key="index" v-html="line"></li>
+      </ul>
+    </div>
+
+    <el-row class="scan__server-state" v-if="showLog && running !== ''">
       <h3>Server state:</h3>
       <el-col :span="12">
         <ul class="server-state">
@@ -120,6 +137,7 @@
 <style lang="scss">
   .scan__container {
     padding: 0 8px;
+    text-align: center;
 
     .el-collapse {
       border: none;
@@ -130,6 +148,7 @@
   .scan__form {
     // padding: 0 8px;
     // margin-top: 30px;
+    margin: 0 auto;
     max-width: 1200px;
 
     input {
@@ -138,13 +157,28 @@
     }
 
     textarea {
-      min-width: 360px;
+      min-width: 380px;
       white-space: nowrap;
       overflow-x: auto;
     }
 
     .form__url {
-      min-width: 360px;
+      min-width: 380px;
+    }
+
+    .scan__urls {
+      padding-bottom: 10px;
+    }
+  }
+
+  .scan__current {
+    padding-top: 10px;
+    // margin-left: 10px;
+    margin: 0 auto;
+    max-width: 640px;
+
+    .el-progress__text {
+      display: block;
     }
   }
 
@@ -159,6 +193,21 @@
   .scan__report-updated {
     margin-left: 15px;
     color: #999;
+    white-space: nowrap;
+  }
+
+  .scan__form-settings {
+    text-align: right;
+    max-width: 640px;
+    margin: 0 auto;
+
+    .el-collapse-item__header {
+      border: none;
+    }
+  }
+
+  .scan__log-container {
+    text-align: left;
   }
 
   .scan__log {
@@ -166,7 +215,7 @@
     background: #2d2d2d;
     color: #ccc;
     list-style: none;
-    margin: 0;
+    margin: 5px 0 0;
     padding: 5px 10px;
     max-height: calc(100vh - 170px);
     overflow-x: auto;
@@ -199,6 +248,7 @@
 
   .scan__server-state {
     padding: 8px 0;
+    text-align: left;
   }
 </style>
 
@@ -255,12 +305,20 @@ export default {
       lastUpdated: '',
       lastUpdatedHuman: '',
       form: {},
+      currentScanPage: '',
+      currentScanQueue: '',
+      currentScanPercent: 0,
+      showLog: false,
     };
   },
 
   computed: {
     log(){
       return this.$store.state.log;
+    },
+
+    isScanEnabled() {
+      return this.connected && !this.currentScanPage;
     },
 
     scanDefaultForm(){
@@ -360,6 +418,11 @@ export default {
       const log = [...this.log, ...[msg]];
       if (log.length > 10000) log.shift();
       this.$store.commit('log', log);
+    },
+
+    showCurrentScan(percentage) {
+      if (!this.currentScanPage && !this.currentScanQueue) return '';
+      return `${this.currentScanPage || this.currentScanQueue} / ${this.currentScanQueue || '?'}`;
     },
 
     // form state to GET params
@@ -529,7 +592,32 @@ export default {
 
       // log to "terminal"
       this.socket.on("status" + key, (msg, cb) => {
-        console.log(`msg ${key}: ${msg}`);
+        // console.log(`msg ${key}: ${msg}`);
+
+
+        // current scan status extract
+        const res = msg.match(/^(\d+).*\((\d+)\)$/);
+        if (res) {
+          // console.log('res: ', res);
+          this.currentScanPage = res[1];
+          this.currentScanQueue = parseInt(res[2]);
+          if (this.form.maxRequests && this.form.maxRequests < this.currentScanQueue) {
+            this.currentScanQueue = this.form.maxRequests;
+          }
+
+          // when page > queue
+          if (this.currentScanPage > this.currentScanQueue) this.currentScanQueue = this.currentScanPage;
+
+          this.currentScanPercent = Math.round(this.currentScanPage / this.currentScanQueue * 100);
+          if (this.currentScanQueue < 10) this.currentScanPercent = 0; // in begin
+          this.currentScanPercent = Math.min(100, this.currentScanPercent); // when overscan
+          if (!this.currentScanPage && this.lastUpdated) this.currentScanPercent = 100; // when finished
+        }
+
+        if (msg.includes('Finish audit')) {
+          this.currentScanPage = '';
+        }
+
         this.logPush(msg);
       });
       this.socket.on("status", (msg, cb) => {
