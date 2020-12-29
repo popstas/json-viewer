@@ -1,5 +1,5 @@
 <template>
-  <section class="container" :class="[ `mode-${displayMode}`]">
+  <section class="container" :class="['report-page', `mode-${displayMode}`]">
     <div v-if="!itemsJsonUrl">
       No reports<br><br>
       <NuxtLink class="el-button el-button--primary" to="/scan">Scan</NuxtLink>
@@ -42,37 +42,6 @@
             <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
           </Panel>
 
-          <!-- Фильтры -->
-          <Panel title="filters" icon="el-icon-search" name="filter_presets">
-            <div class="filter-presets">
-              <FilterPresetButton
-                :preset="preset"
-                v-for="preset in filterPresets"
-                :key="preset.name"
-                toggle
-              ></FilterPresetButton>
-            </div>
-
-            <QueryInput class="filter__query"></QueryInput>
-          </Panel>
-
-          <!-- Наборы колонок -->
-          <Panel title="column presets" icon="el-icon-menu" name="column_presets">
-            <div class="column-presets">
-              <ColumnPresetButton
-                :preset="preset"
-                @click="setPreset(preset);"
-                v-for="preset in columnPresets"
-                :key="preset.name"
-              ></ColumnPresetButton>
-            </div>
-          </Panel>
-
-          <!-- Сводка по таблице -->
-          <Panel title="filtered stats" icon="el-icon-s-data" name="stats">
-            <Stats></Stats>
-          </Panel>
-
           <!-- Выбранные колонки -->
           <Panel title="current columns" icon="el-icon-caret-right" name="current_columns" class="current-columns">
             <ColumnField
@@ -83,6 +52,36 @@
               v-for="field of fieldsWithoutComments"
               :key="field.name"
             ></ColumnField>
+          </Panel>
+
+          <!-- Сводка по таблице -->
+          <Panel title="filtered stats" icon="el-icon-s-data" name="stats">
+            <Stats></Stats>
+          </Panel>
+
+          <Panel title="presets" icon="el-icon-menu" name="filter_presets">
+
+            <!-- Наборы колонок -->
+            <div class="column-presets">
+              <ColumnPresetButton
+                :preset="preset"
+                @click="setPreset(preset);"
+                v-for="preset in columnPresets"
+                :key="preset.name"
+              ></ColumnPresetButton>
+            </div>
+
+             <!-- Фильтры -->
+            <div class="filter-presets">
+              <FilterPresetButton
+                :preset="preset"
+                v-for="preset in filterPresets"
+                :key="preset.name"
+                toggle
+              ></FilterPresetButton>
+            </div>
+
+            <QueryInput class="filter__query"></QueryInput>
           </Panel>
 
         </el-collapse>
@@ -800,7 +799,7 @@ export default {
 
     changeDisplayMode(val) {
       if (val == 'view') this.openedPanels = [];
-      if (val == 'edit') this.openedPanels = ['columns', 'filter_presets', 'column_presets', 'stats'];
+      if (val == 'edit') this.openedPanels = ['columns', 'filter_presets', 'stats'];
     },
 
     openFilterPanelIfNeed() {

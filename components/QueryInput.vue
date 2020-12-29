@@ -5,7 +5,7 @@
       ref="input"
       placeholder="query"
       v-model="q"
-      title="Например:
+      title="Examples:
 
   engine=bitrix&prod=1
 
@@ -42,7 +42,8 @@
 <style lang="scss">
 .query-input {
   input {
-    min-width: 85px;
+    text-align: center;
+    min-width: 150px;
     font-family: monospace;
   }
 
