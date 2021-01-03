@@ -6,8 +6,9 @@ RUN apk update && \
 
 WORKDIR /app
 
-COPY package.json package-lock.json ./
-RUN npm install
+# COPY package.json package-lock.json ./
+COPY package.json ./
+RUN yarn install
 RUN npm run build
 
 # Only copy over the node pieces we need from the above image
@@ -18,6 +19,8 @@ COPY . .
 
 EXPOSE 5302
 ENV PORT=5302
+
+RUN apk add --no-cache nano bash jq
 
 # CMD ["npm", "start"]
 CMD npm run dev-clean

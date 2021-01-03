@@ -73,20 +73,24 @@ body {
 
 </style>
 
-
 <script>
-import Profile from "~/components/Profile";
 
+import Profile from "~/components/Profile";
 import firebase from "firebase";
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyCdKjLhrXLHy46sYfx3qpHTqIE7w5-ew9w",
-  authDomain: "site-audit-seo-1597591908441.firebaseapp.com",
-  projectId: "site-audit-seo-1597591908441",
-  storageBucket: "site-audit-seo-1597591908441.appspot.com",
-  messagingSenderId: "416232515295",
-  appId: "1:416232515295:web:82f6bee07c6b76f3b2eb6a",
-  measurementId: "G-ZKXVHXZL2R"
+  apiKey: process.env.FIREBASE_API_KEY || ',
+  authDomain: process.env.FIREBASE_AUTH_DOMAIN || '',
+  projectId: process.env.FIREBASE_PROJECT_ID || '',
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID || ,
+  appId: process.env.FIREBASE_APP_ID || '',
+  measurementId: process.env.FIREBASE_MEASUREMENT_ID || '',
 };
+
+// Initialize Firebase
 firebase.initializeApp(firebaseConfig);
 firebase.analytics();
 

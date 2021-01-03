@@ -22,15 +22,17 @@ module.exports = {
   plugins: [
     '@/plugins/element-ui',
     '@/plugins/localStorage',
+    '@/plugins/vue-fontawesome',
     '@/plugins/vue-awesome',
+    '@/plugins/vue-material',
     '@/plugins/vue-chat-scroll',
     '@/plugins/vue-tour',
+    '@/plugins/vue-input-tag',
     { src: '@/plugins/vue-tables', ssr: false },
-    { src: '@/plugins/yametrika', ssr: false },
   ],
 
   router: {
-    base: '/'
+    base: process.env.PREFIX_BASE_URL || '/'
   },
 
   env: {
@@ -42,10 +44,14 @@ module.exports = {
   io: {
     sockets: [{
       name: 'main',
-      url: process.env.SERVER_URL || 'http://localhost:5301'
+      url: 'https://metrix.evolutive.group', // process.env.SERVER_URL || 'http://localhost:5301',
     }]
   },
-  
+
+  axios: {
+    baseURL: process.env.SERVER_URL, // Used as fallback if no runtime config is provided
+  },
+
   /*
   ** Headers of the page
   */
@@ -61,7 +67,8 @@ module.exports = {
   head: {
     link: [
       // { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' }
+      { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' },
+      { rel: 'stylesheet', href: '//fonts.googleapis.com/css?family=Roboto:400,500,700,400italic|Material+Icons' },
     ]
   },
   /*
