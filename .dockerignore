@@ -8,3 +8,11 @@ Dockerfile*
 .git/**
 .nuxt/
 dist/
+node_modules
+node_modules/
+node_modules/*
+node_modules/**
+vendor
+vendor/
+vendor/*
+vendor/**

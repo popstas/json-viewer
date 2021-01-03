@@ -1,5 +1,6 @@
 <template>
   <section class="scan__container">
+
     <el-row class="scan__form">
       <el-col :span="4" :xs="24" class="form__urls-switch-col">
         <el-switch class="urls-mode-switch"
@@ -39,48 +40,203 @@
     </el-row>
 
     <el-row style="clear:both">
-      <el-form class="scan__form-settings">
+
         <el-collapse v-model="openedPanels" class="panels">
           <Panel name="settings" icon="el-icon-setting" title="Settings" :subtitle="argsWithoutDefault" >
-            <el-form-item label="Preset">
-              <el-select v-model="form.preset">
-                <el-option
-                  v-for="preset of ['minimal', 'seo', 'headers', 'parse', 'lighthouse', 'lighthouse-all']" :key="preset"
-                  :value="preset"></el-option>
-              </el-select>
-            </el-form-item>
 
-            <el-form-item label="Scan Lighthouse">
-              <el-switch v-model="form.lighthouse"></el-switch>
-            </el-form-item>
+          <el-form class="scan__form-settings">
 
-            <el-form-item label="Max depth">
-              <el-input-number v-model="form.depth" :min="1" :max="100" @keydown.enter.native="sendTask"></el-input-number>
-            </el-form-item>
+              <el-tabs type="border-card" v-model="activeTab">
 
-            <el-form-item label="Max requests">
-              <el-input-number v-model="form.maxRequests" :min="0" @keydown.enter.native.prevent="sendTask"></el-input-number>
-            </el-form-item>
+                <el-tab-pane id="tab-general" name="general" label="General">
 
-            <el-form-item label="Ignore robots.txt">
-              <el-switch v-model="form.ignoreRobotsTxt"></el-switch>
-            </el-form-item>
+                  <fieldset>
+                    <legend>Audit</legend>
 
-            <el-form-item label="Follow sitemap.xml">
-              <el-switch v-model="form.followXmlSitemap"></el-switch>
-            </el-form-item>
+                    <el-form-item label="Preset">
+                      <el-select v-model="form.preset">
+                        <el-option
+                          v-for="preset of ['minimal', 'seo', 'headers', 'parse', 'lighthouse', 'lighthouse-all']" :key="preset"
+                          :value="preset"></el-option>
+                      </el-select>
+                    </el-form-item>
 
-            <el-form-item label="Arguments">
-              <el-input class="scan__args" v-model="args" @keydown.enter.native="sendTask"></el-input>
-            </el-form-item>
+                    <el-form-item label="Scan Lighthouse">
+                      <el-switch v-model="form.lighthouse"></el-switch>
+                    </el-form-item>
 
-            <el-form-item label="Server URL">
-              <el-input v-model="serverUrl"></el-input>
-            </el-form-item>
+                    <el-form-item label="Follow sitemap.xml">
+                      <el-switch v-model="form.followXmlSitemap"></el-switch>
+                    </el-form-item>
 
-          </Panel>
-        </el-collapse>
-      </el-form>
+                    <el-form-item label="Ignore robots.txt">
+                      <el-switch v-model="form.ignoreRobotsTxt"></el-switch>
+                    </el-form-item>
+
+                  </fieldset>
+
+                  <fieldset>
+                    <legend>Advanced</legend>
+
+                      <el-form-item label="Server URL">
+                        <el-input v-model="serverUrl"></el-input>
+                      </el-form-item>
+
+                      <el-form-item label="Max depth">
+                        <el-input-number v-model="form.depth" :min="1" :max="100" @keydown.enter.native="sendTask"></el-input-number>
+                      </el-form-item>
+
+                      <el-form-item label="Max requests">
+                        <el-input-number v-model="form.maxRequests" :min="0" @keydown.enter.native.prevent="sendTask"></el-input-number>
+                      </el-form-item>
+
+                      <el-form-item label="Arguments">
+                        <el-input class="scan__args" v-model="args" @keydown.enter.native="sendTask"></el-input>
+                      </el-form-item>
+
+                  </fieldset>
+
+                </el-tab-pane>
+
+                <el-tab-pane id="tab-extractors" name="extractors" label="Extractors">
+
+                  <fieldset>
+                    <legend>Language Detection</legend>
+
+                    <el-form-item label="Enable">
+                      <el-switch v-model="form.languageDetection"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Whitelist Languages (ISO 639-1)">
+                      <el-input-tag v-model="form.languageWhitelist"></el-input-tag>
+                    </el-form-item>
+
+                    <el-form-item label="Blacklist Languages (ISO 639-1)">
+                      <el-input-tag v-model="form.languageBlacklist"></el-input-tag>
+                    </el-form-item>
+
+                  </fieldset>
+
+                  <fieldset>
+                    <legend>HtmlGrabbr</legend>
+
+                    <el-form-item label="Enable">
+                      <el-switch v-model="form.htmlGrabbr"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Print debug logs">
+                      <el-switch v-model="form.htmlGrabbrDebug"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Beautify HTML content">
+                      <el-switch v-model="form.htmlGrabbrPretty"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Page illustration">
+                      <el-switch v-model="form.htmlGrabbrPageIllustration"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Excerpt (from meta data or HTML)">
+                      <el-switch v-model="form.htmlGrabbrExcerpt"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Read length">
+                      <el-switch v-model="form.htmlGrabbrReadLength"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Embedded image URLs">
+                      <el-switch v-model="form.htmlGrabbrEmbeddedImageURLs"></el-switch>
+                    </el-form-item>
+
+                  </fieldset>
+
+                </el-tab-pane>
+
+                <el-tab-pane id="tab-ai" name="ai" label="Predictive">
+
+                  <fieldset>
+                    <legend>Reading Time Estimation</legend>
+                    <el-form-item label="Enable">
+                      <el-switch v-model="form.readingTime"></el-switch>
+                    </el-form-item>
+                  </fieldset>
+
+                  <fieldset>
+                    <legend>Yake</legend>
+
+                    <el-form-item label="Enable">
+                      <el-switch v-model="form.yake"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Language">
+                      <el-select v-model="form.yakeLanguage">
+                        <el-option
+                          v-for="yakeLanguage of ['auto', 'en', 'fr', 'ru']" :key="yakeLanguage"
+                          :value="yakeLanguage"></el-option>
+                      </el-select>
+                    </el-form-item>
+
+                    <el-form-item label="Max NGRAM Size">
+                      <el-input-number v-model="form.yakeMaxNgramSize" :default="3" :min="1" :max="4" @keydown.enter.native.prevent="sendTask"></el-input-number>
+                    </el-form-item>
+
+                    <el-form-item label="Ngram Score Thresold">
+                      <el-input-number v-model="form.yakeNgramThreshold" :precision="3" :step="0.01" :default="0.02" :min="0" :max="1" @keydown.enter.native.prevent="sendTask"></el-input-number>
+                    </el-form-item>
+
+                    <el-form-item label="Number of Keywords">
+                      <el-input-number v-model="form.yakeNumberKeywords" :default="10" :min="1" :max="20" @keydown.enter.native.prevent="sendTask"></el-input-number>
+                    </el-form-item>
+
+                    <el-form-item label="Server URL">
+                      <el-input v-model="form.yakeServerUrl"></el-input>
+                    </el-form-item>
+
+                  </fieldset>
+
+                </el-tab-pane>
+
+                <el-tab-pane id="tab-export" name="export" label="Export">
+
+                  <fieldset>
+                    <legend>InfluxDB</legend>
+
+                    <el-form-item label="Enable">
+                      <el-switch v-model="form.influxDB"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Database">
+                      <el-input v-model="form.influxDatabase"></el-input>
+                    </el-form-item>
+
+                    <el-form-item label="Measurement">
+                      <el-input v-model="form.influxMeasurement"></el-input>
+                    </el-form-item>
+
+                  </fieldset>
+
+                </el-tab-pane>
+
+                <el-tab-pane id="tab-notification" name="notification" label="Notification">
+
+                  <fieldset>
+                    <legend><i class="fab fa-slack"></i> Slack</legend>
+                    <el-form-item label="Slack Notify">
+                      <el-switch v-model="form.slackNotify"></el-switch>
+                    </el-form-item>
+
+                    <el-form-item label="Conversation ID (can be a channel ID, a DM ID, a MPDM ID, or a group ID)">
+                      <el-input v-model="form.slackConversationID"></el-input>
+                    </el-form-item>
+
+                  </fieldset>
+
+                </el-tab-pane>
+              </el-tabs>
+
+          </el-form>
+        </Panel>
+      </el-collapse>
 
       <div class="scan__buttons-secondary" v-if="openedPanels.includes('settings')">
         <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
@@ -220,7 +376,7 @@
 
   .scan__form-settings {
     text-align: right;
-    max-width: 615px;
+    max-width: 1024px;
     margin: 0 auto;
 
     .el-collapse-item__header,
@@ -228,9 +384,15 @@
       border: none;
     }
 
+    .el-input-tag {
+      text-align: left;
+      height: 44px;
+    }
+
     .el-collapse-item__content {
       padding-bottom: 0;
     }
+
   }
 
   .scan__log-container {
@@ -303,6 +465,66 @@ const controlsMap = {
     arg: '--follow-xml-sitemap',
     type: 'boolean',
   },
+  // language-detection
+  languageDetection: {
+    arg: '--language-detection',
+    type: 'boolean',
+  },  
+  languageWhitelist: {
+    arg: '--language-whitelist',
+  },
+  languageBlacklist: {
+    arg: '--language-blacklist',
+  },  
+  // readingTime
+  readingTime: {
+    arg: '--reading-time',
+    type: 'boolean',
+  },
+  // readingTime
+  htmlGrabbr: {
+    arg: '--html-grabbr',
+    type: 'boolean',
+  },
+  // Yake
+  yake: {
+    arg: '--yake',
+    type: 'boolean',
+  },
+  yakeServerUrl: {
+    arg: '--yake-server-url',
+  },
+  yakeLanguage: {
+    arg: '--yake-language',
+  },
+  yakeMaxNgramSize: {
+    arg: '--yake-max-ngram-size',
+  },
+  yakeNumberKeywords: {
+    arg: '--yake-number-keywords',
+  },
+  yakeNgramThreshold: {
+    arg: '--yake-ngram-threshold',
+  },
+  // InfluxDB
+  influxDB: {
+    arg: '--influxdb',
+    type: 'boolean',
+  },
+  influxDatabase: {
+    arg: '--influxdb-database',
+  },
+  influxMeasurement: {
+    arg: '--influxdb-measurement',
+  },
+  // Slack
+  slackNotify: {
+    arg: '--slack',
+    type: 'boolean',
+  },
+  slackConversationID: {
+    arg: '--slack-conversation-id',
+  },
   lighthouse: {
     arg: '--lighthouse',
     type: 'boolean',
@@ -313,6 +535,7 @@ export default {
   components: { Panel },
   data() {
     return {
+      activeTab: "general",
       routerProcess: false,
       running: '',
       available: '',
@@ -435,12 +658,16 @@ export default {
 
   watch: {
     isUrls(val) {
-      // console.log('val: ', val);
+      console.log('val: ', val);
       if (!val) this.urlsShow = true;
     }
   },
 
   methods: {
+    handleClick(tab, event) {
+      console.log(tab, event);
+    },
+
     logPush(msg) {
       const log = [...this.log, ...[msg]];
       if (log.length > 10000) log.shift();
@@ -472,14 +699,14 @@ export default {
 
       if (this.argsWithoutDefault) query.args = this.argsWithoutDefault;
 
-      // console.log('route scan: updateUrlQuery:', query);
+      console.log('route scan: updateUrlQuery:', query);
       if (push) this.$router.push({ query });
       else this.$router.replace({ query });
     },
 
     // GET params to form state
     updateFormFromQuery() {
-      // console.log('updateFormFromQuery: ', this.$route.query);
+      console.log('updateFormFromQuery: ', this.$route.query);
       if (this.routerProcess) return;
       if (this.$route.query["fields"]) return; // ignore params from viewer
 
@@ -509,8 +736,8 @@ export default {
       const argNameMap = {};
       for (let name in controlsMap) {
         const conf = controlsMap[name];
-        // console.log('name: ', name);
-        // console.log('conf: ', conf);
+        console.log('name: ', name);
+        console.log('conf: ', conf);
         argNameMap[conf.arg] = name;
       }
 
@@ -539,8 +766,8 @@ export default {
         if (conf.type === 'boolean') this.form[formItemName] = true;
         else {
           const val = parts[parseInt(i) + 1];
-          // console.log('formItemName: ', formItemName);
-          // console.log('val: ', val);
+          console.log('formItemName: ', formItemName);
+          console.log('val: ', val);
           if (val) {
             this.form[formItemName] = val;
             lastVal = true;
@@ -609,6 +836,9 @@ export default {
     },
 
     auth() {
+      console.log('this.socket.connected', this.socket.connected);
+      console.log('this.$store.state.user?.uid', this.$store.state.user?.uid);
+      console.log('this.isNeedAuth', this.isNeedAuth);
       if (this.socket.connected && this.$store.state.user?.uid && this.isNeedAuth) {
         this.isNeedAuth = false;
         this.socket.emit('auth', this.$store.state.user);
@@ -738,6 +968,7 @@ export default {
   async mounted() {
     this.socket = this.$nuxtSocket({
       channel: "/",
+      path: "/api/v1/sas/socket.io",
       reconnection: true,
       reconnectionDelayMax: 10000,
       teardown: false,
@@ -749,6 +980,7 @@ export default {
     this.socket.on("connect", () => {
       this.connected = true;
       this.auth();
+      this.submitEvents(this.$store.state.user?.uid || '');
     });
 
     this.socket.on("disconnect", () => {
@@ -760,12 +992,6 @@ export default {
 
     this.socket.on("reconnect_attempt", () => {
       this.logPush('try to connect ' + this.serverUrl + '...');
-    });
-
-    firebase.auth().onAuthStateChanged(user => {
-      // if (!user) user = { uid: 'anon' + Math.random() * 100000}
-      this.auth();
-      this.submitEvents(this.$store.state.user?.uid || '');
     });
 
     // router change event

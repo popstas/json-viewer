@@ -89,6 +89,34 @@ export const state = () => ({
     ignoreRobotsTxt: false,
     followXmlSitemap: false,
     lighthouse: false,
+    // readingTime
+    readingTime: false,
+    // htmlGrabber
+    htmlGrabbr: false,    
+    htmlGrabbrDebug: false,
+    htmlGrabbrPretty: false,
+    htmlGrabbrPageIllustration: true,
+    htmlGrabbrExcerpt: true,
+    htmlGrabbrReadLength: true,
+    htmlGrabbrEmbeddedImageURLs: true,
+    // language detection
+    languageDetection: false,    
+    languageWhitelist: ["en", "fr", "ru"],
+    languageBlacklist: [],
+    // InfluxDB
+    influxDB: false,
+    influxDatabase: 'seoz',
+    influxMeasurement: 'seoz',
+    // Yake
+    yake: false,
+    yakeLanguage: 'auto',      
+    yakeMaxNgramSize: 3,
+    yakeNumberKeywords: 10,
+    yakeNgramThreshold: 0.02,
+    yakeServerUrl: 'http://yake:5000/yake/',
+    // Slack
+    slack: true,
+    slackConversationID: '#eg_seoz',
   },
 
   // app state
