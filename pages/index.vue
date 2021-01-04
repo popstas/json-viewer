@@ -32,7 +32,7 @@
       <div v-if="jsonLoadError">
         <div class="msg danger">Failed to load {{ itemsJsonUrl}}</div>
       </div>
-      <div v-if="jsonLoading">Loading...</div>
+      <div v-if="jsonLoading"><i class="el-icon-loading"></i> Loading...</div>
 
       <div v-if="!jsonLoading && !jsonLoadError">
         <el-collapse v-model="openedPanels" class="panels">
@@ -489,7 +489,7 @@ export default {
 
     buildXlsx() {
       const table = this.$el.querySelector(".VueTables__table");
-      const wb = XLSX.utils.table_to_book(table);
+      const wb = XLSX.utils.table_to_book(table); // TODO: export values from this.filteredItems
       const ws = wb.Sheets[wb.SheetNames[0]];
 
       const lastCell = ws['!ref'].split(':')[1];
