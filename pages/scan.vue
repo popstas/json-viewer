@@ -95,7 +95,7 @@
 
     </el-row>
 
-    <NuxtLink :to="'/?url='+itemsJsonUrl" v-if="itemsJsonUrl" 
+    <NuxtLink :to="'/?url='+itemsJsonUrl" v-if="itemsJsonUrl"
       :class="{'scan__report-link': true, 'el-button': true, 'is-round': true, 'el-button--success': isReportSuccess}"
     >
       Report: {{ $store.getters.shortReportUrl(itemsJsonUrl) }}
@@ -170,6 +170,10 @@
       @media (min-width: 640px) {
         text-align: right;
         margin-right: 10px;
+      }
+
+      .el-switch__label.is-active {
+        color: inherit;
       }
     }
 
@@ -745,7 +749,7 @@ export default {
     this.socket = this.$nuxtSocket({
       channel: "/",
       reconnection: true,
-      reconnectionDelayMax: 10000,
+      reconnectionDelayMax: 3000,
       teardown: false,
     });
 
@@ -782,7 +786,7 @@ export default {
     this.updateFormFromQuery(); // update form after localStorage
   },
 
-  
+
   head() {
     return {
       title: this.pageTitle
