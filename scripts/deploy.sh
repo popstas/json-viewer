@@ -3,7 +3,7 @@ set -eu
 
 rm -rf dist
 
-SERVER_URL="https://site-audit-server.popstas.ru" \
+SERVER_URL="https://site-audit-server-stable.popstas.ru" \
 FRONTEND_URL="https://viasite.github.io/site-audit-seo-viewer" \
 SCAN_DEFAULT_MAX_REQUESTS=50 \
 npm run generate

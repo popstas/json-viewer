@@ -517,7 +517,7 @@ export const actions = {
     const filteredItems = getters.getFilteredItems(q);
 
     commit('filteredItems', filteredItems);
-    commit('availableFields', fieldsByItems(state.filteredItems, state.tests));
+    commit('availableFields', fieldsByItems(state.filteredItems, state.tests)); // TODO: return all fields
   },
 
   q({ commit, dispatch }, q) {
