@@ -466,6 +466,15 @@ header {
       text-align: right;
     }
 
+    .col-readability_text > div {
+      max-height: 500px;
+      overflow: hidden;
+
+      &:hover {
+        max-height: inherit;
+      }
+    }
+
     @media(min-width:800px) {
       // sticky first column
       .col-default {

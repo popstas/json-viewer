@@ -549,7 +549,7 @@ export default {
         query.q = this.q;
       }
 
-      if (updateFields) query.fields = this.columns.join(",");
+      if (updateFields) query.fields = this.columns.join(","); // TODO: fields remove from url after page open
 
       // don't add default json url
       if (this.itemsJsonUrl !== process.env.JSON_URL) {

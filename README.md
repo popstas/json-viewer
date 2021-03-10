@@ -9,3 +9,6 @@ Demo:
 
 # TODO
 - show diff between reports
+- Don't show empty fields
+- Scan server don't really changing, due websockets server in nuxt.config.js
+- Feature: cancel current scan
