@@ -635,8 +635,8 @@ export default {
         const res = msg.match(/^(\d+).*\((\d+)\)$/);
         if (res) {
           // console.log('res: ', res);
-          this.currentScanPage = res[1];
-          this.currentScanQueue = parseInt(res[2]);
+          this.currentScanPage = parseInt(res[1]);
+          this.currentScanQueue = this.currentScanPage + parseInt(res[2]);
           if (this.form.maxRequests && this.form.maxRequests < this.currentScanQueue) {
             this.currentScanQueue = this.form.maxRequests;
           }
