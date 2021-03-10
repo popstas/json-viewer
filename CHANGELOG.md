@@ -1,3 +1,25 @@
+# [4.2.0](https://github.com/viasite/site-audit-seo-viewer/compare/v4.1.0...v4.2.0) (2021-03-10)
+
+
+### Bug Fixes
+
+* add css for readability_text ([18a52a6](https://github.com/viasite/site-audit-seo-viewer/commit/18a52a6ce060c71da546ce06011ab283dec951de))
+* fix queue displey count ([b5e8229](https://github.com/viasite/site-audit-seo-viewer/commit/b5e822905d67a2ff33223e42c2d1b2fc86458091))
+* **reports:** rearrange panels: explorer, current columns, stats, presets ([adc3fb1](https://github.com/viasite/site-audit-seo-viewer/commit/adc3fb1cfb92bf9f3be91b503a1bf70c168f76e3))
+* **scan:** remove color from url/urls switch ([8d26d47](https://github.com/viasite/site-audit-seo-viewer/commit/8d26d4767870e3c58ca127f3414e72fc6e963b1b))
+* **scan:** switch to site-audit-server-stable.popstas.ru ([60c9051](https://github.com/viasite/site-audit-seo-viewer/commit/60c9051ef64e0684a7979fa3f4607ffcc3767d03))
+* focus on scan button, then on report button ([2f1596a](https://github.com/viasite/site-audit-seo-viewer/commit/2f1596a42c36c9800757f8b11d9dbaa63695ed0e))
+
+
+### Features
+
+* cancel command ([1431bf3](https://github.com/viasite/site-audit-seo-viewer/commit/1431bf346b8d9ea0153310d77aca82b9f13cf823))
+* restore connection with running scan job ([8e676de](https://github.com/viasite/site-audit-seo-viewer/commit/8e676de7dfc2a2c5a7b2b2c4ef4eae218158f6ff))
+* show animated loader ([74a82a0](https://github.com/viasite/site-audit-seo-viewer/commit/74a82a07b3a7338848a5a7c7d3718ac4ca2b5fe8))
+* **scan:** loader spinner while scan ([251bc88](https://github.com/viasite/site-audit-seo-viewer/commit/251bc88b45f5909f4798da81064a78bae99e9449))
+
+
+
 # [4.1.0](https://github.com/viasite/site-audit-seo-viewer/compare/v4.0.0...v4.1.0) (2020-12-29)
 
 
