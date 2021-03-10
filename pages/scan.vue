@@ -91,6 +91,7 @@
         <!-- {{ currentScanPage }} / {{ currentScanQueue }} -->
         <el-progress :percentage="currentScanPercent" :format="showCurrentScan"></el-progress>
         <i v-if="currentScanPage" class="el-icon-loading"></i>
+        <el-button v-if="currentScanPercent" type="primary" @click="cancelTask">Cancel</el-button>
       </div>
 
     </el-row>
@@ -614,6 +615,10 @@ export default {
 
       // const res = await this.$axios.$post(`${this.serverUrl}/scan`, opts);
       // console.log('res: ', res);
+    },
+
+    async cancelTask() {
+      this.socket.emit('cancel', {});
     },
 
     auth() {
