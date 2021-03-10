@@ -619,7 +619,12 @@ export default {
     auth() {
       if (this.socket.connected && this.$store.state.user?.uid && this.isNeedAuth) {
         this.isNeedAuth = false;
-        this.socket.emit('auth', this.$store.state.user);
+        this.socket.emit('auth', {
+          ...this.$store.state.user,
+          ...{ connectionId: this.$store.state.connectionId || this.$store.state.lastConnectionId } // send last connectionId
+        });
+        this.$store.commit('connectionId', this.socket.id);
+        this.$store.commit('lastConnectionId', this.socket.id);
       }
     },
 
@@ -628,9 +633,6 @@ export default {
 
       // log to "terminal"
       this.socket.on("status" + key, (msg, cb) => {
-        // console.log(`msg ${key}: ${msg}`);
-
-
         // current scan status extract
         const res = msg.match(/^(\d+).*\((\d+)\)$/);
         if (res) {
@@ -758,6 +760,9 @@ export default {
 
     this.socket.on("connect", () => {
       this.connected = true;
+      this.currentScanPage = '';
+      this.currentScanPercent = 0;
+      this.currentScanQueue = 0;
       this.auth();
     });
 

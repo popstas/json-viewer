@@ -12,6 +12,7 @@ export default ({store}) => {
       'currentJsonSort',
       'displayMode',
       'uid',
+      'lastConnectionId',
       'url',
       'urls',
       'args',

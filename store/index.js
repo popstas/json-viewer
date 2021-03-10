@@ -2,70 +2,6 @@ import pjson from '~/package.json';
 import jsonQuery from 'json-query';
 import firebase from "firebase";
 
-const fieldsByItems = (items, tests) => {
-  let excludedFields = [
-    // objects
-    'id',
-    'tests',
-    // duplicates
-    'meta_engine',
-    'meta_screenshots',
-    'meta_prod',
-    'item_root',
-    // not working
-    'total_pages_load_time',
-    'result',
-    'max_result',
-    'result_percent'
-  ];
-
-  let fields = [];
-  let fieldPaths = [];
-
-  for (let itemInd in items) {
-    let item = items[itemInd];
-
-    // раньше из некоторых вложенных объектов доставались поля,
-    // теперь они прессуются в одномерный объект
-    let objs = {
-      '': item
-      // 'item_info.': item.item_info,
-      // 'meta.': item.meta
-    };
-
-    for (let prefix in objs) {
-      const obj = objs[prefix];
-      for (let fieldName in obj) {
-        let fieldPath = prefix + fieldName;
-        if (excludedFields.includes(fieldPath)) continue;
-        if (fieldPaths.includes(fieldPath)) continue;
-
-        let field = {
-          name: fieldPath,
-          title: fieldName
-        };
-
-        // info from /etc/item-info.yml
-        const info = tests[fieldName];
-        if (info) {
-          for (let fName of ['comment', 'description', 'command', 'validate', 'default', 'align', 'type']) {
-            if(info[fName]) field[fName] = info[fName];
-          }
-        }
-
-        if (!field.type) field.type = 'string';
-
-        fields.push(field);
-        fieldPaths.push(fieldPath);
-      }
-    }
-  }
-
-  return fields;
-};
-
-
-
 export const state = () => ({
   // data
   items: [],
@@ -105,6 +41,8 @@ export const state = () => ({
   columnPresets: {},
   filterPresets: [],
   user: false,
+  connectionId: 0, // current tab id
+  lastConnectionId: 0, // current user id
   uid: '', // only for anonymous
   url: 'https://blog.popstas.ru',
   urls: '',
@@ -482,6 +420,12 @@ export const mutations = {
   serverUrl(state, newValue) {
     state.serverUrl = newValue;
   },
+  connectionId(state, newValue) {
+    state.connectionId = newValue;
+  },
+  lastConnectionId(state, newValue) {
+    state.lastConnectionId = newValue;
+  },
   log(state, newValue) {
     state.log = newValue;
   },
@@ -573,3 +517,65 @@ export const actions = {
 
 export const strict = true;
 // export const strict = false;
+
+function fieldsByItems(items, tests){
+  let excludedFields = [
+    // objects
+    'id',
+    'tests',
+    // duplicates
+    'meta_engine',
+    'meta_screenshots',
+    'meta_prod',
+    'item_root',
+    // not working
+    'total_pages_load_time',
+    'result',
+    'max_result',
+    'result_percent'
+  ];
+
+  let fields = [];
+  let fieldPaths = [];
+
+  for (let itemInd in items) {
+    let item = items[itemInd];
+
+    // раньше из некоторых вложенных объектов доставались поля,
+    // теперь они прессуются в одномерный объект
+    let objs = {
+      '': item
+      // 'item_info.': item.item_info,
+      // 'meta.': item.meta
+    };
+
+    for (let prefix in objs) {
+      const obj = objs[prefix];
+      for (let fieldName in obj) {
+        let fieldPath = prefix + fieldName;
+        if (excludedFields.includes(fieldPath)) continue;
+        if (fieldPaths.includes(fieldPath)) continue;
+
+        let field = {
+          name: fieldPath,
+          title: fieldName
+        };
+
+        // info from /etc/item-info.yml
+        const info = tests[fieldName];
+        if (info) {
+          for (let fName of ['comment', 'description', 'command', 'validate', 'default', 'align', 'type']) {
+            if(info[fName]) field[fName] = info[fName];
+          }
+        }
+
+        if (!field.type) field.type = 'string';
+
+        fields.push(field);
+        fieldPaths.push(fieldPath);
+      }
+    }
+  }
+
+  return fields;
+};
