@@ -41,7 +41,10 @@
     <el-row style="clear:both">
       <el-form class="scan__form-settings">
         <el-collapse v-model="openedPanels" class="panels">
-          <Panel name="settings" icon="el-icon-setting" title="Settings" :subtitle="argsWithoutDefault" >
+          <Panel name="settings" icon="el-icon-setting" title="Settings" :subtitle="!openedPanels.includes('settings') ? argsWithoutDefault : ''" >
+
+            <div class="scan__other-args" v-if="openedPanels.includes('settings')" v-html="argsWithoutDefault"></div>
+
             <el-form-item label="Preset">
               <el-select v-model="form.preset">
                 <el-option
@@ -80,6 +83,10 @@
 
             <el-form-item label="Report fields">
               <el-input class="scan__report-fields" v-model="form.reportFields" title="Example: url,h1,readability_length"></el-input>
+            </el-form-item>
+
+            <el-form-item label="Report query">
+              <el-input class="scan__report-fields" v-model="form.reportQ" title="Example: request_time>1000"></el-input>
             </el-form-item>
 
             <el-form-item label="Arguments">
@@ -248,6 +255,16 @@
     .el-collapse-item__header,
     .el-collapse-item__wrap {
       border: none;
+
+      .panel__subtitle {
+        display: inline-block;
+        max-height: 32px;
+        overflow: hidden;
+      }
+    }
+
+    .scan__other-args {
+      color: #999;
     }
 
     .el-collapse-item__content {
@@ -339,6 +356,10 @@ const controlsMap = {
   },
   reportFields: {
     arg: '--report-fields',
+    // type: 'string',
+  },
+  reportQ: {
+    arg: '--report-q',
     // type: 'string',
   },
 };
@@ -449,6 +470,7 @@ export default {
 
     reportUrl() {
       return '/?' +
+        (this.form.reportQ ? `q=${this.form.reportQ}&` : '') +
         (this.form.reportFields ? `fields=${this.form.reportFields}&` : '') +
         `url=${this.itemsJsonUrl}`;
     },
@@ -615,7 +637,7 @@ export default {
           args += ' ' + conf.arg;
         }
         else {
-          if (val === '') continue;
+          if (val === '' || val === undefined) continue;
           args += ` ${conf.arg} ${val}`;
         }
       }
@@ -640,6 +662,7 @@ export default {
 
       // hack: remove virtual arg, it used only for report link generate
       opts.args = opts.args.replace(/--report-fields .*?(\s|$)/, '');
+      opts.args = opts.args.replace(/--report-q .*?(\s|$)/, '');
 
 
       this.updateUrlQuery(true); // set in url only scanned

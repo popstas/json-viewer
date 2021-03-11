@@ -28,6 +28,7 @@ export const state = () => ({
     urlList: false,
     outName: '',
     reportFields: '',
+    reportQ: '',
   },
 
   // app state
