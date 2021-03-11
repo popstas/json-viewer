@@ -450,7 +450,8 @@ export default {
 
   watch: {
     q(q) {
-      this.updateUrlQuery();
+      // console.log('watch q');
+      this.updateUrlQuery(false);
       if (q) this.openFilterPanelIfNeed();
 
       // добавление колонок, которые есть в фильтре
@@ -462,7 +463,8 @@ export default {
     },
 
     async itemsJsonUrl() {
-      await this.changeJsonUrl(this.itemsJsonUrl, true);
+      const forceDefaultColumns = !this.$route.query["fields"];
+      await this.changeJsonUrl(this.itemsJsonUrl, forceDefaultColumns);
     },
 
     displayMode(val) {
@@ -489,7 +491,7 @@ export default {
 
     buildXlsx() {
       const table = this.$el.querySelector(".VueTables__table");
-      const wb = XLSX.utils.table_to_book(table); // TODO: export values from this.filteredItems
+      const wb = XLSX.utils.table_to_book(table);
       const ws = wb.Sheets[wb.SheetNames[0]];
 
       const lastCell = ws['!ref'].split(':')[1];
@@ -534,6 +536,8 @@ export default {
 
     // обновляет выбранные фильтры и колонки в урле
     updateUrlQuery(updateFields = false) {
+      // console.log('updateFields: ', updateFields);
+      // console.log('this.columns: ', this.columns);
       if (this.routerProcess) return;
       this.routerProcess = true;
       setTimeout(() => {
@@ -549,7 +553,15 @@ export default {
         query.q = this.q;
       }
 
-      if (updateFields) query.fields = this.columns.join(","); // TODO: fields remove from url after page open
+      if (updateFields) {
+        const isDefaultFields = this.isDefaultFields(this.columns);
+        // console.log('isDefaultFields: ', isDefaultFields);
+        if (isDefaultFields) delete(query.fields);
+        else query.fields = this.columns.join(",");
+      }
+      else {
+        query.fields = this.$route.query["fields"];
+      }
 
       // don't add default json url
       if (this.itemsJsonUrl !== process.env.JSON_URL) {
@@ -612,8 +624,8 @@ export default {
       // console.log('setPreset: ', preset);
       this.setFields(preset.columns);
 
-      const isDefaultPreset = preset.name === 'default';
-      this.updateUrlQuery(!isDefaultPreset);
+      // const isDefaultPreset = preset.name === 'default';
+      this.updateUrlQuery(true);
     },
 
     // индекс поля в массиве по объекту
@@ -682,10 +694,11 @@ export default {
     },
 
     arraysEqual(a,b) { return !!a && !!b && !(a<b || b<a); },
-    // TODO: not detect default preset
     isDefaultFields(columns) {
       const presets = this.$store.state.columnPresets;
-      const defaultColumns = presets.default ? this.columns.columns : false;
+      const defaultColumns = presets.default ? presets.default.columns : false;
+      // console.log('columns: ', columns);
+      // console.log('defaultColumns: ', defaultColumns);
       if (!defaultColumns) return false;
 
       return this.arraysEqual(columns, defaultColumns)
@@ -783,10 +796,9 @@ export default {
         // columns
         if (forceDefaultColumns) {
           this.setDefaultFields();
+          // console.log('forceDefaultColumns');
+          this.updateUrlQuery(true);
         }
-
-        // update url
-        this.updateUrlQuery();
 
         this.jsonLoadError = false;
         this.jsonLoading = false;
@@ -852,7 +864,9 @@ export default {
 
     this.changeDisplayMode(this.displayMode);
     if (this.q) this.openFilterPanelIfNeed(); // after displayMode
-    this.updateUrlQuery();
+    // console.log('query after mounted');
+
+    this.updateUrlQuery(true);
   },
 
   head() {
