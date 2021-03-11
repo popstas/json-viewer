@@ -27,6 +27,7 @@ export const state = () => ({
     lighthouse: false,
     urlList: false,
     outName: '',
+    reportFields: '',
   },
 
   // app state

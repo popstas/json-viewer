@@ -63,19 +63,23 @@
             </el-form-item>
 
             <el-form-item label="Ignore robots.txt">
-              <el-switch v-model="form.ignoreRobotsTxt"></el-switch>
+              <el-switch v-model="form.ignoreRobotsTxt" title="Scan all found pages"></el-switch>
             </el-form-item>
 
             <el-form-item label="Follow sitemap.xml">
               <el-switch v-model="form.followXmlSitemap"></el-switch>
             </el-form-item>
 
-            <el-form-item label="URL contains URL list">
+            <el-form-item label="URL contains URL list" title="Parse URL as URL list">
               <el-switch v-model="form.urlList"></el-switch>
             </el-form-item>
 
             <el-form-item label="Report name">
-              <el-input class="scan__out-name" v-model="form.outName"></el-input>
+              <el-input class="scan__out-name" v-model="form.outName" title="Default: domain name"></el-input>
+            </el-form-item>
+
+            <el-form-item label="Report fields">
+              <el-input class="scan__report-fields" v-model="form.reportFields" title="Example: url,h1,readability_length"></el-input>
             </el-form-item>
 
             <el-form-item label="Arguments">
@@ -104,7 +108,7 @@
 
     </el-row>
 
-    <NuxtLink :to="'/?url='+itemsJsonUrl" v-if="itemsJsonUrl"
+    <NuxtLink :to="reportUrl" v-if="itemsJsonUrl"
       :class="{'scan__report-link': true, 'el-button': true, 'is-round': true, 'el-button--success': isReportSuccess}"
     >
       Report: {{ $store.getters.shortReportUrl(itemsJsonUrl) }}
@@ -221,7 +225,8 @@
     font-family: monospace;
   }
 
-  .scan__out-name {
+  .scan__out-name,
+  .scan__report-fields {
     width: 180px;
   }
 
@@ -332,6 +337,10 @@ const controlsMap = {
     arg: '--out-name',
     // type: 'string',
   },
+  reportFields: {
+    arg: '--report-fields',
+    // type: 'string',
+  },
 };
 
 export default {
@@ -436,6 +445,12 @@ export default {
 
     isReportSuccess() {
       return this.lastUpdated && !this.currentScanPage;
+    },
+
+    reportUrl() {
+      return '/?' +
+        (this.form.reportFields ? `fields=${this.form.reportFields}&` : '') +
+        `url=${this.itemsJsonUrl}`;
     },
 
     urlList() {
@@ -600,6 +615,7 @@ export default {
           args += ' ' + conf.arg;
         }
         else {
+          if (val === '') continue;
           args += ` ${conf.arg} ${val}`;
         }
       }
@@ -621,6 +637,9 @@ export default {
         url: this.url,
         args: this.buildArgs(true, overrides)
       };
+
+      // hack: remove virtual arg, it used only for report link generate
+      opts.args = opts.args.replace(/--report-fields .*?(\s|$)/, '');
 
 
       this.updateUrlQuery(true); // set in url only scanned
