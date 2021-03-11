@@ -33,7 +33,7 @@
             <ColumnField
               :field="field"
               :checked="$store.getters.fieldExists(field)"
-              @click="$emit('toggleField', field)"
+              @click="$emit('toggleField', field, false, true)"
               :class="{ active: $store.getters.fieldExists(field) }"
             ></ColumnField>
           </el-dropdown-item>
@@ -48,7 +48,7 @@
         :checked="$store.getters.fieldExists(field)"
         v-for="field in group.fields"
         :key="field.name"
-        @click="$emit('toggleField', field)"
+        @click="$emit('toggleField', field, false, true)"
         :class="{ active: $store.getters.fieldExists(field) }"
         v-if="$store.getters.fieldExists(field) && !opened"
       ></ColumnField>
@@ -75,7 +75,7 @@
       <ColumnField
         :field="field"
         :checked="$store.getters.fieldExists(field)"
-        @click="$emit('toggleField', field)"
+        @click="$emit('toggleField', field, false, true)"
         :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
         v-for="field in group.fields"
         :key="'content' + field.name"
