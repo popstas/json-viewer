@@ -1,3 +1,20 @@
+# [4.3.0](https://github.com/viasite/site-audit-seo-viewer/compare/v4.2.0...v4.3.0) (2021-03-11)
+
+
+### Bug Fixes
+
+* **filters:** change url when toggle column in table ([7001632](https://github.com/viasite/site-audit-seo-viewer/commit/70016329b1475da044013f7cf734d83e598df564))
+* **reports:** better field presets work while change report ([06b1eee](https://github.com/viasite/site-audit-seo-viewer/commit/06b1eee644412d394e01831ed1bc528fdb6bfa6e))
+
+
+### Features
+
+* **scan:** add "Report fields", override default fields in report ([87cddf7](https://github.com/viasite/site-audit-seo-viewer/commit/87cddf72d524ed332bb7063da56ce000ee1ec2d6))
+* **scan:** add "Report query", override default query in report ([e7533de](https://github.com/viasite/site-audit-seo-viewer/commit/e7533ded047a6039a536fff462d96ac081043637))
+* **scan:** add controls for --url-list, --out-name ([f542bfa](https://github.com/viasite/site-audit-seo-viewer/commit/f542bfadc64d4cb5fa298afa848f19ca8a7d2941))
+
+
+
 # [4.2.0](https://github.com/viasite/site-audit-seo-viewer/compare/v4.1.0...v4.2.0) (2021-03-10)
 
 
