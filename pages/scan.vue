@@ -70,6 +70,14 @@
               <el-switch v-model="form.followXmlSitemap"></el-switch>
             </el-form-item>
 
+            <el-form-item label="URL contains URL list">
+              <el-switch v-model="form.urlList"></el-switch>
+            </el-form-item>
+
+            <el-form-item label="Report name">
+              <el-input class="scan__out-name" v-model="form.outName"></el-input>
+            </el-form-item>
+
             <el-form-item label="Arguments">
               <el-input class="scan__args" v-model="args" @keydown.enter.native="sendTask"></el-input>
             </el-form-item>
@@ -213,6 +221,10 @@
     font-family: monospace;
   }
 
+  .scan__out-name {
+    width: 180px;
+  }
+
   .scan__report-link {
     margin: 15px 0;
   }
@@ -311,6 +323,14 @@ const controlsMap = {
   lighthouse: {
     arg: '--lighthouse',
     type: 'boolean',
+  },
+  urlList: {
+    arg: '--url-list',
+    type: 'boolean',
+  },
+  outName: {
+    arg: '--out-name',
+    // type: 'string',
   },
 };
 

@@ -25,6 +25,8 @@ export const state = () => ({
     ignoreRobotsTxt: false,
     followXmlSitemap: false,
     lighthouse: false,
+    urlList: false,
+    outName: '',
   },
 
   // app state
