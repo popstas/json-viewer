@@ -11,7 +11,7 @@
     <div class="item-details__groups">
       <a
         class="item-details__groups-link"
-        :href="'#' + item[$store.state.defaultField] + '-' + group.name"
+        :href="$nuxt.$route.fullPath.replace(/#.*/, '') + '#' + item[$store.state.defaultField] + '-' + group.name"
         v-for="group in groups"
         :key="group.name"
         >{{ group.name }}</a
@@ -88,6 +88,7 @@ export default {
     },
 
     groups() {
+      console.log('$nuxt.$route: ', $nuxt.$route);
       let groups = { unnamed: { name: "", fields: [] } };
       for (let colName in this.item) {
         let val = this.item[colName];
@@ -155,16 +156,16 @@ export default {
       for (let groupName of groupsDefaultOrder) {
         if (groups[groupName]) groupsSorted[groupName] = groups[groupName];
       }
-      console.log('groupsSorted: ', groupsSorted);
+      // console.log('groupsSorted: ', groupsSorted);
 
       // then other groups
       for (let groupName in groups) {
-        console.log('groupName: ', groupName);
+        // console.log('groupName: ', groupName);
         if (!groupsSorted[groupName]) groupsSorted[groupName] = groups[groupName];
       }
 
-      console.log('groups: ', groups);
-      console.log('groupsSorted: ', groupsSorted);
+      // console.log('groups: ', groups);
+      // console.log('groupsSorted: ', groupsSorted);
 
       return groupsSorted;
     },
@@ -174,6 +175,6 @@ export default {
     getColumnValidateClass(value, validateRules) {
       return this.$store.getters.getColumnValidateClass(value, validateRules);
     },
-  },
+  }
 };
 </script>
