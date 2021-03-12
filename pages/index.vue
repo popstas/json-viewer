@@ -101,6 +101,7 @@
         </div>
 
         <v-client-table
+          :class="{ 'table_without-header': hideTable }"
           v-if="filteredItems.length > 0"
           :columns="columns"
           :data="filteredItems"
@@ -110,7 +111,7 @@
           ref="table"
         >
           <template slot="child_row" slot-scope="props">
-            <ItemDetails :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
+            <ItemDetails @hideTable="onHideTable" :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
           </template>
 
           <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
@@ -164,6 +165,7 @@ export default {
       jsonLoading: true,
       openedPanels: [],
       sort: {},
+      hideTable: false,
     };
   },
 
@@ -473,6 +475,10 @@ export default {
   },
 
   methods: {
+
+    onHideTable(val) {
+      this.hideTable = val
+    },
 
     formatExcelCols(json) {
       let widthArr = Object.keys(json[0]).map(key => {

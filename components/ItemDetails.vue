@@ -1,16 +1,20 @@
 <template>
   <div class="item-details">
     <a
-      v-if="item.url"
+      v-if="item.url && lastGroup"
       class="item-details__title"
       :href="item.url"
       target="_blank"
       >{{ item.url }}</a
     >
 
-    <div class="item-details__groups">
+    <!-- navigation -->
+    <div class="item-details__groups" v-if="lastGroup">
       <a
-        class="item-details__groups-link"
+        :class="{ 
+          'item-details__groups-link_active': group.name === lastGroup, 
+          'item-details__groups-link': true 
+        }"
         :href="$nuxt.$route.fullPath.replace(/#.*/, '') + '#' + item[$store.state.defaultField] + '-' + group.name"
         v-for="group in groups"
         :key="group.name"
@@ -18,12 +22,14 @@
       >
     </div>
 
+    <!-- groups panels -->
     <div
       :class="{
         'item-details__group': true,
         'item-details__group_lighthouse': group.name.match(/Lighthouse/),
       }"
       v-for="group in groups"
+      :data-group="group.name"
       :key="group.name"
       :id="item[$store.state.defaultField] + '-' + group.name"
     >
@@ -68,6 +74,11 @@ import FilterPresetButton from "~/components/FilterPresetButton";
 import "vue-awesome/icons/filter";
 
 const groupsDefaultOrder = [
+  // site-discovery
+  'site_main',
+  'meta',
+
+  // site-audit-seo
   'metatags',
   'readability',
   'yake',
@@ -79,6 +90,19 @@ const groupsDefaultOrder = [
 export default {
   components: { FilterPresetButton },
   props: ["item"],
+  data() {
+    return {
+      observer: null,
+      lastGroup: '',
+    }
+  },
+
+  watch: {
+    lastGroup(val) {
+      this.$emit('hideTable', val !== '');
+    }
+  },
+
   computed: {
     tests() {
       return this.$store.state.tests;
@@ -88,7 +112,7 @@ export default {
     },
 
     groups() {
-      console.log('$nuxt.$route: ', $nuxt.$route);
+      // console.log('$nuxt.$route: ', $nuxt.$route);
       let groups = { unnamed: { name: "", fields: [] } };
       for (let colName in this.item) {
         let val = this.item[colName];
@@ -170,11 +194,58 @@ export default {
       return groupsSorted;
     },
   },
+
   methods: {
     // выдает класс валидации по значению и правилам валидации
     getColumnValidateClass(value, validateRules) {
       return this.$store.getters.getColumnValidateClass(value, validateRules);
     },
-  }
+
+    onElementObserved(entries) {
+      let lastTarget;
+      console.log('');
+      entries.forEach(({ target, isIntersecting}) => {
+        // console.log('target.dataset.group: ', target.dataset.group);
+
+        // hide all groups
+        if (target === this.$el && !isIntersecting) {
+          this.lastGroup = '';
+          return;
+        }
+
+        if (!isIntersecting) return;
+        // console.log('target: ', target);
+        lastTarget = target;
+        // this.observer.unobserve(target);
+      });
+
+      if (lastTarget) {
+        this.lastGroup = lastTarget.dataset.group;
+        // console.log('lastTarget: ', lastTarget);
+      }
+    }
+  },
+
+  mounted() {
+    // item details table of contents observe
+    this.observer = new IntersectionObserver(
+      this.onElementObserved/* ,
+      {
+        root: this.$el,
+        threshold: 1.0,
+      } */
+    );
+    const groups = this.$el.querySelectorAll('.item-details__group');
+    // console.log('groups: ', groups);
+    this.observer.observe(this.$el);
+    for(let group of groups) {
+      this.observer.observe(group);
+    }
+  },
+
+  beforeDestroy() {
+    this.observer.disconnect();
+    this.$emit('hideTable', false);
+  },
 };
 </script>

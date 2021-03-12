@@ -231,16 +231,25 @@ header {
     &-link {
       display: inline-block;
       padding: 10px;
+
+      &_active {
+        background: #ecf5ff;
+        border-color: #c6e2ff;
+      }
     }
 
     // fixed right panel
     @media (min-width: 1000px) {
       position: fixed;
       right: 0;
-      top: 250px;
+      top: 128px;
       width: 200px;
       padding: 15px;
       background: #fff;
+      z-index: 2;
+      box-shadow: 0 0 3px #ccc;
+      max-height: calc(100vh - 180px - 30px);
+      overflow-y: auto;
 
       &-link {
         display: block;
@@ -327,6 +336,16 @@ header {
 
   &__title {
     font-size: 1.5rem;
+    @media (min-width: 1000px) {
+      position: fixed;
+      right: 0;
+      top: 64px;
+      // width: 200px;
+      padding: 15px;
+      background: #fff;
+      z-index: 2;
+      // box-shadow: 0 0 3px #ccc;
+    }
   }
 
   &__group {
@@ -407,6 +426,11 @@ header {
       overflow-y: visible;
     }
   }
+
+  &.table_without-header thead {
+    display: none;
+  }
+
   th {
     position: sticky;
     top: 0;
