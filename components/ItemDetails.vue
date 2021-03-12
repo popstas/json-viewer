@@ -1,6 +1,12 @@
 <template>
   <div class="item-details">
-    <a v-if="item.url" class="item-details__title" :href="item.url" target="_blank">{{ item.url }}</a>
+    <a
+      v-if="item.url"
+      class="item-details__title"
+      :href="item.url"
+      target="_blank"
+      >{{ item.url }}</a
+    >
 
     <div class="item-details__groups">
       <a
@@ -8,11 +14,15 @@
         :href="'#' + item[$store.state.defaultField] + '-' + group.name"
         v-for="group in groups"
         :key="group.name"
-      >{{ group.name }}</a>
+        >{{ group.name }}</a
+      >
     </div>
 
     <div
-      :class="{'item-details__group': true, 'item-details__group_lighthouse': group.name.match(/Lighthouse/)}"
+      :class="{
+        'item-details__group': true,
+        'item-details__group_lighthouse': group.name.match(/Lighthouse/),
+      }"
       v-for="group in groups"
       :key="group.name"
       :id="item[$store.state.defaultField] + '-' + group.name"
@@ -25,8 +35,13 @@
           :title="field.name"
           :class="field.validateClass"
         >
-          <span class="item-details__label">{{ field.comment || field.name }}</span>
-          <span class="item-details__value" v-html="field.valueText || field.value"></span>
+          <span class="item-details__label">{{
+            field.comment || field.name
+          }}</span>
+          <span
+            class="item-details__value"
+            v-html="field.valueText || field.value"
+          ></span>
 
           <FilterPresetButton
             v-if="itemsLength > 1"
@@ -51,6 +66,15 @@
 <script>
 import FilterPresetButton from "~/components/FilterPresetButton";
 import "vue-awesome/icons/filter";
+
+const groupsDefaultOrder = [
+  'metatags',
+  'readability',
+  'yake',
+  'perf',
+  'content',
+];
+
 
 export default {
   components: { FilterPresetButton },
@@ -95,8 +119,12 @@ export default {
           valueText = parseInt(val) ? "yes" : "no"; // tolang
         }
 
-
-        if (typeof val === 'string' && (field.type === 'image' || val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) && val) {
+        if (
+          typeof val === "string" &&
+          (field.type === "image" ||
+            val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) &&
+          val
+        ) {
           // const src = val.replace(/^\//, this.tests.url);
           valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
         }
@@ -111,23 +139,41 @@ export default {
             groups[groupName] = { name: groupName, fields: [] };
           }
 
-          const f = {...field};
+          const f = { ...field };
 
           // hide field duplicates
-          if (g != 0) f.validateClass += ' secondary group-'+ groupName;
+          if (g != 0) f.validateClass += " secondary group-" + groupName;
 
           groups[groupName].fields.push(f);
         }
       }
-      // console.log('groups: ', groups);
-      return groups;
-    }
+
+      // sort
+      const groupsSorted = {};
+
+      // first from hardcoded order
+      for (let groupName of groupsDefaultOrder) {
+        if (groups[groupName]) groupsSorted[groupName] = groups[groupName];
+      }
+      console.log('groupsSorted: ', groupsSorted);
+
+      // then other groups
+      for (let groupName in groups) {
+        console.log('groupName: ', groupName);
+        if (!groupsSorted[groupName]) groupsSorted[groupName] = groups[groupName];
+      }
+
+      console.log('groups: ', groups);
+      console.log('groupsSorted: ', groupsSorted);
+
+      return groupsSorted;
+    },
   },
   methods: {
     // выдает класс валидации по значению и правилам валидации
     getColumnValidateClass(value, validateRules) {
       return this.$store.getters.getColumnValidateClass(value, validateRules);
     },
-  }
+  },
 };
 </script>
