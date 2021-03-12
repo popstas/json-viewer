@@ -49,7 +49,7 @@
               :checked="$store.getters.fieldExists(field)"
               @click="toggleField(field, false, true)"
               :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
-              v-for="field of fieldsWithoutComments"
+              v-for="field of fields"
               :key="field.name"
             ></ColumnField>
           </Panel>
