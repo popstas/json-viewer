@@ -1,3 +1,22 @@
+# [5.0.0](https://github.com/viasite/site-audit-seo-viewer/compare/v4.3.0...v5.0.0) (2021-03-13)
+
+
+### Bug Fixes
+
+* fixed table of contents menu in item details ([26ceff3](https://github.com/viasite/site-audit-seo-viewer/commit/26ceff36991a3beec243a46cd84e3a447fe32d03))
+* human names in "current columns" panel ([5c117e2](https://github.com/viasite/site-audit-seo-viewer/commit/5c117e2e854d329acfe33b2e0afe9d3e22997bcb))
+* item details max width 800px ([518ba80](https://github.com/viasite/site-audit-seo-viewer/commit/518ba805c11a5807613b255dc68870c3f26300d1))
+
+
+### Features
+
+* **reports:** interactive item details navigation ([670af9c](https://github.com/viasite/site-audit-seo-viewer/commit/670af9c127c71f3612aeda102985c0725d062a1a))
+* **reports:** link for rescan with report options ([acba625](https://github.com/viasite/site-audit-seo-viewer/commit/acba625199acba86fe3bcaa77f60fd16a718719a))
+* **reports:** new item details design, manual groups order ([5483445](https://github.com/viasite/site-audit-seo-viewer/commit/54834450b8cc6775cc647e3c5dda94fbf81d2b8f))
+* **reports:** type "ranges" for "filtered stats" panel ([fd290cd](https://github.com/viasite/site-audit-seo-viewer/commit/fd290cd5b9d825f2be9fd33f922a9fbf7fbe2452))
+
+
+
 # [4.3.0](https://github.com/viasite/site-audit-seo-viewer/compare/v4.2.0...v4.3.0) (2021-03-11)
 
 
