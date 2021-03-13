@@ -98,6 +98,12 @@ export default {
   computed: {
     stats() {
       const stats = [];
+
+      const rangeFields = [];
+      for (let field of this.availableFields) {
+        if (field.stat && field.stat.type === 'ranges') rangeFields.push(field.name);
+      }
+
       for (let field of this.availableFields) {
         field = this.tests[field.name];
         if (!field) continue;
@@ -110,7 +116,7 @@ export default {
         // average
         // TODO: field.stat = 'average'
         const averageFields = [
-          'lighthouse_scores_performance',
+          // 'lighthouse_scores_performance',
           'lighthouse_scores_pwa',
           'lighthouse_scores_accessibility',
           'lighthouse_scores_best-practices',
@@ -121,9 +127,9 @@ export default {
           'lighthouse_interactive',
           'lighthouse_total-blocking-time',
           'lighthouse_cumulative-layout-shift',
-          "request_time",
-          "dom_size",
-          "html_size",
+          // "request_time",
+          // "dom_size",
+          // "html_size",
           "text_ratio_percent",
         ];
         if (averageFields.includes(field.name)) {
@@ -136,9 +142,63 @@ export default {
           valueText = val + " (average)"; // tolang
         }
 
+        // ranges
+        if (rangeFields.includes(field.name)) {
+          const rangesCount = {};
+          const msg = [];
+
+          // count ranges
+          for (let item of this.filteredItems) {
+            let val = parseInt(item[field.name]);
+            // TODO:L universe with validate.js
+            let ranges = field.stat.ranges;
+            if (!Array.isArray(ranges)) ranges = Object.keys(ranges); // object to array
+            for (let range of ranges) {
+              if (rangesCount[range] === undefined) rangesCount[range] = 0; // for correct order
+              let isMatchValue;
+              let minMax, fromTo, exact;
+
+              // minMax
+              if (minMax = range.match(/^(<|>)\s*(\d+)$/)) {
+                const operator = minMax[1];
+                const needValue = parseInt(minMax[2]);
+                if (operator == '<' && val < needValue) isMatchValue = true;
+                if (operator == '>' && val > needValue) isMatchValue = true;
+              }
+
+              // fromTo
+              else if (fromTo = range.match(/^(\d+)-(\d+)$/)) {
+                const from = fromTo[1];
+                const to = fromTo[2];
+                isMatchValue = val >= from && val <= to;
+              }
+
+              // exact
+              else if (exact = range.match(/^(\d+)$/)) {
+                const needValue = exact[1];
+                isMatchValue = val == needValue;
+              }
+
+              if (isMatchValue) rangesCount[range]++;
+            }
+          }
+
+          // build value string
+          // console.log('rangesCount: ', rangesCount);
+          for (let range in rangesCount) {
+            const valName = range;
+            const count = rangesCount[range];
+            if (count === 0) continue;
+            msg.push(
+              `<span class="item-details__subvalue">${valName}: ${count}</span>`
+            )
+          }
+          validateClass = 'item-details__value_has-subvalues ' + validateClass;
+          val = msg.join("<br>");
+        }
+
         // enum
         const enumFields = [
-          "status",
           "canonical_count",
           "is_canonical",
           "h1_count",
