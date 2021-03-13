@@ -14,6 +14,7 @@
           >
             <span class="item-details__subvalue-text">{{ subval.value }}: {{ subval.count }}</span>
 
+            <!-- TODO: ranges filter -->
             <FilterPresetButton class="field-preset" :preset="{ q: fStat.name + '=' + subval.value }" toggle no-count>
               <icon name="filter" scale="0.6"></icon>
             </FilterPresetButton>
@@ -99,9 +100,32 @@ export default {
     stats() {
       const stats = [];
 
+      const averageFields = [
+        'lighthouse_scores_pwa',
+        'lighthouse_scores_accessibility',
+        'lighthouse_scores_best-practices',
+        'lighthouse_scores_seo',
+        'lighthouse_first-contentful-paint',
+        'lighthouse_speed-index',
+        'lighthouse_largest-contentful-paint',
+        'lighthouse_interactive',
+        'lighthouse_total-blocking-time',
+        'lighthouse_cumulative-layout-shift',
+      ];
+      const enumFields = [
+        // site-discovery fields
+        "engine",
+        "site_template",
+      ];
       const rangeFields = [];
+      const uniqueFields = [];
+
       for (let field of this.availableFields) {
-        if (field.stat && field.stat.type === 'ranges') rangeFields.push(field.name);
+        if (!field.stat) continue;
+        if (field.stat.type === 'average') averageFields.push(field.name);
+        if (field.stat.type === 'enum') enumFields.push(field.name);
+        if (field.stat.type === 'ranges') rangeFields.push(field.name);
+        if (field.stat.type === 'unique') uniqueFields.push(field.name);
       }
 
       for (let field of this.availableFields) {
@@ -114,24 +138,6 @@ export default {
         let validateClass = "";
 
         // average
-        // TODO: field.stat = 'average'
-        const averageFields = [
-          // 'lighthouse_scores_performance',
-          'lighthouse_scores_pwa',
-          'lighthouse_scores_accessibility',
-          'lighthouse_scores_best-practices',
-          'lighthouse_scores_seo',
-          'lighthouse_first-contentful-paint',
-          'lighthouse_speed-index',
-          'lighthouse_largest-contentful-paint',
-          'lighthouse_interactive',
-          'lighthouse_total-blocking-time',
-          'lighthouse_cumulative-layout-shift',
-          // "request_time",
-          // "dom_size",
-          // "html_size",
-          "text_ratio_percent",
-        ];
         if (averageFields.includes(field.name)) {
           let sum = 0;
           for (let item of this.filteredItems) {
@@ -198,13 +204,6 @@ export default {
         }
 
         // enum
-        const enumFields = [
-          "canonical_count",
-          "is_canonical",
-          "h1_count",
-          "engine",
-          "site_template",
-        ];
         if (enumFields.includes(field.name)) {
           let vals = {};
           for (let item of this.filteredItems) {
@@ -245,7 +244,6 @@ export default {
         }
 
         // non-unique values
-        const uniqueFields = ["title", "description", "h1", "keywords"];
         if (uniqueFields.includes(field.name)) {
           const findDuplicates = (arr) => {
             let sorted_arr = arr.slice().sort(); // You can define the comparing function here.
