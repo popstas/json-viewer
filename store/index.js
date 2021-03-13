@@ -44,6 +44,7 @@ export const state = () => ({
   q: '',
   columnPresets: {},
   filterPresets: [],
+  scanOptions: {},
   user: false,
   connectionId: 0, // current tab id
   lastConnectionId: 0, // current user id
@@ -395,6 +396,9 @@ export const mutations = {
   },
   filterPresets(state, newValue) {
     state.filterPresets = newValue;
+  },
+  scanOptions(state, newValue) {
+    state.scanOptions = newValue || {};
   },
 
   addField(state, field) {

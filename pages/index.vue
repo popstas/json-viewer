@@ -780,6 +780,7 @@ export default {
         this.$store.commit("columnPresets", itemsJson.columns);
         this.$store.commit("filterPresets", itemsJson.filters);
         this.$store.commit("tests", itemsJson.fields);
+        this.$store.commit("scanOptions", itemsJson.scan);
         this.$store.dispatch("items", itemsJson.items);
 
         // open details when single row

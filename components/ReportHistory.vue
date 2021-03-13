@@ -17,10 +17,16 @@
 
     <button :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
 
-    <a :href="getShareUrl(itemsJsonUrl)" target="_blank">share</a>,
+    <a :href="getShareUrl(itemsJsonUrl)" target="_blank">share</a> ,
     <a :href="itemsJsonUrl" target="_blank">json</a>
     <template v-if="$router.options.base == '/'">
       , <a  :href="shareProdUrl" target="_blank">prod</a>
+    </template>
+
+    <template v-if="rescanUrl">
+      , <NuxtLink :to="rescanUrl" v-if="rescanUrl" :title="rescanUrlTitle" class="report-history__rescan-link">
+        rescan
+      </NuxtLink>
     </template>
   </div>
 </template>
@@ -144,6 +150,22 @@ export default {
       return `https://viasite.github.io/site-audit-seo-viewer/?url=${this.itemsJsonUrl}`;
     },
 
+    rescanUrl() {
+      const scanOptions = this.$store.state.scanOptions;
+      let args = scanOptions.args;
+      if (!args) return '';
+      args = args.join(' ').trim();
+
+      if (this.$route.query["q"]) args += ` --report-q ${this.$route.query["q"]}`;
+      if (this.$route.query["fields"]) args += ` --report-fields ${this.$route.query["fields"]}`;
+      // console.log('args: ', args);
+
+      return `/scan/?url=${scanOptions.url}&args=${args}`;
+    },
+
+    rescanUrlTitle() {
+      return this.$store.state.scanOptions.args.join(' ').trim();
+    },
   },
 
   methods: {
