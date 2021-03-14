@@ -17,6 +17,8 @@ export default ({store}) => {
       'urls',
       'args',
       'serverUrl',
-      'log'],
+      'log',
+      'scanPresets',
+    ],
   })(store);
 };

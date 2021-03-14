@@ -45,7 +45,7 @@
 
             <div class="scan__other-args" v-if="openedPanels.includes('settings')" v-html="argsWithoutDefault"></div>
 
-            <el-form-item label="Preset">
+            <el-form-item label="Fields preset">
               <el-select v-model="form.preset">
                 <el-option
                   v-for="preset of ['minimal', 'seo', 'headers', 'parse', 'lighthouse', 'lighthouse-all']" :key="preset"
@@ -77,6 +77,8 @@
               <el-switch v-model="form.urlList"></el-switch>
             </el-form-item>
 
+            <el-divider></el-divider>
+
             <el-form-item label="Report name">
               <el-input class="scan__out-name" v-model="form.outName" title="Default: domain name"></el-input>
             </el-form-item>
@@ -88,6 +90,8 @@
             <el-form-item label="Report query">
               <el-input class="scan__report-fields" v-model="form.reportQ" title="Example: request_time>1000"></el-input>
             </el-form-item>
+
+            <el-divider></el-divider>
 
             <el-form-item label="Arguments">
               <el-input class="scan__args" v-model="args" @keydown.enter.native="sendTask"></el-input>
@@ -104,6 +108,11 @@
       <div class="scan__buttons-secondary" v-if="openedPanels.includes('settings')">
         <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
         <el-button :disabled="!isScanEnabled" type="primary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
+
+        <div class="scan__preset-save-form">
+          <el-input placeholder="Preset name" class="scan__report-fields" v-model="form.presetName" title="For save preset"></el-input>
+          <el-button type="secondary" :disabled="form.presetName === ''" @click="saveAsPreset">Save preset</el-button>
+        </div>
       </div>
 
       <div class="scan__current">
@@ -122,6 +131,16 @@
     </NuxtLink>
     <div class="scan__report-updated" v-if="lastUpdatedHuman && !currentScanPage">{{ lastUpdatedHuman }} ago</div>
 
+
+    <el-card class="scan__presets-container box-card" v-if="scanPresets.length > 0">
+      <h3>Scan presets:</h3>
+      <draggable v-model="scanPresets" tag="ul" class="scan__presets">
+        <li v-for="preset in scanPresets" :key="preset.name">
+          <NuxtLink :to="presetUrl(preset)" :title="preset.args" v-html="preset.name"></NuxtLink>
+          <button class="scan__presets-remove" @click="removePreset(preset.name)">✖</button>
+        </li>
+      </draggable>
+    </el-card>
 
     <div class="scan__log-container">
       <el-link @click="showLog = !showLog">{{ showLog ? 'hide log' : 'show log' }}</el-link>
@@ -217,6 +236,10 @@
     clear: both;
   }
 
+  .scan__preset-save-form {
+    padding-top: 1em;
+  }
+
   .scan__current {
     padding-top: 10px;
     // margin-left: 10px;
@@ -272,6 +295,39 @@
     }
   }
 
+  .scan__presets-container {
+    text-align: left;
+    max-width: 600px;
+    margin-top: 100px;
+  }
+
+  .scan__presets {
+    text-align: left;
+    padding: 0;
+    
+    li {
+      list-style: none;
+      line-height: 2em;
+
+      &:hover {
+        box-shadow: 0 0 2px #ccc;
+      }
+    }
+
+    .scan__presets-remove {
+      background: none;
+      border: none;
+      padding: 0 5px;
+      float: right;
+      color: #ccc;
+      line-height: 2em;
+
+      &:hover {
+        color: #666;
+      }
+    }
+  }
+
   .scan__log-container {
     text-align: left;
   }
@@ -322,6 +378,8 @@
 import Panel from "~/components/Panel";
 import firebase from "firebase";
 import _ from "lodash";
+import draggable from 'vuedraggable';
+
 const url = require('url');
 
 const controlsMap = {
@@ -365,7 +423,7 @@ const controlsMap = {
 };
 
 export default {
-  components: { Panel },
+  components: { Panel, draggable },
   data() {
     return {
       routerProcess: false,
@@ -397,6 +455,15 @@ export default {
   computed: {
     log(){
       return this.$store.state.log;
+    },
+
+    scanPresets: {
+      get() {
+        return this.$store.state.scanPresets;
+      },
+      set(presets) {
+        this.$store.commit('scanPresets', presets);
+      }
     },
 
     isScanEnabled() {
@@ -549,7 +616,7 @@ export default {
       if (this.routerProcess) return;
       if (this.$route.query["fields"]) return; // ignore params from viewer
 
-      for (let paramName of ['url', 'urls', 'args', 'serverUrl']) {
+      for (let paramName of ['url', 'urls', 'args', 'serverUrl', 'preset']) {
         let val = this.$route.query[paramName];
         if (val) {
           if (paramName === 'url' && val.includes('/reports/')) continue;
@@ -562,6 +629,10 @@ export default {
             const unknownArgs = this.parseKnownArgs(val);
             // console.log('unknownArgs: ', unknownArgs);
             val = unknownArgs.join(' ');
+          }
+          if (paramName === 'preset') {
+            this.form.presetName = val;
+            continue;
           }
 
           this[paramName] = val;
@@ -643,6 +714,33 @@ export default {
       }
 
       return args;
+    },
+
+    saveAsPreset() {
+      let presets = [...this.scanPresets];
+      const preset = {
+        name: this.form.presetName,
+        url: this.url,
+        args: this.buildArgs(true)
+      }
+
+      // remove if exists
+      presets = presets.filter(p => p.name !== preset.name);
+
+      presets.push(preset);
+      this.$store.commit('scanPresets', presets);
+    },
+
+    removePreset(name) {
+      // console.log('remove preset: ', name);
+      let presets = [...this.scanPresets]
+      presets = presets.filter(preset => preset.name !== name);
+      this.$store.commit('scanPresets', presets);
+    },
+
+    presetUrl(preset) {
+      // console.log('preset: ', preset);
+      return `/scan?url=${preset.url}&args=${preset.args}&preset=${preset.name}`;
     },
 
     closeSettings() {

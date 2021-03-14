@@ -29,6 +29,7 @@ export const state = () => ({
     outName: '',
     reportFields: '',
     reportQ: '',
+    presetName: '',
   },
 
   // app state
@@ -54,6 +55,7 @@ export const state = () => ({
   args: '--lang en',
   serverUrl: process.env.SERVER_URL || false,
   log: [],
+  scanPresets: [],
 
   introTourSteps: [ // tolang
     /* {
@@ -436,6 +438,10 @@ export const mutations = {
   },
   log(state, newValue) {
     state.log = newValue;
+  },
+  scanPresets(state, newValue) {
+    // console.log('scanPresets: ', newValue);
+    state.scanPresets = newValue;
   },
 };
 
