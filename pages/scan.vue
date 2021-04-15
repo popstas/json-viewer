@@ -449,6 +449,7 @@ export default {
       currentScanQueue: '',
       currentScanPercent: 0,
       showLog: false,
+      autoscan: false,
     };
   },
 
@@ -616,7 +617,13 @@ export default {
       if (this.routerProcess) return;
       if (this.$route.query["fields"]) return; // ignore params from viewer
 
-      for (let paramName of ['url', 'urls', 'args', 'serverUrl', 'preset']) {
+      // reset form to default
+      for (let formName in this.scanDefaultForm) {
+        this.form[formName] = this.scanDefaultForm[formName];
+      }
+
+      // add params from query
+      for (let paramName of ['url', 'urls', 'args', 'serverUrl', 'preset', 'run']) {
         let val = this.$route.query[paramName];
         if (val) {
           if (paramName === 'url' && val.includes('/reports/')) continue;
@@ -821,6 +828,12 @@ export default {
         if (msg.includes('Finish audit')) {
           this.currentScanPage = '';
           this.currentScanPercent = 0;
+
+          // open report after scan
+          if (this.autoscan) {
+            this.autoscan = false;
+            this.$router.push({ path: this.reportUrl });
+          }
         }
 
         if (msg.includes('Pending...')) {
@@ -915,8 +928,9 @@ export default {
   async mounted() {
     this.socket = this.$nuxtSocket({
       channel: "/",
-      reconnection: true,
-      reconnectionDelayMax: 3000,
+      reconnection: true, // not used?
+      reconnectionDelayMax: 3000, // not used?
+      persist: true, // causes disconnects?
       teardown: false,
     });
 
@@ -929,6 +943,10 @@ export default {
       this.currentScanPercent = 0;
       this.currentScanQueue = 0;
       this.auth();
+
+      if (this.autoscan) {
+        setTimeout(this.sendTask, 500);
+      }
     });
 
     this.socket.on("disconnect", () => {
@@ -954,6 +972,10 @@ export default {
     });
 
     this.updateFormFromQuery(); // update form after localStorage
+
+    if (this.$route.query.run == '1') {
+      this.autoscan = true;
+    }
   },
 
 

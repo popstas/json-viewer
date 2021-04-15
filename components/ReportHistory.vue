@@ -160,7 +160,7 @@ export default {
       if (this.$route.query["fields"]) args += ` --report-fields ${this.$route.query["fields"]}`;
       // console.log('args: ', args);
 
-      return `/scan?url=${scanOptions.url}&args=${args}`;
+      return `/scan?url=${scanOptions.url}&args=${args}&run=1`;
     },
 
     rescanUrlTitle() {
