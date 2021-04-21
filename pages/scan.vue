@@ -169,6 +169,7 @@
           <li>total scans: {{ scansTotal }} (all time: {{ scansTotalAll }})</li>
           <li>total pages: {{ pagesTotal }} (all time: {{ pagesTotalAll }})</li>
           <li>uptime: {{ uptimeHuman }}</li>
+          <li v-if="serverVersion">version: {{ serverVersion }}</li>
           <li>reboots: {{ reboots }}</li>
         </ul>
       </el-col>
@@ -443,6 +444,7 @@ export default {
       scansTotalAll: '',
       pagesTotalAll: '',
       uptime: '',
+      serverVersion: '',
       reboots: '',
       isNeedAuth: true,
       openedPanels: [],
@@ -891,6 +893,7 @@ export default {
         this.lastUpdatedHuman = this.getLastUpdatedHuman();
 
         // console.log('msg: ', msg);
+        // map to data
         for (let name in serverState) {
           if (this[name] !== undefined) this[name] = serverState[name];
           // this.serverState[name] = serverState[name];
