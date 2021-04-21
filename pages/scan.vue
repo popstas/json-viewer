@@ -761,18 +761,6 @@ export default {
       }
 
       items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
-      items.push(item);
       this.$store.commit('scanHistory', items);
     },
 
