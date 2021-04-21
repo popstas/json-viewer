@@ -164,7 +164,9 @@ export default {
     },
 
     rescanUrlTitle() {
-      return this.$store.state.scanOptions.args.join(' ').trim();
+      const t = this.$store.state.scanOptions.time;
+      const mins = t ? Number(t / 60).toFixed(1) : '';
+      return this.$store.state.scanOptions.args.join(' ').trim() + (mins ? `\n${mins} mins` : '');
     },
   },
 
