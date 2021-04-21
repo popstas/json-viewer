@@ -131,10 +131,13 @@ export default {
 
     setPreset() {
       const q = this.mergePreset(this.preset.q);
-      this.$store.dispatch("q", q);
-      this.$nuxt.$emit("inputFocus");
+      // timeout for instant redraw
+      setTimeout(() => {
+        this.$store.dispatch("q", q);
+        this.$nuxt.$emit("inputFocus");
 
-      if (this.preset.sort) this.$nuxt.$emit("sort", this.preset.sort);
+        if (this.preset.sort) this.$nuxt.$emit("sort", this.preset.sort);
+      }, 10);
     },
 
     getFilterCount() {

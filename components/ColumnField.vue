@@ -41,7 +41,10 @@ export default {
   methods: {
     click() {
       this.$refs.component.classList.add("clicked");
-      this.$emit("click", this.field);
+      // timeout for instant redraw
+      setTimeout(() => {
+        this.$emit("click", this.field);
+      }, 10);
     }
   },
   computed: {
