@@ -132,7 +132,7 @@
     <div class="scan__report-updated" v-if="lastUpdatedHuman && !currentScanPage">{{ lastUpdatedHuman }} ago</div>
 
 
-    <el-card class="scan__presets-container box-card" v-if="scanPresets.length > 0">
+    <el-card class="scan__presets-container scan__list box-card" v-if="scanPresets.length > 0">
       <h3>Scan presets:</h3>
       <draggable v-model="scanPresets" tag="ul" class="scan__presets">
         <li v-for="preset in scanPresets" :key="preset.name">
@@ -141,6 +141,8 @@
         </li>
       </draggable>
     </el-card>
+
+    <ScanHistory :items="scanHistory"></ScanHistory>
 
     <div class="scan__log-container">
       <el-link @click="showLog = !showLog">{{ showLog ? 'hide log' : 'show log' }}</el-link>
@@ -295,9 +297,13 @@
     }
   }
 
-  .scan__presets-container {
+  .scan__list {
     text-align: left;
     max-width: 600px;
+    margin-bottom: 15px;
+  }
+
+  .scan__presets-container {
     margin-top: 100px;
   }
 
@@ -376,6 +382,7 @@
 
 <script>
 import Panel from "~/components/Panel";
+import ScanHistory from "~/components/ScanHistory";
 import firebase from "firebase";
 import _ from "lodash";
 import draggable from 'vuedraggable';
@@ -423,7 +430,7 @@ const controlsMap = {
 };
 
 export default {
-  components: { Panel, draggable },
+  components: { draggable, Panel, ScanHistory },
   data() {
     return {
       routerProcess: false,
@@ -473,6 +480,10 @@ export default {
 
     scanDefaultForm(){
       return this.$store.state.scanDefaultForm;
+    },
+
+    scanHistory(){
+      return this.$store.state.scanHistory;
     },
 
     scanUrlHistory(){
@@ -738,6 +749,31 @@ export default {
       this.$store.commit('scanPresets', presets);
     },
 
+    saveHistory() {
+      let items = [...this.scanHistory];
+      const item = {
+        name: this.form.presetName,
+        url: this.url,
+        args: this.buildArgs(true),
+        date: Date.now(),
+      }
+
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      items.push(item);
+      this.$store.commit('scanHistory', items);
+    },
+
     removePreset(name) {
       // console.log('remove preset: ', name);
       let presets = [...this.scanPresets]
@@ -776,6 +812,8 @@ export default {
       if (!this.isUrls) {
         this.$store.commit('addUrlHistory', this.url);
       }
+
+      this.saveHistory();
 
       console.log("scan:", opts);
       this.socket.emit('scan', opts);

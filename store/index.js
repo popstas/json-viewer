@@ -11,6 +11,7 @@ export const state = () => ({
   // constants
   itemsJsonUrl: process.env.JSON_URL || '',
   jsonUrlHistory: {},
+  scanHistory: [],
   scanUrlHistory: {},
   name: pjson.name,
   version: pjson.version,
@@ -334,6 +335,9 @@ export const mutations = {
 
   jsonUrlHistory(state, newValue) {
     state.jsonUrlHistory = newValue;
+  },
+  scanHistory(state, newValue) {
+    state.scanHistory = newValue;
   },
   scanUrlHistory(state, newValue) {
     state.scanUrlHistory = newValue;
