@@ -1,3 +1,12 @@
+## [5.1.2](https://github.com/viasite/site-audit-seo-viewer/compare/v5.1.1...v5.1.2) (2021-04-21)
+
+
+### Bug Fixes
+
+* remove test history items ([dcdf196](https://github.com/viasite/site-audit-seo-viewer/commit/dcdf196ec78f5849c78f3a599a55ea8f722676da))
+
+
+
 ## [5.1.1](https://github.com/viasite/site-audit-seo-viewer/compare/v5.1.0...v5.1.1) (2021-04-21)
 
 
