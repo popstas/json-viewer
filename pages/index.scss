@@ -415,6 +415,14 @@ header {
     box-shadow: none;
   }
 
+  .table__column-controls {
+    text-align: right;
+
+    td { padding: 0 !important; }
+    label { display: none; }
+    button { margin-right: 0px; }
+  }
+
   &__child-row {
     text-align: left;
   }

@@ -113,6 +113,19 @@
           <template slot="child_row" slot-scope="props">
             <ItemDetails @hideTable="onHideTable" :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
           </template>
+          <template slot="prependHead">
+            <tr class="table__column-controls">
+              <td></td>
+              <td v-for="field in fields" :key="field.name">
+                <ColumnField
+                  :field="field"
+                  :checked="$store.getters.fieldExists(field)"
+                  @click="toggleField(field, false, true)"
+                  :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
+                ></ColumnField>
+              </td>
+            </tr>
+          </template>
 
           <!-- для каждой колонки создается слот, который получает класс и значение через функции, медленно -->
           <div
