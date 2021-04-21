@@ -4,7 +4,7 @@
     <ul class="scan__presets">
       <li v-for="preset in itemsReversed" :key="preset.date">
         <NuxtLink :to="presetUrl(preset)" :title="preset.args">
-          {{ new Date(preset.date).toISOString().substring(0,19).replace('T', ' ') }} {{ preset.url }}
+          {{ time2date(preset.date) }} {{ preset.url }}
         </NuxtLink>
         <button class="scan__presets-remove" @click="removePreset(preset.date)">✖</button>
       </li>
@@ -51,6 +51,12 @@ export default {
       return `/scan?url=${preset.url}&args=${preset.args}&preset=${preset.name}`;
     },
 
+    time2date(time) {
+      const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+      const d = new Date(time - tzoffset);
+      const str = d.toISOString().substring(0,19).replace('T', ' ');
+      return str;
+    }
   },
 
   async mounted() {
