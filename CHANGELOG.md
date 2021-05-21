@@ -1,3 +1,19 @@
+# [5.2.0](https://github.com/viasite/site-audit-seo-viewer/compare/v5.1.2...v5.2.0) (2021-05-21)
+
+
+### Bug Fixes
+
+* **reports:** table was freezed after change columns, add indicator ([e0a2fec](https://github.com/viasite/site-audit-seo-viewer/commit/e0a2fec4464aeb7c3b8b6a7717d2e258307b5e06))
+* **scan:** show item history with user timezone ([ff3e422](https://github.com/viasite/site-audit-seo-viewer/commit/ff3e422adfde241d68e00aa054942398c27961e0))
+
+
+### Features
+
+* column controls above columns ([038b079](https://github.com/viasite/site-audit-seo-viewer/commit/038b079453b7d9fa55ba821d918d910ee766b409))
+* connection state, cancel indicator, better reconnection ([816f6d9](https://github.com/viasite/site-audit-seo-viewer/commit/816f6d9eca1f06217e9d5f7058d196f22d7462e2))
+
+
+
 ## [5.1.2](https://github.com/viasite/site-audit-seo-viewer/compare/v5.1.1...v5.1.2) (2021-04-21)
 
 
