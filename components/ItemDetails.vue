@@ -1,5 +1,6 @@
 <template>
   <div class="item-details">
+    <button v-if="$store.state.flags.compare" class="item-compare" @click="toggleCompare">{{ isInCompare ? 'Add to compare' : 'Remove from compare'}}</button>
     <a
       v-if="item.url && lastGroup"
       class="item-details__title"
@@ -11,9 +12,9 @@
     <!-- navigation -->
     <div class="item-details__groups" v-if="lastGroup">
       <a
-        :class="{ 
-          'item-details__groups-link_active': group.name === lastGroup, 
-          'item-details__groups-link': true 
+        :class="{
+          'item-details__groups-link_active': group.name === lastGroup,
+          'item-details__groups-link': true
         }"
         :href="$nuxt.$route.fullPath.replace(/#.*/, '') + '#' + item[$store.state.defaultField] + '-' + group.name"
         v-for="group in groups"
@@ -94,6 +95,7 @@ export default {
     return {
       observer: null,
       lastGroup: '',
+      isInCompare : false,
     }
   },
 
@@ -104,6 +106,10 @@ export default {
   },
 
   computed: {
+    id() {
+      return this.$store.state.itemsJsonUrl + '_' + this.url;
+    },
+
     tests() {
       return this.$store.state.tests;
     },
@@ -223,7 +229,20 @@ export default {
         this.lastGroup = lastTarget.dataset.group;
         // console.log('lastTarget: ', lastTarget);
       }
-    }
+    },
+
+    toggleCompare() {
+      const isRemove = !this.isInCompare;
+      this.isInCompare = !this.isInCompare;
+      const item = {
+        id: this.id,
+        reportUrl: this.$store.state.itemsJsonUrl,
+        item: this.item
+      };
+      console.log('isRemove: ', isRemove);
+      this.$store.dispatch('addToCompare', {item, isRemove});
+    },
+
   },
 
   mounted() {
@@ -240,6 +259,11 @@ export default {
     this.observer.observe(this.$el);
     for(let group of groups) {
       this.observer.observe(group);
+    }
+
+    if (this.$store.state.flags.compare) {
+      console.log('compareList: ', this.$store.state.compareList);
+      this.isInCompare = !!this.$store.state.compareList.findIndex(i => i && i.id == this.id);
     }
   },
 

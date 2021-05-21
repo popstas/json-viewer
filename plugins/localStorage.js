@@ -5,6 +5,7 @@ export default ({store}) => {
     paths: [
       'itemsJsonUrl',
       'jsonUrlHistory',
+      'compareList',
       'scanHistory',
       'scanUrlHistory',
       'visitCount',

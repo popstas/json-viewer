@@ -11,6 +11,7 @@ export const state = () => ({
   // constants
   itemsJsonUrl: process.env.JSON_URL || '',
   jsonUrlHistory: {},
+  compareList: [],
   scanHistory: [],
   scanUrlHistory: {},
   name: pjson.name,
@@ -31,6 +32,10 @@ export const state = () => ({
     reportFields: '',
     reportQ: '',
     presetName: '',
+  },
+
+  flags: {
+    compare: false,
   },
 
   // app state
@@ -336,6 +341,9 @@ export const mutations = {
   jsonUrlHistory(state, newValue) {
     state.jsonUrlHistory = newValue;
   },
+  compareList(state, newValue) {
+    state.compareList = newValue;
+  },
   scanHistory(state, newValue) {
     state.scanHistory = newValue;
   },
@@ -531,6 +539,28 @@ export const actions = {
       commit("setUser", false);
     }
   },
+
+  addToCompare({ commit, state }, {item, isRemove = false}) {
+    console.log('addToCompare');
+    console.log('item: ', item);
+    console.log('isRemove: ', isRemove);
+    let list = [...state.compareList];
+    const foundIndex = list.findIndex(i => i && i.id == item.id);
+    console.log('foundIndex: ', foundIndex);
+    // remove and found
+    if (isRemove && foundIndex !== -1) {
+      console.log('delete(list[foundIndex])');
+      delete(list[foundIndex]);
+    }
+    // add and not found
+    if (!isRemove && foundIndex === -1) {
+      list.push(item);
+    }
+
+    list = list.filter(Boolean);
+    console.log('list: ', list);
+    commit('compareList', list);
+  }
 };
 
 export const strict = true;
