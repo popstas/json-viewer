@@ -119,7 +119,8 @@
         <!-- {{ currentScanPage }} / {{ currentScanQueue }} -->
         <el-progress :percentage="currentScanPercent" :format="showCurrentScan"></el-progress>
         <i v-if="currentScanPage" class="el-icon-loading"></i>
-        <el-button v-if="currentScanPercent" type="primary" @click="cancelTask">Cancel</el-button>
+        <el-button v-if="currentScanPercent && !canceling" type="primary" @click="cancelTask">Cancel</el-button>
+        <span v-if="canceling">Canceling...</span>
       </div>
 
     </el-row>
@@ -144,37 +145,50 @@
 
     <ScanHistory :items="scanHistory"></ScanHistory>
 
-    <div class="scan__log-container">
-      <el-link @click="showLog = !showLog">{{ showLog ? 'hide log' : 'show log' }}</el-link>
-      <ul class="scan__log"
-        v-chat-scroll="{always: false, smooth: false}"
-        v-if="showLog && log.length > 0"
-      >
-        <li v-for="(line, index) in log" :key="index" v-html="line"></li>
-      </ul>
+    <el-link @click="showLog = !showLog">{{ showLog ? 'hide advanced' : 'show advanced' }}</el-link>
+
+    <div class="scan__advanced" v-if="showLog">
+      <div class="scan__log-container" v-if="log.length > 0">
+        <ul class="scan__log" v-chat-scroll="{always: false, smooth: false}">
+          <li v-for="(line, index) in log" :key="index" v-html="line"></li>
+        </ul>
+      </div>
+
+      <el-row class="scan__server-state" v-if="running !== ''">
+        <h3>Server state:</h3>
+        <el-col :span="12">
+          <ul class="server-state">
+            <li>running: {{ running }}</li>
+            <!-- <li>available: {{ available }}</li> -->
+            <li>pending: {{ pending }}</li>
+            <li>connections: {{ connections }}</li>
+          </ul>
+        </el-col>
+        <el-col :span="12">
+          <ul class="server-state">
+            <li>total scans: {{ scansTotal }} (all time: {{ scansTotalAll }})</li>
+            <li>total pages: {{ pagesTotal }} (all time: {{ pagesTotalAll }})</li>
+            <li>uptime: {{ uptimeHuman }}</li>
+            <li v-if="serverVersion">version: {{ serverVersion }}</li>
+            <li>reboots: {{ reboots }}</li>
+          </ul>
+        </el-col>
+      </el-row>
+
+      <el-row class="scan__connection-state">
+        <h3>Connection state:</h3>
+        <el-col :span="12">
+          <ul class="server-state">
+            <li>connection id: {{ $store.state.connectionId }}</li>
+            <li>last connection id: {{ $store.state.lastConnectionId }}</li>
+          </ul>
+        </el-col>
+        <el-col :span="12">
+          <ul class="server-state">
+          </ul>
+        </el-col>
+      </el-row>
     </div>
-
-    <el-row class="scan__server-state" v-if="showLog && running !== ''">
-      <h3>Server state:</h3>
-      <el-col :span="12">
-        <ul class="server-state">
-          <li>running: {{ running }}</li>
-          <!-- <li>available: {{ available }}</li> -->
-          <li>pending: {{ pending }}</li>
-          <li>connections: {{ connections }}</li>
-        </ul>
-      </el-col>
-      <el-col :span="12">
-        <ul class="server-state">
-          <li>total scans: {{ scansTotal }} (all time: {{ scansTotalAll }})</li>
-          <li>total pages: {{ pagesTotal }} (all time: {{ pagesTotalAll }})</li>
-          <li>uptime: {{ uptimeHuman }}</li>
-          <li v-if="serverVersion">version: {{ serverVersion }}</li>
-          <li>reboots: {{ reboots }}</li>
-        </ul>
-      </el-col>
-    </el-row>
-
   </section>
 </template>
 
@@ -376,6 +390,10 @@
   }
 
   .scan__server-state {
+    margin-top: 30px;
+  }
+
+  .scan__advanced {
     padding: 8px 0;
     text-align: left;
   }
@@ -457,6 +475,7 @@ export default {
       currentScanPage: '',
       currentScanQueue: '',
       currentScanPercent: 0,
+      canceling: false,
       showLog: false,
       autoscan: false,
     };
@@ -584,6 +603,10 @@ export default {
     isUrls(val) {
       // console.log('val: ', val);
       if (!val) this.urlsShow = true;
+    },
+
+    currentScanPercent(val) {
+      if (val == 0) this.canceling = false;
     }
   },
 
@@ -819,10 +842,12 @@ export default {
     auth() {
       if (this.socket.connected && this.$store.state.user?.uid && this.isNeedAuth) {
         this.isNeedAuth = false;
-        this.socket.emit('auth', {
+        const opts = {
           ...this.$store.state.user,
           ...{ connectionId: this.$store.state.connectionId || this.$store.state.lastConnectionId } // send last connectionId
-        });
+        };
+        // console.log('opts: ', opts);
+        this.socket.emit('auth', opts);
         this.$store.commit('connectionId', this.socket.id);
         this.$store.commit('lastConnectionId', this.socket.id);
       }
@@ -830,6 +855,7 @@ export default {
 
     submitEvents(key) {
       // console.log('this.socket: ', this.socket);
+      // console.log('submitEvents: ', key);
 
       // log to "terminal"
       this.socket.on("status" + key, (msg, cb) => {
@@ -853,6 +879,10 @@ export default {
           if (!this.currentScanPage && this.lastUpdated) this.currentScanPercent = 100; // when finished
         }
 
+        if (msg.includes('cancel command')) {
+          this.canceling = true;
+        }
+
         if (msg.includes('Finish audit')) {
           this.currentScanPage = '';
           this.currentScanPercent = 0;
@@ -871,7 +901,9 @@ export default {
         this.logPush(msg);
       });
       this.socket.on("status", (msg, cb) => {
-        console.log('msg: ', msg);
+        console.log('status: ', msg);
+        // console.log('this.socket: ', this.socket);
+        // console.log('this.socket.id: ', this.socket.id);
         this.logPush(msg);
       });
 
@@ -879,6 +911,7 @@ export default {
       this.socket.on("serverState" + key, (serverState, cb) => {
         // update last report date
         this.lastUpdatedHuman = this.getLastUpdatedHuman();
+        if (serverState.sockets) console.log('sockets: ', serverState.sockets);
 
         // console.log('msg: ', msg);
         // map to data
@@ -890,6 +923,7 @@ export default {
 
       // scan result
       this.socket.on("result" + key, (data, cb) => {
+        this.currentScanPercent = 0;
         const viewerUrl = window.location.origin + this.$router.options.base;
         if (data.json) {
           const url = viewerUrl + '?url=' + data.json;
@@ -955,13 +989,16 @@ export default {
   },
 
   async mounted() {
+    // https://github.com/richardeschloss/nuxt-socket-io/blob/80bd7195b12eaa1dd51dea0e968e8e06635f848f/io/types.d.ts#L129
     this.socket = this.$nuxtSocket({
       channel: "/",
-      reconnection: true, // not used?
-      reconnectionDelayMax: 3000, // not used?
-      persist: true, // causes disconnects?
+      // persist: 'socket' + Math.random(0, 10000), // https://nuxt-socket-io.netlify.app/vuexmodule/?
       teardown: false,
+      emitTimeout: 40000,
+      timeout: 60000,
     });
+
+    // console.log('this.socket: ', this.socket);
 
     this.form = {...this.scanDefaultForm};
     /* Listen for events: */
@@ -978,8 +1015,14 @@ export default {
       }
     });
 
-    this.socket.on("disconnect", () => {
-      this.logPush('server disconnected');
+    this.socket.on("error", () => {
+      console.log('socket error');
+    });
+
+    this.socket.on("disconnect", reason => {
+      this.logPush('server disconnected: ' + reason);
+      // console.log('disconnect socket: ', {...this.socket});
+      this.$store.commit('connectionId', '');
       this.isNeedAuth = true;
       this.connected = false;
       this.running = '';
@@ -1004,6 +1047,12 @@ export default {
 
     if (this.$route.query.run == '1') {
       this.autoscan = true;
+    }
+
+    if (this.$route.query.connection_id) {
+      this.$store.commit('connectionId', this.$route.query.connection_id);
+      this.$store.commit('lastConnectionId', this.$route.query.connection_id);
+      this.showLog = true;
     }
   },
 
