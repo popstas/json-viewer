@@ -37,6 +37,11 @@ module.exports = {
     JSON_URL: process.env.JSON_URL,
     SERVER_URL: process.env.SERVER_URL,
     SCAN_DEFAULT_MAX_REQUESTS: parseInt(process.env.SCAN_DEFAULT_MAX_REQUESTS),
+    NO_FOOTER: process.env.NO_FOOTER,
+    NO_LOGIN: process.env.NO_LOGIN,
+    NO_FILTERS: process.env.NO_FILTERS,
+    NO_TOUR: process.env.NO_TOUR,
+    NO_NAVIGATION: process.env.NO_NAVIGATION,
   },
 
   io: {
@@ -60,7 +65,7 @@ module.exports = {
 
   head: {
     link: [
-      // { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
+      { rel: 'icon', type: 'image/x-icon', href: process.env.FAVICON || '/favicon.ico' },
       { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' }
     ]
   },

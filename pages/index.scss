@@ -449,6 +449,9 @@ header {
     top: 0;
     box-shadow: 0 0 3px #ccc;
   }
+  .VueTables__filters-row th {
+    top: 45px;
+  }
 
   .VueTables__child-row-toggler {
     position: absolute;

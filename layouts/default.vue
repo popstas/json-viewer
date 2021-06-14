@@ -1,6 +1,6 @@
 <template>
   <el-container>
-    <el-header height="66px">
+    <el-header height="66px" v-if="$store.state.serverUrl || $store.state.flags.login">
       <el-row>
         <el-col :span="12">
           <el-menu :default-active="activeIndex" mode="horizontal" @select="handleSelect" class="header__menu">
@@ -9,7 +9,7 @@
           </el-menu>
         </el-col>
         <el-col :span="12">
-          <Profile></Profile>
+          <Profile v-if="$store.state.flags.login"></Profile>
         </el-col>
       </el-row>
     </el-header>
@@ -18,7 +18,7 @@
       <nuxt />
     </el-main>
 
-    <el-footer height="36px">
+    <el-footer v-if="$store.state.flags.footer" height="36px">
       <a 
         target="_blank"
         href="https://github.com/viasite/site-audit-seo-viewer/releases"

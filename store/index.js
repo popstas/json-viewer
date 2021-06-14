@@ -10,6 +10,14 @@ export const state = () => ({
 
   // constants
   itemsJsonUrl: process.env.JSON_URL || '',
+  flags: {
+    footer: !process.env.HIDE_FOOTER,
+    login: !process.env.NO_LOGIN,
+    filters: !process.env.NO_FILTERS,
+    tour: !process.env.NO_TOUR,
+    navigation: !process.env.NO_NAVIGATION,
+    compare: false,
+  },
   jsonUrlHistory: {},
   compareList: [],
   scanHistory: [],
@@ -32,10 +40,6 @@ export const state = () => ({
     reportFields: '',
     reportQ: '',
     presetName: '',
-  },
-
-  flags: {
-    compare: false,
   },
 
   // app state
@@ -223,7 +227,16 @@ export const getters = {
       if(res) {
         const operator = res[1];
         let expected = res[2];
-        if(!['==', '==='].includes(operator)) expected = parseFloat(expected);
+
+        console.log('expected: ', expected);
+        const dateNow = expected.match(/^\{now\}([\+\-])(\d+)$/);
+        if (dateNow) {
+          const k = dateNow == '+' ? 1 : -1;
+          expected = Date.now() + parseInt(dateNow[2] * k);
+          console.log('expected2: ', expected);
+          console.log('new Date(expected): ', new Date(expected));
+        }
+        else if(!['==', '==='].includes(operator)) expected = parseFloat(expected);
 
         // always not match for empty values (except 0)
         const funcReturn = (val, condition) => {
@@ -613,7 +626,20 @@ function fieldsByItems(items, tests){
         const info = tests[fieldName];
         if (info) {
           // TODO: remove fields list?
-          for (let fName of ['comment', 'description', 'command', 'validate', 'default', 'align', 'type', 'stat', 'filterType']) {
+          const fieldsAllowed = [
+            'comment',
+            'description',
+            'command',
+            'validate',
+            'default',
+            'align',
+            'type',
+            'stat',
+            'filterType',
+            'href',
+            'format',
+          ];
+          for (let fName of fieldsAllowed) {
             if(info[fName]) field[fName] = info[fName];
           }
         }

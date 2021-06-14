@@ -1,6 +1,7 @@
 <template>
   <button
     @click="setPreset"
+    v-if="$store.state.flags.navigation"
     class="filter-presets__button"
     :title="'Filter:\n' + preset.q"
     :class="{

@@ -6,10 +6,11 @@
     </div>
 
     <div v-else>
-      <v-tour name="introTour" :steps="introTourSteps" :options="{ highlight: true }"></v-tour>
+      <v-tour v-if="$store.state.flags.tour" name="introTour" :steps="introTourSteps" :options="{ highlight: true }"></v-tour>
 
-      <header>
+      <header v-if="$store.state.flags.navigation">
         <el-button
+          v-if="$store.state.flags.tour"
           class="help-tour-button"
           :plain="!isNewUser"
           :type="isNewUser ? 'primary' : ''" @click="startIntroTour"
@@ -27,7 +28,6 @@
 
         <div class="total">total: {{ filteredItems.length }}</div>
       </header>
-      <br>
 
       <div v-if="jsonLoadError">
         <div class="msg danger">Failed to load {{ itemsJsonUrl}}</div>
@@ -35,7 +35,7 @@
       <div v-if="jsonLoading"><i class="el-icon-loading"></i> Loading...</div>
 
       <div v-if="!jsonLoading && !jsonLoadError">
-        <el-collapse v-model="openedPanels" class="panels">
+        <el-collapse v-if="$store.state.flags.navigation" v-model="openedPanels" class="panels">
 
           <!-- Тулбар -->
           <Panel title="columns explorer" icon="el-icon-folder-opened" name="columns">
@@ -43,7 +43,7 @@
           </Panel>
 
           <!-- Выбранные колонки -->
-          <Panel title="current columns" icon="el-icon-caret-right" name="current_columns" class="current-columns">
+          <!-- <Panel title="current columns" icon="el-icon-caret-right" name="current_columns" class="current-columns">
             <ColumnField
               :field="field"
               :checked="$store.getters.fieldExists(field)"
@@ -52,7 +52,7 @@
               v-for="field of fields"
               :key="field.name"
             ></ColumnField>
-          </Panel>
+          </Panel> -->
 
           <!-- Сводка по таблице -->
           <Panel title="filtered stats" icon="el-icon-s-data" name="stats">
@@ -86,11 +86,11 @@
 
         </el-collapse>
 
-        <div><br>
+        <div v-if="$store.state.flags.navigation"><br>
           total: {{ filteredItems.length }}
         </div>
 
-        <div class="table-actions">
+        <div class="table-actions" v-if="$store.state.flags.navigation">
           <el-checkbox class="human-columns-switch" v-model="showHumanColumns">
             Human column names
           </el-checkbox>
@@ -114,7 +114,7 @@
             <ItemDetails @hideTable="onHideTable" :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
           </template>
           <template slot="prependHead">
-            <tr class="table__column-controls">
+            <tr v-if="$store.state.flags.navigation" class="table__column-controls">
               <td></td>
               <td v-for="field in fields" :key="field.name">
                 <ColumnField
@@ -791,7 +791,7 @@ export default {
 
       if (field.type === 'boolean') {
         if (valueText == 'true' || valueText === true) valueText = 1;
-        valueText = parseInt(valueText) ? "yes" : "no"; // tolang
+        valueText = parseInt(valueText) ? "Yes" : "No"; // tolang
       }
 
       return valueText;

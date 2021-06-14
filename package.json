@@ -10,6 +10,7 @@
     "dev-popstas": "cross-env SERVER_URL=http://popstas-server:5301 HOST=0.0.0.0 PORT=5302 nuxt",
     "dev-popstas-prod": "cross-env SCAN_DEFAULT_MAX_REQUESTS=10 FRONTEND_URL=https://site-audit.popstas.ru SERVER_URL=https://site-audit-server.popstas.ru HOST=0.0.0.0 PORT=5302 nuxt",
     "dev-popstas-prod-stable": "cross-env SCAN_DEFAULT_MAX_REQUESTS=10 FRONTEND_URL=https://site-audit.popstas.ru SERVER_URL=https://site-audit-server-stable.popstas.ru HOST=0.0.0.0 PORT=5302 nuxt",
+    "dev-no-interface": "cross-env NO_NAVIGATION=1 NO_LOGIN=1 NO_FOOTER=1 NO_FILTERS=1 NO_TOUR=1 SERVER_URL=\"\" HOST=0.0.0.0 PORT=5302 nuxt",
     "dev-clean": "nuxt",
     "build": "nuxt build",
     "deploy-prod": "bash scripts/deploy.sh",
