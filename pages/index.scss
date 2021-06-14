@@ -396,6 +396,11 @@ header {
 .VueTables {
   margin-top: 15px;
 
+  > .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+
   &__sort-icon {
   }
 

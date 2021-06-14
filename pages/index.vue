@@ -102,7 +102,7 @@
 
         <v-client-table
           :class="{ 'table_without-header': hideTable }"
-          v-if="filteredItems.length > 0"
+          v-if="filteredItems.length > 0 && fields.length > 0"
           :columns="columns"
           :data="filteredItems"
           :options="tableOptions"
@@ -307,7 +307,7 @@ export default {
         }
         else {
           // align left for text
-          if (field.type === 'string') {
+          if (['string', 'email', 'domain'].includes(field.type)) {
             rules.push({
               class: 'align-left',
               condition: () => true
@@ -391,14 +391,18 @@ export default {
       }
       // console.log('cellClasses: ', cellClasses);
 
-      return {
+      const options = {
         headings: this.headings,
         headingsTooltips: this.headingsTooltips,
-        filterable: [this.$store.state.defaultField],
+        filterable: this.filterableColumns,
         cellClasses: cellClasses,
         columnsClasses: columnsClasses,
         perPage: Math.min(1000, this.filteredItems.length),
         perPageValues: [50, 100, 250, 500, 1000, 5000],
+        texts: {
+          defaultOption: '',
+          filterBy: '',
+        },
         // columnsDropdown: true,
         rowClassCallback(row) {
           if (row.error) return "danger";
@@ -412,6 +416,14 @@ export default {
           } */
         }
       };
+
+      // column filters
+      if (this.fields.length > 0 && Object.entries(this.listColumns).length > 0) {
+        options.filterByColumn = true;
+        options.listColumns = this.listColumns;
+      }
+
+      return options; 
     },
 
     columns() {
@@ -440,6 +452,66 @@ export default {
           + (field.description ? `\n\n${field.description}` : '');
       });
       return h;
+    },
+
+    filterableColumns() {
+      const list = [this.$store.state.defaultField];
+      this.fields.forEach(field => {
+        if (field.filterType && !list.includes(field.name)) list.push(field.name);
+      });
+      return list;
+    },
+
+    // фильтры к колонкам
+    listColumns() {
+      let cols = {};
+      this.fields.forEach(field => {
+        if (!field.filterType) return;
+
+        if (field.type == 'boolean') {
+          cols[field.name] = [
+            {
+              id: 0,
+              text: 'No', // tolang
+            },
+            {
+              id: 1,
+              text: 'Yes',
+            },
+          ]
+        }
+
+        if (field.filterType == 'string') {
+          // text filter by default
+        }
+
+        if (field.filterType == 'enum') {
+          const vals = {};
+          for (let item of this.filteredItems) {
+            const iVal = item[field.name];
+            if ([null, undefined, ''].includes(iVal)) continue;
+
+            if (vals[iVal]) vals[iVal] += 1;
+            else vals[iVal] = 1;
+          }
+
+          const sorted = Object.keys(vals).sort();
+          const list = [];
+          let i = 0;
+          for (let valName of sorted) {
+            const count = vals[valName];
+            list.push({
+              id: valName,
+              text: `${valName} (${count})`,
+            });
+            i++;
+          }
+          cols[field.name] = list;
+        }
+      });
+
+      // console.log('cols: ', cols);
+      return cols;
     },
 
     pageTitle() {
@@ -680,6 +752,18 @@ export default {
         valueText = valueText.replace('T', ' ').replace(/\..*/, '')
       }
 
+      if (field.type === 'email' && valueText) {
+        valueText = `<a href="mailto:${valueText}" target="_blank">${valueText}</a>`;
+      }
+
+      if (field.type === 'phone' && valueText) {
+        valueText = `<a href="tel:${valueText}">${valueText}</a>`;
+      }
+
+      if (field.name === 'domain' && valueText) {
+        valueText = `<a href="https://${valueText}" target="_blank">${valueText}</a>`;
+      }
+
       if (colName.match(/url/i)) {
         valueText = `<a href="${valueText}" target="_blank">${valueText}</a>`;
       }
@@ -706,6 +790,7 @@ export default {
       }
 
       if (field.type === 'boolean') {
+        if (valueText == 'true' || valueText === true) valueText = 1;
         valueText = parseInt(valueText) ? "yes" : "no"; // tolang
       }
 

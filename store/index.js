@@ -612,7 +612,8 @@ function fieldsByItems(items, tests){
         // info from /etc/item-info.yml
         const info = tests[fieldName];
         if (info) {
-          for (let fName of ['comment', 'description', 'command', 'validate', 'default', 'align', 'type', 'stat']) {
+          // TODO: remove fields list?
+          for (let fName of ['comment', 'description', 'command', 'validate', 'default', 'align', 'type', 'stat', 'filterType']) {
             if(info[fName]) field[fName] = info[fName];
           }
         }
