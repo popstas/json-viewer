@@ -179,6 +179,7 @@ export default {
       openedPanels: [],
       sort: {},
       hideTable: false,
+      reportName: '',
     };
   },
 
@@ -517,6 +518,8 @@ export default {
     pageTitle() {
       let title = [];
 
+      if (this.reportName) title.push(this.reportName);
+
       const reportName = this.$store.getters.shortReportUrl(this.itemsJsonUrl);
       title.push(reportName);
 
@@ -731,6 +734,26 @@ export default {
       return this.$store.getters.getValidateFunc(str);
     },
 
+    ago(ms) {
+      // seconds to ms
+      if (new Date(ms).getFullYear() < 1971) {
+        ms = ms * 1000;
+      }
+
+      // console.log('ms: ', ms);
+      // console.log('new Date(ms): ', new Date(ms));
+      const delta = (Date.now() - ms) / 1000;
+      const mins = Math.floor(delta % 60);
+      const hours = Math.floor(delta % 86400 / 3600);
+      const days = Math.floor(delta / 86400);
+
+      const parts = [];
+      if (days) parts.push(`${days}d`);
+      if (hours && days < 2) parts.push(`${hours}h`);
+      if (mins && !days) parts.push(`${mins}m`);
+      return parts.join(' ');
+    },
+
     // обёртка над шаблоном колонки
     getColumnValue(row, colName) {
       // достает значение colName из row, со вложенностью
@@ -742,14 +765,23 @@ export default {
 
       // шаблоны полей задаются здесь
 
+      if (field.href && row.href) {
+        valueText = `<a href="${row.href}" target="_blank">${valueText}</a>`;
+      }
+
       if (field.type === 'integer' && valueText) {
         valueText = new Intl.NumberFormat().format(valueText);
       }
 
       if (field.type === 'timestamp' && valueText) {
-        const offset = new Date().getTimezoneOffset() * 60000;
-        valueText = new Date(valueText * 1000 - offset).toISOString();
-        valueText = valueText.replace('T', ' ').replace(/\..*/, '')
+        if (field.format == 'ago') {
+          valueText = this.ago(valueText);
+        }
+        else {
+          const offset = new Date().getTimezoneOffset() * 60000;
+          valueText = new Date(valueText * 1000 - offset).toISOString();
+          valueText = valueText.replace('T', ' ').replace(/\..*/, '')
+        }
       }
 
       if (field.type === 'email' && valueText) {
@@ -875,11 +907,12 @@ export default {
         const itemsJson = await this.$axios.$get(itemsJsonUrl);
         // console.log('itemsJson.items: ', itemsJson.items);
         // console.log('itemsJson.fields: ', itemsJson.fields);
-        this.$store.commit("columnPresets", itemsJson.columns);
-        this.$store.commit("filterPresets", itemsJson.filters);
-        this.$store.commit("tests", itemsJson.fields);
-        this.$store.commit("scanOptions", itemsJson.scan);
-        this.$store.dispatch("items", itemsJson.items);
+        this.$store.commit("columnPresets", itemsJson.columns || {});
+        this.$store.commit("filterPresets", itemsJson.filters || []);
+        this.$store.commit("tests", itemsJson.fields || []);
+        this.$store.commit("scanOptions", itemsJson.scan || {});
+        this.$store.dispatch("items", itemsJson.items || []);
+        this.reportName = itemsJson.name || '';
 
         // open details when single row
         if (this.itemsLength === 1) {
@@ -893,6 +926,10 @@ export default {
         // filter
         if (this.defaultFilter && !this.$route.query["q"]) {
           this.$route.query["q"] = this.defaultFilter.q;
+        }
+
+        if (itemsJson.defaultSort && !this.$route.query["sort"]) {
+          this.sort = itemsJson.defaultSort;
         }
 
         // q
