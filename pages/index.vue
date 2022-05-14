@@ -915,13 +915,18 @@ export default {
       }
     },
 
+    buildJsonInfo(items) {
+      return {items};
+    },
+
     async changeJsonUrl(itemsJsonUrl, forceDefaultColumns) {
       // data init
       this.jsonLoadError = false;
       this.jsonLoading = true;
       this.$store.commit('filteredItems', []);
       try {
-        const itemsJson = await this.$axios.$get(itemsJsonUrl);
+        let itemsJson = await this.$axios.$get(itemsJsonUrl);
+        if (Array.isArray(itemsJson)) itemsJson = this.buildJsonInfo(itemsJson);
         // console.log('itemsJson.items: ', itemsJson.items);
         // console.log('itemsJson.fields: ', itemsJson.fields);
         this.$store.commit("columnPresets", itemsJson.columns || {});
