@@ -182,6 +182,7 @@ export default {
       sort: {},
       hideTable: false,
       reportName: '',
+      favicon: process.env.FAVICON || '/favicon.ico',
     };
   },
 
@@ -916,6 +917,16 @@ export default {
         this.$store.dispatch("items", itemsJson.items || []);
         this.reportName = itemsJson.name || '';
 
+        // favicon
+        if (itemsJson.favicon) {
+          this.favicon = itemsJson.favicon;
+        }
+
+        // defaultSort
+        if (itemsJson.defaultSort && !this.$route.query["sort"]) {
+          this.sort = itemsJson.defaultSort;
+        }
+
         // open details when single row
         if (this.itemsLength === 1) {
           const row = this.filteredItems[0];
@@ -928,10 +939,6 @@ export default {
         // filter
         if (this.defaultFilter && !this.$route.query["q"]) {
           this.$route.query["q"] = this.defaultFilter.q;
-        }
-
-        if (itemsJson.defaultSort && !this.$route.query["sort"]) {
-          this.sort = itemsJson.defaultSort;
         }
 
         // q
@@ -1015,7 +1022,13 @@ export default {
 
   head() {
     return {
-      title: this.pageTitle
+      title: this.pageTitle,
+      link: [{
+        hid: 'icon',
+        rel: 'icon',
+        type: 'image/x-icon',
+        href: this.favicon,
+      }]
     };
   }
 };
