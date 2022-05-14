@@ -108,10 +108,10 @@
           :columns="columns"
           :data="filteredItems"
           :options="tableOptions"
-          @row-click="rowClick"
           @sorted="updateUrlQuery"
           ref="table"
         >
+        <!-- @row-click="rowClick" -->
           <template slot="child_row" slot-scope="props">
             <ItemDetails @hideTable="onHideTable" :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
           </template>
