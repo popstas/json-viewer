@@ -11,7 +11,7 @@ export const state = () => ({
   // constants
   itemsJsonUrl: process.env.JSON_URL || '',
   flags: {
-    footer: !process.env.HIDE_FOOTER,
+    footer: !process.env.NO_FOOTER,
     login: !process.env.NO_LOGIN,
     filters: !process.env.NO_FILTERS,
     tour: !process.env.NO_TOUR,
@@ -468,6 +468,11 @@ export const mutations = {
     // console.log('scanPresets: ', newValue);
     state.scanPresets = newValue;
   },
+  flags(state, newObj) {
+    for (let name in newObj) {
+      state.flags[name] = newObj[name];
+    }
+  }
 };
 
 export const actions = {
