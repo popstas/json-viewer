@@ -8,6 +8,8 @@
     <div v-else>
       <v-tour v-if="$store.state.flags.tour" name="introTour" :steps="introTourSteps" :options="{ highlight: true }"></v-tour>
 
+      <el-button class="advanced-button" @click="$store.commit('flags', {navigation: true})" v-if="!$store.state.flags.navigation">...</el-button>
+
       <header v-if="$store.state.flags.navigation">
         <el-button
           v-if="$store.state.flags.tour"
@@ -947,7 +949,7 @@ export default {
       } catch(e) {
         this.jsonLoadError = true;
         this.jsonLoading = false;
-        // console.log('e: ', e);
+        console.error(e);
       }
     },
 
