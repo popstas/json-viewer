@@ -18,14 +18,14 @@
           <el-dropdown-item
             v-for="preset in columnPresets"
             :key="'columnPreset' + preset.name"
-            v-if="preset.groups.indexOf(group.name) !== -1"
+            v-if="isGroupNameInPreset"
           >
             <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
           </el-dropdown-item>
           <el-dropdown-item
             v-for="preset in filterPresets"
             :key="preset.name"
-            v-if="preset.groups.indexOf(group.name) !== -1"
+            v-if="isGroupNameInPreset"
           >
             <FilterPresetButton :preset="preset"></FilterPresetButton>
           </el-dropdown-item>
@@ -59,7 +59,7 @@
       <span
         v-for="preset in columnPresets"
         :key="'columnPreset' + preset.name"
-        v-if="preset.groups.indexOf(group.name) !== -1"
+        v-if="isGroupNameInPreset"
       >
         <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
       </span>
@@ -67,7 +67,7 @@
       <span
         v-for="preset in filterPresets"
         :key="preset.name"
-        v-if="preset.groups.indexOf(group.name) !== -1"
+        v-if="isGroupNameInPreset"
       >
         <FilterPresetButton :preset="preset"></FilterPresetButton>
       </span>
@@ -97,6 +97,10 @@ export default {
   },
 
   computed: {
+    isGroupNameInPreset() {
+      return this.preset && this.preset.groups && this.preset.groups.indexOf(this.group.name) !== -1;
+    },
+
     columnPresets() {
       return this.$store.state.columnPresets;
     },
@@ -119,7 +123,7 @@ export default {
 
     changeGroupOpened() {
       this.$emit("changeGroupOpened");
-    }
+    },
   }
 };
 </script>
