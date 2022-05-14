@@ -788,6 +788,13 @@ export default {
         }
       }
 
+      if (field.type === 'date') {
+        const d = new Date(valueText);
+        valueText = d.toISOString();
+        valueText = valueText.replace('T', ' ').replace(/\..*/, '')
+        if (d.getTime() == 0) valueText = '-';
+      }
+
       if (field.type === 'email' && valueText) {
         valueText = `<a href="mailto:${valueText}" target="_blank">${valueText}</a>`;
       }
