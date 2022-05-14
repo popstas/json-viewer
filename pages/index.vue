@@ -829,6 +829,12 @@ export default {
 
       // show images as images
       if (typeof valueText === 'string' && (field.type === 'image' || valueText.match(/^http.*\.(jpg|jpeg|png|gif)$/)) && valueText) {
+        // relative urls
+        if (valueText.startsWith('/') && row.url) {
+          const url = new URL(row.url);
+          valueText = `${url.origin}/${valueText}`;
+        }
+
         valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${valueText}" title="${valueText}"/>`;
       }
 
