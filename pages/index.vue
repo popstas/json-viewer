@@ -768,8 +768,9 @@ export default {
 
       // шаблоны полей задаются здесь
 
-      if (field.href && row.href) {
-        valueText = `<a href="${row.href}" target="_blank">${valueText}</a>`;
+      if (field.href) {
+        let href = row[field.href] || row.href;
+        valueText = `<a href="${href}" target="_blank">${valueText}</a>`;
       }
 
       if (field.type === 'integer' && valueText) {
