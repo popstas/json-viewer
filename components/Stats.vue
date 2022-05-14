@@ -100,37 +100,47 @@ export default {
     stats() {
       const stats = [];
 
-      const averageFields = [
-        'lighthouse_scores_pwa',
-        'lighthouse_scores_accessibility',
-        'lighthouse_scores_best-practices',
-        'lighthouse_scores_seo',
-        'lighthouse_first-contentful-paint',
-        'lighthouse_speed-index',
-        'lighthouse_largest-contentful-paint',
-        'lighthouse_interactive',
-        'lighthouse_total-blocking-time',
-        'lighthouse_cumulative-layout-shift',
-      ];
-      const enumFields = [
-        // site-discovery fields
-        "engine",
-        "site_template",
-      ];
-      const rangeFields = [];
-      const uniqueFields = [];
+      const statFields = {
+        average: [
+          'lighthouse_scores_pwa',
+          'lighthouse_scores_accessibility',
+          'lighthouse_scores_best-practices',
+          'lighthouse_scores_seo',
+          'lighthouse_first-contentful-paint',
+          'lighthouse_speed-index',
+          'lighthouse_largest-contentful-paint',
+          'lighthouse_interactive',
+          'lighthouse_total-blocking-time',
+          'lighthouse_cumulative-layout-shift',
+        ],
+
+        sum: [],
+
+        enum: [
+          // site-discovery fields
+          "engine",
+          "site_template",
+        ],
+
+        range: [],
+        unique: [],
+      };
 
       for (let field of this.availableFields) {
-        if (!field.stat) continue;
-        if (field.stat.type === 'average') averageFields.push(field.name);
-        if (field.stat.type === 'enum') enumFields.push(field.name);
-        if (field.stat.type === 'ranges') rangeFields.push(field.name);
-        if (field.stat.type === 'unique') uniqueFields.push(field.name);
+        let stat = field.stat;
+        if (!stat) continue;
+
+        if (typeof stat === 'string') stat = { type: stat };
+
+        if (statFields[stat.type]) {
+          statFields[stat.type].push(field.name);
+        }
       }
 
       for (let field of this.availableFields) {
         field = this.tests[field.name];
         if (!field) continue;
+        let fieldStat = field.stat;
 
         let val = "";
         let subvalues = [];
@@ -138,7 +148,7 @@ export default {
         let validateClass = "";
 
         // average
-        if (averageFields.includes(field.name)) {
+        if (statFields['average'].includes(field.name)) {
           let sum = 0;
           for (let item of this.filteredItems) {
             sum += parseInt(item[field.name]);
@@ -148,16 +158,27 @@ export default {
           valueText = val + " (average)"; // tolang
         }
 
+        // sum
+        if (statFields['sum'].includes(field.name)) {
+          let sum = 0;
+          for (let item of this.filteredItems) {
+            sum += parseInt(item[field.name]);
+          }
+          val = sum;
+          validateClass = this.getColumnValidateClass(val, field.validate);
+          valueText = val + " (sum)"; // tolang
+        }
+
         // ranges
-        if (rangeFields.includes(field.name)) {
+        if (statFields['range'].includes(field.name)) {
           const rangesCount = {};
           const msg = [];
 
           // count ranges
           for (let item of this.filteredItems) {
             let val = parseInt(item[field.name]);
-            // TODO:L universe with validate.js
-            let ranges = field.stat.ranges;
+            // TODO: universe with validate.js
+            let ranges = fieldStat.ranges;
             if (!Array.isArray(ranges)) ranges = Object.keys(ranges); // object to array
             for (let range of ranges) {
               if (rangesCount[range] === undefined) rangesCount[range] = 0; // for correct order
@@ -204,7 +225,7 @@ export default {
         }
 
         // enum
-        if (enumFields.includes(field.name)) {
+        if (statFields['enum'].includes(field.name)) {
           let vals = {};
           for (let item of this.filteredItems) {
             const iVal = item[field.name];
@@ -244,7 +265,7 @@ export default {
         }
 
         // non-unique values
-        if (uniqueFields.includes(field.name)) {
+        if (statFields['unique'].includes(field.name)) {
           const findDuplicates = (arr) => {
             let sorted_arr = arr.slice().sort(); // You can define the comparing function here.
             let results = [];
