@@ -807,7 +807,7 @@ export default {
         valueText = `<a href="https://${valueText}" target="_blank">${valueText}</a>`;
       }
 
-      if (colName.match(/url/i)) {
+      if (colName.match(/url/i) || field.type === 'url') {
         valueText = `<a href="${valueText}" target="_blank">${valueText}</a>`;
       }
 
