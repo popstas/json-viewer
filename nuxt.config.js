@@ -52,13 +52,13 @@ module.exports = {
       url: process.env.SERVER_URL || 'http://localhost:5301'
     }]
   },
-  
+
   /*
   ** Headers of the page
   */
   pwa: {
     meta: {
-      name: 'site-audit-seo',
+      name: 'json-viewer',
       ogHost: process.env.FRONTEND_URL || '/',
       ogImage: '/og_image.png',
       favicon: false,

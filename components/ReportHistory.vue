@@ -179,7 +179,7 @@ export default {
 
     shareProdUrl() {
       // console.log('this.$router: ', this.$router);
-      return `https://viasite.github.io/site-audit-seo-viewer/?url=${this.itemsJsonUrl}`;
+      return `https://viasite.github.io/json-viewer/?url=${this.itemsJsonUrl}`;
     },
 
     rescanUrl() {

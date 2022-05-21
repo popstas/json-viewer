@@ -325,7 +325,7 @@
   .scan__presets {
     text-align: left;
     padding: 0;
-    
+
     li {
       list-style: none;
       line-height: 2em;
@@ -557,7 +557,7 @@ export default {
       const domain = url.parse((this.url)).hostname;
       return `Audit ${domain}`
         + (this.argsWithoutDefault ? ` - args: ${this.argsWithoutDefault}` : '')
-        + ` - site-audit-seo`;
+        + ` - ${this.$store.state.name}`;
     },
 
     isInlineForm() {
@@ -1056,6 +1056,7 @@ export default {
     }
   },
 
+  // middleware: 'auth',
 
   head() {
     return {

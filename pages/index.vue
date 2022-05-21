@@ -427,7 +427,7 @@ export default {
         options.listColumns = this.listColumns;
       }
 
-      return options; 
+      return options;
     },
 
     columns() {
@@ -532,7 +532,7 @@ export default {
         title.push("Fields: " + this.columns);
       } */
 
-      title.push('Results - site-audit-seo');
+      title.push('Results - ' + this.$store.state.name);
       return title.join(" - ");
     },
 
@@ -608,7 +608,7 @@ export default {
     },
 
     buildXlsx() {
-      const table = this.$el.querySelector(".VueTables__table");
+      const table = this.$el.querySelector('.VueTables__table');
       const wb = XLSX.utils.table_to_book(table);
       const ws = wb.Sheets[wb.SheetNames[0]];
 
@@ -642,7 +642,7 @@ export default {
     getXlsx() {
       const wb = this.buildXlsx();
       const suffix = this.q ? "--" + this.q.replace(/&/g, ",") : "";
-      const filename = `site-audit-seo${suffix}.xlsx`;
+      const filename = `json-viewer${suffix}.xlsx`;
       XLSX.writeFile(wb, filename, {});
     },
 

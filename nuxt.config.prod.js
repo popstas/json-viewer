@@ -1,10 +1,10 @@
 const baseConfig = require('./nuxt.config');
-baseConfig.router.base = '/site-audit-seo-viewer/';
+baseConfig.router.base = '/json-viewer/';
 module.exports = {
   ...baseConfig,
   ...{
     router: {
-      base: '/site-audit-seo-viewer/'
+      base: '/json-viewer/'
     }
   }
 };

@@ -19,9 +19,9 @@
     </el-main>
 
     <el-footer v-if="$store.state.flags.footer" height="36px">
-      <a 
+      <a
         target="_blank"
-        href="https://github.com/viasite/site-audit-seo-viewer/releases"
+        href="https://github.com/viasite/json-viewer/releases"
       >{{ $store.state.name }} {{ $store.state.version }}</a>
     </el-footer>
   </el-container>

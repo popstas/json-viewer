@@ -1,4 +1,4 @@
-# site-audit-seo-viewer
+# json-viewer
 
 Web viewer for [site-audit-seo](https://github.com/viasite/site-audit-seo).
 
