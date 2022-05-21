@@ -1,3 +1,30 @@
+# [6.0.0](https://github.com/viasite/site-audit-seo-viewer/compare/v5.2.0...v6.0.0) (2022-05-21)
+
+
+### Bug Fixes
+
+* disable open row on click ([6cc6312](https://github.com/viasite/site-audit-seo-viewer/commit/6cc63124d596ee12b6a50ed47921012cd57b5c6e))
+* flags code ([c5b13ff](https://github.com/viasite/site-audit-seo-viewer/commit/c5b13ff2fd29b6d3a28e5c578bee05eb15e2425e))
+* safe defaults for json fields, reportName, field.format=ago, defaultSort ([162841d](https://github.com/viasite/site-audit-seo-viewer/commit/162841d692d8b89e895d4559dbd9999078bc0563))
+* working relative url for images ([ec85f7a](https://github.com/viasite/site-audit-seo-viewer/commit/ec85f7acb65a2ba23b8ce792d470d3f623b5e368))
+
+
+### Features
+
+* button for full navigation when flags.navigation == false ([d619664](https://github.com/viasite/site-audit-seo-viewer/commit/d619664746e8e5ccc42dc8bf266a448ef5f895ef))
+* direct input json for table ([404f53b](https://github.com/viasite/site-audit-seo-viewer/commit/404f53b97f1c69bedd32f244be4c7926516eb149))
+* favicon ([f958e2d](https://github.com/viasite/site-audit-seo-viewer/commit/f958e2dfbe29f4d84ea95a7eaef6e3950544af67))
+* feature flags, disable interface parts ([a65de65](https://github.com/viasite/site-audit-seo-viewer/commit/a65de656ae9cb28f79fa7f82f361e929bc07e0b2))
+* field.href attr that point to href field, default row.href ([50efccd](https://github.com/viasite/site-audit-seo-viewer/commit/50efccdc44335609d4990d50eab58d0aa3626e78))
+* field.type = date ([171a038](https://github.com/viasite/site-audit-seo-viewer/commit/171a03801139d36c8b237ba2891a0e8efc1caae6))
+* field.type = url ([57ec1c4](https://github.com/viasite/site-audit-seo-viewer/commit/57ec1c42b6357d7f7512a93a0c4a94617ee19b2a))
+* filtered stats: type = 'sum' ([8dedc24](https://github.com/viasite/site-audit-seo-viewer/commit/8dedc246103a5dd58652f2988a071e5f2d9c5147))
+* filters for columns, types: email, phone, domain ([42d9661](https://github.com/viasite/site-audit-seo-viewer/commit/42d96611bb5114699b0d812752bd186780aea1fc))
+* rename site-audit-seo-viewer to json-viewer ([78ed024](https://github.com/viasite/site-audit-seo-viewer/commit/78ed024cd7a462ce509c9d58a2564a838574ec6e))
+* treat json array as table ([2a7b9a7](https://github.com/viasite/site-audit-seo-viewer/commit/2a7b9a7ba0be328350f5a947cd1c80b9eabd227c))
+
+
+
 # [5.2.0](https://github.com/viasite/site-audit-seo-viewer/compare/v5.1.2...v5.2.0) (2021-05-21)
 
 
@@ -505,16 +532,16 @@
 
 ### Bug Fixes
 
-* domain_idn выровнен по левому краю ([1130dfe](https://github.com/viasite/site-audit-seo-viewer/commit/1130dfef34f3c5e5766edc553fa93305f31aabde))
 * сайты с одинаковыми доменами, но с разными хостами теперь нормально выводятся ([ba9f519](https://github.com/viasite/site-audit-seo-viewer/commit/ba9f51949b82ff06405ff9dd5df976b8c353ce4f))
+* domain_idn выровнен по левому краю ([1130dfe](https://github.com/viasite/site-audit-seo-viewer/commit/1130dfef34f3c5e5766edc553fa93305f31aabde))
 
 
 ### Features
 
-* favicon ([dacadd0](https://github.com/viasite/site-audit-seo-viewer/commit/dacadd0f51178659249e098de85f1b65ae8ba5d8))
 * в domain_idn добавлены favicons ([054f5c1](https://github.com/viasite/site-audit-seo-viewer/commit/054f5c160e3710e72b37e6efb9f743a882255cbf))
 * по умолчанию показывать приоритетные сайты ([647b786](https://github.com/viasite/site-audit-seo-viewer/commit/647b78684088c5ae049483ef31916b1ed144f92d))
 * поиск по колонкам, быстрое добавление колонки ([1f96b35](https://github.com/viasite/site-audit-seo-viewer/commit/1f96b35a9ab50f07d5b19c5e96e9f04bfbe46817))
+* favicon ([dacadd0](https://github.com/viasite/site-audit-seo-viewer/commit/dacadd0f51178659249e098de85f1b65ae8ba5d8))
 
 
 
@@ -523,8 +550,8 @@
 
 ### Bug Fixes
 
-* input не всегда доступен для фокуса ([e541b23](https://github.com/viasite/site-audit-seo-viewer/commit/e541b23b3455d53dffbfcd170435c3cecb018937))
 * изменилась модель в sites.json, теперь boolean идут с правильным типом ([8ea385b](https://github.com/viasite/site-audit-seo-viewer/commit/8ea385b840e1463ad720c2e76d62c490a38b5ad1))
+* input не всегда доступен для фокуса ([e541b23](https://github.com/viasite/site-audit-seo-viewer/commit/e541b23b3455d53dffbfcd170435c3cecb018937))
 
 
 ### Features
@@ -540,10 +567,10 @@
 
 ### Bug Fixes
 
-* filters in FieldGroup working ([8f45ba7](https://github.com/viasite/site-audit-seo-viewer/commit/8f45ba74c93c4f85ef72fe872495bea8c54033a4))
 * добавлялись дубли колонок ([13d95fa](https://github.com/viasite/site-audit-seo-viewer/commit/13d95fa3adb9526ea17a3d48f237bb450ad20f61))
 * нормальная работа одиночных фильтров, очистка запроса по кнопке ([39f534f](https://github.com/viasite/site-audit-seo-viewer/commit/39f534f6fed4528fa670e0216f7c6f7944a69182))
 * решены проблемы с фокусом на строке запроса, когда надо и когда не надо ([00abd7f](https://github.com/viasite/site-audit-seo-viewer/commit/00abd7f91f8101048e7ba77ca2837bb7ff8b623b))
+* filters in FieldGroup working ([8f45ba7](https://github.com/viasite/site-audit-seo-viewer/commit/8f45ba74c93c4f85ef72fe872495bea8c54033a4))
 
 
 ### Features
@@ -567,25 +594,19 @@
 
 ### Bug Fixes
 
-* check for field exists before add to fields ([8410886](https://github.com/viasite/site-audit-seo-viewer/commit/8410886baa7e8fab6b6261b8f420b19c998eaaca))
-* css, прибраны группы полей, верстка под мобильники ([1804410](https://github.com/viasite/site-audit-seo-viewer/commit/1804410233ac92843b8958e3b077c3c5a6f15ae0))
-* previous commit was not completed ([924111c](https://github.com/viasite/site-audit-seo-viewer/commit/924111c53903f17abecf3cd603e1f683c27c9722))
 * в заголовках таблиц части переменной разделяются пробелами ([6be15b0](https://github.com/viasite/site-audit-seo-viewer/commit/6be15b08c010d8c546d324daa25cd4143a8ec731))
 * вернул пресеты в развернутые меню ([9a4ae13](https://github.com/viasite/site-audit-seo-viewer/commit/9a4ae131c8e2ebdcc11d262edeaf71e82ef29523))
 * не раскрашивать пустые ячейки ([e6d6534](https://github.com/viasite/site-audit-seo-viewer/commit/e6d65348c820a4ed71169683e1689578fa0f7e56))
 * поправлены цвета lighthouse ([f27b601](https://github.com/viasite/site-audit-seo-viewer/commit/f27b601d59811c647d8b24c4b7875543b3cc8af5))
 * растягивание раскраски ячеек на всю высоту ([a537dcf](https://github.com/viasite/site-audit-seo-viewer/commit/a537dcfb60aaa650d392bf4d97f9c45435747fa0))
 * фильтры переведены, прибран css, добавлены подсказки ([3d30dcd](https://github.com/viasite/site-audit-seo-viewer/commit/3d30dcddddd660a14276aaea4dd0e8eb3679e689))
+* check for field exists before add to fields ([8410886](https://github.com/viasite/site-audit-seo-viewer/commit/8410886baa7e8fab6b6261b8f420b19c998eaaca))
+* css, прибраны группы полей, верстка под мобильники ([1804410](https://github.com/viasite/site-audit-seo-viewer/commit/1804410233ac92843b8958e3b077c3c5a6f15ae0))
+* previous commit was not completed ([924111c](https://github.com/viasite/site-audit-seo-viewer/commit/924111c53903f17abecf3cd603e1f683c27c9722))
 
 
 ### Features
 
-* client_priority ([ab871be](https://github.com/viasite/site-audit-seo-viewer/commit/ab871be7c15bda0759ca194ddac08526d9b4a439))
-* envy, jivosite ([b0d8a39](https://github.com/viasite/site-audit-seo-viewer/commit/b0d8a39eb6a7c57c579abe3ffe58131059f36f5b))
-* lighthouse ([ff317d9](https://github.com/viasite/site-audit-seo-viewer/commit/ff317d923842b1185a7671a8a8532e2fb0861b4c))
-* lighthouse итоговые очки по категориям (scores) ([d8900f3](https://github.com/viasite/site-audit-seo-viewer/commit/d8900f3c7a538beff15d797696f7fd869c94a123))
-* lighthouse_all метрика по всем оценкам ([a640a04](https://github.com/viasite/site-audit-seo-viewer/commit/a640a04e52c7042e53344a6eb460bf41a1ee2a0b))
-* updated_time ([c889d34](https://github.com/viasite/site-audit-seo-viewer/commit/c889d343733cafa7fd676c5423156b45f877a0dd))
 * группы полей из tests ([a0987f4](https://github.com/viasite/site-audit-seo-viewer/commit/a0987f48dc74c18491e7bee02046438cf541af43))
 * группы фильтров, пресетов колонок ([76987cb](https://github.com/viasite/site-audit-seo-viewer/commit/76987cbc702805e4237eddd7a5da3444df5931bc))
 * добавлены пресеты drupal, dirty git ([9cd72f1](https://github.com/viasite/site-audit-seo-viewer/commit/9cd72f1ff72a96e7c569595140e9a10a249dbe68))
@@ -599,8 +620,14 @@
 * сворачивание групп колонок ([24d3b57](https://github.com/viasite/site-audit-seo-viewer/commit/24d3b5769ef41d4c10dd1ee2f60a1a1ed9c28bfd))
 * теперь колонки автоматически добавляются, если выбирается фильтр, где они участвуют в условии ([f3150e1](https://github.com/viasite/site-audit-seo-viewer/commit/f3150e10f7c40728d4a9f6e8a31500eb4ca27534))
 * убрать все колонки ([7c5c151](https://github.com/viasite/site-audit-seo-viewer/commit/7c5c151775ac1435af1fd874971faa7a9add9747))
+* client_priority ([ab871be](https://github.com/viasite/site-audit-seo-viewer/commit/ab871be7c15bda0759ca194ddac08526d9b4a439))
 * **filter:** tel_links>0, meta_pagespeed>0 ([a06f328](https://github.com/viasite/site-audit-seo-viewer/commit/a06f328e8d8799d0b58c169b5a1dec13551fa216))
 * фильтры drupal without cache, drupal without js min ([7003d7f](https://github.com/viasite/site-audit-seo-viewer/commit/7003d7f5da4fc8345e980d7db0e09c147b399666))
+* envy, jivosite ([b0d8a39](https://github.com/viasite/site-audit-seo-viewer/commit/b0d8a39eb6a7c57c579abe3ffe58131059f36f5b))
+* lighthouse ([ff317d9](https://github.com/viasite/site-audit-seo-viewer/commit/ff317d923842b1185a7671a8a8532e2fb0861b4c))
+* lighthouse итоговые очки по категориям (scores) ([d8900f3](https://github.com/viasite/site-audit-seo-viewer/commit/d8900f3c7a538beff15d797696f7fd869c94a123))
+* lighthouse_all метрика по всем оценкам ([a640a04](https://github.com/viasite/site-audit-seo-viewer/commit/a640a04e52c7042e53344a6eb460bf41a1ee2a0b))
+* updated_time ([c889d34](https://github.com/viasite/site-audit-seo-viewer/commit/c889d343733cafa7fd676c5423156b45f877a0dd))
 
 
 
@@ -615,8 +642,8 @@
 ### Features
 
 * поддержка Назад в браузере, фильтры в title ([acd676b](https://github.com/viasite/site-audit-seo-viewer/commit/acd676ba3dc2903f1bb6374e3d0db901bfc60d62))
-* сохранение q в url ([3d3329d](https://github.com/viasite/site-audit-seo-viewer/commit/3d3329dd6c74f7894f057ac6062b5a4de5cb4133))
 * сохранение набора колонок в url ([58dc751](https://github.com/viasite/site-audit-seo-viewer/commit/58dc751ac8f58244ce896f86b39998380cb03098))
+* сохранение q в url ([3d3329d](https://github.com/viasite/site-audit-seo-viewer/commit/3d3329dd6c74f7894f057ac6062b5a4de5cb4133))
 
 
 
@@ -669,15 +696,15 @@
 * вес сайта, site_info.files_size ([ce1e0fe](https://github.com/viasite/site-audit-seo-viewer/commit/ce1e0fed0d260e2b999cccb2dd7495e0181b5d0a))
 * возможность включить любое поле как колонку ([ec2ac7b](https://github.com/viasite/site-audit-seo-viewer/commit/ec2ac7bbf06584b3c74a11532d78ce9072650f20))
 * добавлен ТИЦ ([7719330](https://github.com/viasite/site-audit-seo-viewer/commit/7719330a254bf7c6a5642d896c28f465c0467a82))
-* **info:** add not scannable message to site_info ([157c4db](https://github.com/viasite/site-audit-seo-viewer/commit/157c4dbfd3900fcbcdf55c07490e550eb86a893a))
 * **info:** вывод ошибок запуска site-info в site.site_info ([cc9235f](https://github.com/viasite/site-audit-seo-viewer/commit/cc9235f09b665e478c0b5a75e936846e678ea7b7))
+* **info:** add not scannable message to site_info ([157c4db](https://github.com/viasite/site-audit-seo-viewer/commit/157c4dbfd3900fcbcdf55c07490e550eb86a893a))
+* **list:** подсвечены ряды без site_info ([586bc43](https://github.com/viasite/site-audit-seo-viewer/commit/586bc4315910df0cf83c1efb4547d56927197797))
 * **list:** add engine from ansible if not detected (for services) ([2ac1bd2](https://github.com/viasite/site-audit-seo-viewer/commit/2ac1bd2ef5a6bc15f2f42cb9107b247a85cdf5f4))
 * **list:** add error column ([ba38ca0](https://github.com/viasite/site-audit-seo-viewer/commit/ba38ca027c7f3bd908af24f8d39ce3191f649bdc))
 * **list:** add visitors ([ae52e29](https://github.com/viasite/site-audit-seo-viewer/commit/ae52e2984f6ee01aafa4ee47f8d5ecc7e9368a24))
 * **list:** starter template of list app ([16863d0](https://github.com/viasite/site-audit-seo-viewer/commit/16863d0b84f22c13f18478e56efe0287c93be328))
 * **list:** vuetable-2 -> vue-tables-2 ([7690242](https://github.com/viasite/site-audit-seo-viewer/commit/7690242c8b66559a850560967323a5dcaee4ba4a))
 * **list:** year ([36d10da](https://github.com/viasite/site-audit-seo-viewer/commit/36d10da13d86d5a017dd39aa49d9358b8e0b9725))
-* **list:** подсвечены ряды без site_info ([586bc43](https://github.com/viasite/site-audit-seo-viewer/commit/586bc4315910df0cf83c1efb4547d56927197797))
 * viasite-projects-list ([8827e32](https://github.com/viasite/site-audit-seo-viewer/commit/8827e32d5a706c195b4c9146c85792b9997b526e))
 
 
