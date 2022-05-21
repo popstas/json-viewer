@@ -10,6 +10,7 @@ export const state = () => ({
 
   // constants
   itemsJsonUrl: process.env.JSON_URL || '',
+  jsonRaw: '',
   flags: {
     footer: !process.env.NO_FOOTER,
     login: !process.env.NO_LOGIN,
@@ -351,6 +352,10 @@ export const mutations = {
     }
   },
 
+  jsonRaw(state, newValue) {
+    state.jsonRaw = newValue;
+  },
+
   jsonUrlHistory(state, newValue) {
     state.jsonUrlHistory = newValue;
   },
@@ -488,6 +493,7 @@ export const actions = {
     // default field (or use first field)
     let defaultField = state.allFields.find(f => f.default);
     if (!defaultField) defaultField = state.allFields[0];
+    if (!defaultField) return;
     // console.log('defaultField: ', defaultField);
     commit('defaultField', defaultField.name);
 

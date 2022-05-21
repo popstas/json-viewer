@@ -17,6 +17,23 @@
 
     <button :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
 
+    <button
+      :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}"
+      @click="itemsJsonUrl = 'input'" title="Convert JSON to table">input</button>
+    <MonacoEditor
+      v-if="itemsJsonUrl === 'input'"
+      class="jsonRaw"
+      language="json"
+      :options="{
+        //validate: true,
+        minimap: {
+          enabled: false
+        },
+      }"
+      @editorWillMount="editorMounted"
+      v-model="jsonRaw">
+    </MonacoEditor >
+
     <a :href="getShareUrl(itemsJsonUrl)" target="_blank">share</a> ,
     <a :href="itemsJsonUrl" target="_blank">json</a>
     <template v-if="$router.options.base == '/'">
@@ -33,7 +50,7 @@
 
 <style lang="scss">
 .report-history {
-  display: inline-block;
+  //display: inline-block;
 
   &__sort {
     width: 128px;
@@ -82,6 +99,11 @@
     background: none;
     border: none;
   }
+
+  .jsonRaw {
+    margin: 10px 0;
+    height: 50vh;
+  }
 }
 
 </style>
@@ -89,9 +111,10 @@
 <script>
 import FilterPresetButton from "~/components/FilterPresetButton";
 import "vue-awesome/icons/filter";
+import MonacoEditor from 'vue-monaco'
 
 export default {
-  components: {},
+  components: { MonacoEditor },
 
   computed: {
     itemsJsonUrl: {
@@ -109,6 +132,15 @@ export default {
       },
       set(val) {
         this.$store.commit('currentJsonSort', val);
+      }
+    },
+
+    jsonRaw: {
+      get() {
+        return this.$store.state.jsonRaw;
+      },
+      set(val) {
+        this.$store.commit('jsonRaw', val);
       }
     },
 
@@ -181,6 +213,25 @@ export default {
 
     getShareUrl(url) {
       return this.$router.options.base + `?url=${url}`;
+    },
+
+    editorMounted(monaco) {
+      /*window.MonacoEnvironment = {
+        getWorkerUrl: function (workerId, label) {
+          return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
+              self.MonacoEnvironment = { baseUrl: '${window.location.origin}/' };
+              importScripts('${window.location.origin}/vs/base/worker/workerMain.js');
+          `)}`;
+        }
+      };*/
+
+      // console.log("monaco:", monaco);
+
+      // monaco.trigger('anyString', 'editor.action.formatDocument');
+
+      /*monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+        validate: true,
+      });*/
     },
   },
 };

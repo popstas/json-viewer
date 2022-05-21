@@ -539,7 +539,16 @@ export default {
     isNewUser() {
       return this.$store.state.visitCount < this.$store.state.newUserVisits;
     },
+
+    jsonInput() {
+      try {
+        return JSON.parse(this.$store.state.jsonRaw);
+      } catch (e) {
+        return false;
+      }
+    },
   },
+  // end of computed
 
   watch: {
     q(q) {
@@ -558,6 +567,18 @@ export default {
     async itemsJsonUrl() {
       const forceDefaultColumns = !this.$route.query["fields"];
       await this.changeJsonUrl(this.itemsJsonUrl, forceDefaultColumns);
+    },
+
+    async jsonInput(val) {
+      // return false;
+      // const forceDefaultColumns = !this.$route.query["fields"];
+      const forceDefaultColumns = true;
+      await this.changeJsonUrl('input', forceDefaultColumns);
+
+      if (val) {
+        // format json
+        // this.$store.commit('jsonRaw', JSON.stringify(val, null, '  '))
+      }
     },
 
     displayMode(val) {
@@ -869,7 +890,11 @@ export default {
           break;
         }
       }
-      if (!defaultPreset) return;
+
+      if (!defaultPreset) {
+        // all fields
+        defaultPreset = { columns: this.availableFields.map(f => f.name) };
+      }
 
       fields = [...defaultPreset.columns];
 
@@ -925,7 +950,15 @@ export default {
       this.jsonLoading = true;
       this.$store.commit('filteredItems', []);
       try {
-        let itemsJson = await this.$axios.$get(itemsJsonUrl);
+        let itemsJson;
+        if (itemsJsonUrl === 'input') {
+          // load input json
+          itemsJson = this.jsonInput;
+        } else {
+          // load url json
+          itemsJson = await this.$axios.$get(itemsJsonUrl);
+        }
+
         if (Array.isArray(itemsJson)) itemsJson = this.buildJsonInfo(itemsJson);
         // console.log('itemsJson.items: ', itemsJson.items);
         // console.log('itemsJson.fields: ', itemsJson.fields);

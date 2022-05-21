@@ -1,3 +1,5 @@
+// import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
+
 module.exports = {
   ssr: false,
 
@@ -77,6 +79,11 @@ module.exports = {
   ** Build configuration
   */
   build: {
+    /*plugins: [
+      new MonacoWebpackPlugin({
+        languages: ['json']
+      }),
+    ]*/
     /*
     ** Run ESLint on save
     */

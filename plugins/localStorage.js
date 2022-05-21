@@ -4,6 +4,7 @@ export default ({store}) => {
   createPersistedState({
     paths: [
       'itemsJsonUrl',
+      'jsonRaw',
       'jsonUrlHistory',
       'compareList',
       'scanHistory',
