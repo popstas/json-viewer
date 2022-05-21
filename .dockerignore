@@ -8,3 +8,4 @@ Dockerfile*
 .git/**
 .nuxt/
 dist/
+data/

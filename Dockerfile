@@ -1,4 +1,4 @@
-FROM mhart/alpine-node:12
+FROM node:14-alpine AS builder
 
 RUN apk update && \
     apk upgrade && \
@@ -7,13 +7,16 @@ RUN apk update && \
 WORKDIR /app
 
 COPY package.json package-lock.json ./
+RUN chown -R node:node /app
+USER node
 RUN npm install
 RUN npm run build
 
 # Only copy over the node pieces we need from the above image
-FROM mhart/alpine-node:12
+FROM node:14-alpine
 WORKDIR /app
-COPY --from=0 /app .
+USER node
+COPY --from=builder /app .
 COPY . .
 
 EXPOSE 5302
