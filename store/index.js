@@ -229,7 +229,7 @@ export const getters = {
         const operator = res[1];
         let expected = res[2];
 
-        console.log('expected: ', expected);
+        // console.log('expected: ', expected);
         const dateNow = expected.match(/^\{now\}([\+\-])(\d+)$/);
         if (dateNow) {
           const k = dateNow == '+' ? 1 : -1;
@@ -558,6 +558,7 @@ export const actions = {
               commit('webhookShow', settings.webhookShow);
             } */
           }
+          // TODO: sync history for this domain
         });
     } else {
       commit("setUser", false);

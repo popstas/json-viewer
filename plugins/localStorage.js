@@ -17,7 +17,7 @@ export default ({store}) => {
       'uid',
       'lastConnectionId',
       'url',
-      'urls',
+      // 'urls',
       'args',
       'serverUrl',
       'log',

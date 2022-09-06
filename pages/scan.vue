@@ -22,6 +22,12 @@
           <el-input v-if="urlsShow" v-model="urls" type="textarea" :rows="10" wrap="soft" autofocus :autosize="{ minRows: 1, maxRows: 10}"
             placeholder="One line - one URL"
           ></el-input>
+
+          <el-link
+            type="primary" v-if="urlsShow"
+            @click.native.prevent="urlsShow = !urlsShow"
+            v-html="`hide urls (${urlList.length})`"
+          ></el-link>
         </div>
         <span v-if="!isUrls">
           <el-autocomplete v-model="url" @keydown.enter.native.prevent="sendTask" autofocus class="form__url"
@@ -634,8 +640,8 @@ export default {
       let query = {};
 
       if (this.isUrls) {
-        if (this.urlList.length > 0) query.urls = this.urlList.join(',');
-        if (query.urls.length > 5000) delete(query.urls);
+        if (this.urlList.length > 0 && this.urlList.length < 100) query.urls = this.urlList.join(',');
+        if (query.urls?.length > 2048) delete(query.urls);
       } else {
         if (this.url) query.url = this.url;
       }
@@ -659,7 +665,7 @@ export default {
       }
 
       // add params from query
-      for (let paramName of ['url', 'urls', 'args', 'serverUrl', 'preset', 'run']) {
+      for (let paramName of ['url', 'urls', 'urls_list', 'args', 'serverUrl', 'preset', 'run']) {
         let val = this.$route.query[paramName];
         if (val) {
           if (paramName === 'url' && val.includes('/reports/')) continue;
@@ -668,6 +674,22 @@ export default {
             this.isUrls = true;
             this.urlsShow = false;
           }
+
+
+          // urls_list url to urls input
+          if (paramName === 'urls_list') {
+            fetch(val).then((response) => {
+              return response.json();
+            }).then(data => {
+              const urls = [];
+              for (const item of data) {
+                if (item.url) urls.push(item.url);
+              }
+              this.urls = urls.join('\n');
+            })
+            this.isUrls = true;
+          }
+
           if (paramName === 'args') {
             const unknownArgs = this.parseKnownArgs(val);
             // console.log('unknownArgs: ', unknownArgs);
@@ -734,7 +756,9 @@ export default {
     buildArgs(withDefault = true, overrides = {}) {
       let args = this.args;
 
-      if (this.isUrls && this.urlList.length > 0) {
+      // don't add urls to args, it might be too long
+      // withDefault - full args
+      if (withDefault && this.isUrls && this.urlList.length > 0) {
         args += ' --urls ' + this.urlList.join(',');
       }
 
@@ -804,6 +828,7 @@ export default {
       if (pindex !== -1) this.openedPanels.splice(pindex, 1);
     },
 
+    // send task to server
     async sendTask(overrides = {}) {
       this.$store.commit('log', []); // clear log
       this.urlsShow = false;
