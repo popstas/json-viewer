@@ -20,7 +20,7 @@
     <button
       :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}"
       @click="itemsJsonUrl = 'input'" title="Convert JSON to table">input</button>
-    <MonacoEditor
+    <textarea
       v-if="itemsJsonUrl === 'input'"
       class="jsonRaw"
       language="json"
@@ -32,7 +32,7 @@
       }"
       @editorWillMount="editorMounted"
       v-model="jsonRaw">
-    </MonacoEditor >
+    </textarea >
 
     <a :href="getShareUrl(itemsJsonUrl)" target="_blank">share</a> ,
     <a :href="itemsJsonUrl" target="_blank">json</a>
@@ -45,6 +45,10 @@
         rescan
       </NuxtLink>
     </template>
+
+    , <NuxtLink :to="rescanFiltered" :title="rescanUrlTitle" class="report-history__rescan-filtered-link">
+      rescan filtered
+    </NuxtLink>
   </div>
 </template>
 
@@ -103,6 +107,7 @@
   .jsonRaw {
     margin: 10px 0;
     height: 50vh;
+    width: 50vw;
   }
 }
 
@@ -111,10 +116,10 @@
 <script>
 import FilterPresetButton from "~/components/FilterPresetButton";
 import "vue-awesome/icons/filter";
-import MonacoEditor from 'vue-monaco'
+// import MonacoEditor from 'vue-monaco'
 
 export default {
-  components: { MonacoEditor },
+  // components: { MonacoEditor },
 
   computed: {
     itemsJsonUrl: {
@@ -195,10 +200,34 @@ export default {
       return `/scan?url=${scanOptions.url}&args=${args}&run=1`;
     },
 
+    rescanFiltered() {
+      const scanOptions = this.$store.state.scanOptions;
+      let args = scanOptions.args;
+      if (!args) return '';
+      args = args.join(' ').trim();
+
+      if (this.$route.query["q"]) args += ` --report-q ${this.$route.query["q"]}`;
+      if (this.$route.query["fields"]) args += ` --report-fields ${this.$route.query["fields"]}`;
+      // console.log('args: ', args);
+
+      // TODO:
+      const urls = [];
+      for (const item of this.$store.state.filteredItems) {
+
+      }
+
+      return `/scan?url=${scanOptions.url}&args=${args}&run=1`;
+    },
+
+    // TODO:
+    storeFiltered() {
+      this.$store.state.filteredItems;
+    },
+
     rescanUrlTitle() {
       const t = this.$store.state.scanOptions.time;
       const mins = t ? Number(t / 60).toFixed(1) : '';
-      return this.$store.state.scanOptions.args.join(' ').trim() + (mins ? `\n${mins} mins` : '');
+      return this.$store.state.scanOptions.args?.join(' ').trim() + (mins ? `\n${mins} mins` : '');
     },
   },
 
