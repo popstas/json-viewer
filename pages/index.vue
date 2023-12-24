@@ -89,7 +89,8 @@
         </el-collapse>
 
         <div v-if="$store.state.flags.navigation"><br>
-          total: {{ filteredItems.length }}
+          <div>total: {{ filteredItems.length }}</div>
+          <div v-if="date">updated: {{ new Date(date).toLocaleString() }}</div>
         </div>
 
         <div class="table-actions" v-if="$store.state.flags.navigation">
@@ -112,12 +113,13 @@
           ref="table"
         >
         <!-- @row-click="rowClick" -->
-          <template slot="child_row" slot-scope="props">
-            <ItemDetails @hideTable="onHideTable" :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
+          <template v-slot:child_row="props" v-if="!hideTableFilters">
+            <ItemDetails v-if="!hideTableFilters" @hideTable="onHideTable" :item="$store.getters.getItemByDefaultField(props.row[$store.state.defaultField])"></ItemDetails>
           </template>
+
           <template slot="prependHead">
-            <tr v-if="$store.state.flags.navigation" class="table__column-controls">
-              <td></td>
+            <tr v-if="$store.state.flags.navigation && !hideTableFilters" class="table__column-controls">
+              <td v-if="!hideTableFilters"></td>
               <td v-for="field in fields" :key="field.name">
                 <ColumnField
                   :field="field"
@@ -183,6 +185,8 @@ export default {
       hideTable: false,
       reportName: '',
       favicon: process.env.FAVICON || '/favicon.ico',
+      date: false,
+      hideTableFilters: false, // for buildXlsx
     };
   },
 
@@ -281,7 +285,9 @@ export default {
       const cellClasses = {};
       const classMap = {
         warning: 'warning',
-        error: 'danger'
+        error: 'danger',
+        success: 'success',
+        accent: 'accent',
       };
       for (let columnName of this.columns) {
         const field = this.fields.find(f => f.name == columnName);
@@ -319,7 +325,7 @@ export default {
           }
 
           // align center for numbers
-          if (['integer', 'boolean', 'time'].includes(field.type)) {
+          if (['integer', 'number', 'boolean', 'time'].includes(field.type)) {
             rules.push({
               class: 'align-center',
               condition: () => true
@@ -332,7 +338,7 @@ export default {
           let validateRules = field.validate;
 
           // fix validateRules: ignore legacy object rules
-          for (let errType of ['success', 'warning', 'error']) {
+          for (let errType of ['success', 'warning', 'error', 'accent']) {
             if (validateRules[errType] && typeof validateRules[errType] !== 'string') {
               console.log(`${columnName}: only strings should be in field.validate.${errType}, given: `, validateRules[errType]);
               delete(validateRules[errType]);
@@ -348,38 +354,44 @@ export default {
           }*/
 
           // warning
-          for (let errType of ['warning', 'error']) {
+          for (let errType of ['warning', 'error', 'success', 'accent']) {
             if (!validateRules[errType]) continue;
             rules.push({
               class: classMap[errType],
               condition: row => {
-                const val = row[columnName];
+                // const val = row[columnName];
+                const res = validateRules[errType].match(/^([A-Za-z0-9_]*)\s*(===|==|!==|!=|>|>=|<|<=)\s*(.*)$/);
+                const valueColumn = res ? res[1] : columnName;
+                const validateVal = row[valueColumn];
                 const func = this.getValidateFunc(validateRules[errType]);
 
                 // for debug
-                /*if(columnName == 'status') {
+                /*if(columnName == 'name') {
                   console.log('errType: ', errType);
                   console.log('rules: ', validateRules[errType]);
-                  console.log('val: ', val);
-                  console.log('valid: ', func(val));
+                  // console.log('validateRules[value_from]:' , validateRules['value_from']);
+                  console.log('val: ', validateVal);
+                  console.log('valid: ', func(validateVal));
                   console.log('');
                 }*/
 
-                return func(val);
+                return func(validateVal);
               }
             });
           }
 
           // success
-          if (validateRules.warning || validateRules.error) {
+          //  && (!validateRules['value_from'] || validateRules.success)  // TODO: убрать отсюда value_from, это костыль для одного случая
+          if ((validateRules.warning || validateRules.error) && !validateRules.success) {
             rules.push({
               class: 'success',
               condition: row => {
-                const val = row[columnName];
+                // const val = row[columnName];
+                const validateVal = field.validate_from ? row[field.validate_from] : row[columnName];
                 const isSuccess =
-                  !this.getValidateFunc(validateRules.warning)(val) &&
-                  !this.getValidateFunc(validateRules.error)(val) &&
-                  !['', NaN, null, undefined].includes(val);
+                  !this.getValidateFunc(validateRules.warning)(validateVal) &&
+                  !this.getValidateFunc(validateRules.error)(validateVal) &&
+                  !['', NaN, null, undefined].includes(validateVal);
 
                   // console.log('errType: ', 'success');
                   // console.log('val: ', val);
@@ -398,7 +410,7 @@ export default {
       const options = {
         headings: this.headings,
         headingsTooltips: this.headingsTooltips,
-        filterable: this.filterableColumns,
+        filterable: this.hideTableFilters ? false : this.filterableColumns,
         cellClasses: cellClasses,
         columnsClasses: columnsClasses,
         perPage: Math.min(1000, this.filteredItems.length),
@@ -427,6 +439,16 @@ export default {
         options.listColumns = this.listColumns;
       }
 
+      // customers, array valued field
+      // TODO: to field config
+      /*options.filterAlgorithm = {
+        customers(row, query) {
+          return row.customers.includes(query);
+        }
+      }*/
+
+      // console.log("options.filterable:", options.filterable);
+      // console.log("options:", options);
       return options;
     },
 
@@ -460,9 +482,14 @@ export default {
 
     filterableColumns() {
       const list = [this.$store.state.defaultField];
-      this.fields.forEach(field => {
+      // console.log("this.fields:", this.fields);
+      for (const field of this.fields) {
+        // console.log("field.name:", field.name);
+        // console.log("field.filterType:", field.filterType);
+        // console.log("field.filterType && !list.includes(field.name):", field.filterType && !list.includes(field.name));
         if (field.filterType && !list.includes(field.name)) list.push(field.name);
-      });
+      }
+      // console.log("list:", list);
       return list;
     },
 
@@ -492,11 +519,24 @@ export default {
         if (field.filterType == 'enum') {
           const vals = {};
           for (let item of this.filteredItems) {
-            const iVal = item[field.name];
+            if (Array.isArray(item[field.name])) {
+              for (let val of item[field.name]) {
+                if (vals[val]) vals[val] += 1;
+                else vals[val] = 1;
+              }
+            } else {
+              const iVal = item[field.name];
+              if ([null, undefined, ''].includes(iVal)) continue;
+
+              if (vals[iVal]) vals[iVal] += 1;
+              else vals[iVal] = 1;
+            }
+            /*const iVal = item[field.name];
+
             if ([null, undefined, ''].includes(iVal)) continue;
 
             if (vals[iVal]) vals[iVal] += 1;
-            else vals[iVal] = 1;
+            else vals[iVal] = 1;*/
           }
 
           const sorted = Object.keys(vals).sort();
@@ -608,39 +648,48 @@ export default {
     },
 
     buildXlsx() {
-      const table = this.$el.querySelector('.VueTables__table');
-      const wb = XLSX.utils.table_to_book(table);
-      const ws = wb.Sheets[wb.SheetNames[0]];
+      return new Promise((resolve, reject) => {
+        this.hideTableFilters = true;
+        setTimeout(() => { // for header hide
+          const table = this.$el.querySelector('.VueTables__table');
+          const wb = XLSX.utils.table_to_book(table);
+          this.hideTableFilters = false;
+          const ws = wb.Sheets[wb.SheetNames[0]];
 
-      const lastCell = ws['!ref'].split(':')[1];
-      const range = XLSX.utils.decode_range('B1:'+lastCell);
+          const lastCell = ws['!ref'].split(':')[1];
+          const range = XLSX.utils.decode_range('B1:'+lastCell);
 
-      const cols = [1];
+          const cols = [];
+          const widthLimit = 100;
 
-      for(let r = 0; r <= range.e.r; r++){
-        // delete first col
-        const firstAddr = XLSX.utils.encode_cell({r:r, c:0});
-        delete(ws[firstAddr]);
+          for(let r = 0; r <= range.e.r; r++){
+            // delete first col
+            // 19.04.2023, now, unnecessary rows and columns hides before export
+            // const firstAddr = XLSX.utils.encode_cell({r:r, c:0});
+            // delete(ws[firstAddr]);
 
-        // count columns width
-        for(let c = 1; c <= range.e.c; c++) {
-          const addr = XLSX.utils.encode_cell({r:r, c:c});
-          const length = Object.values(ws[addr].v).length + 2;
-          if(!cols[c]) cols[c] = length;
-          else cols[c] = Math.max(cols[c], length);
-        }
-      }
-      const colsObj = cols.map(length => { return {width: length} });
+            // count columns width
+            for(let c = 0; c <= range.e.c; c++) {
+              const addr = XLSX.utils.encode_cell({r:r, c:c});
+              const length = Object.values(ws[addr].v).length + 2;
+              if(!cols[c]) cols[c] = length;
+              else cols[c] = Math.max(cols[c], length);
+              if(cols[c] > widthLimit) cols[c] = widthLimit;
+            }
+          }
+          const colsObj = cols.map(length => { return {width: length} });
 
-      ws['!cols'] = colsObj;
-      ws['!autofilter'] = { ref: 'B1:'+lastCell };
+          ws['!cols'] = colsObj;
+          ws['!autofilter'] = { ref: 'B1:'+lastCell };
 
-      // console.log('wb: ', wb);
-      return wb;
+          // console.log('wb: ', wb);
+          return resolve(wb);
+        }, 100);
+      });
     },
 
-    getXlsx() {
-      const wb = this.buildXlsx();
+    async getXlsx() {
+      const wb = await this.buildXlsx();
       const suffix = this.q ? "--" + this.q.replace(/&/g, ",") : "";
       const filename = `json-viewer${suffix}.xlsx`;
       XLSX.writeFile(wb, filename, {});
@@ -794,7 +843,7 @@ export default {
         valueText = `<a href="${href}" target="_blank">${valueText}</a>`;
       }
 
-      if (field.type === 'integer' && valueText) {
+      if (['integer', 'number'].includes(field.type) && valueText) {
         valueText = new Intl.NumberFormat().format(valueText);
       }
 
@@ -807,6 +856,10 @@ export default {
           valueText = new Date(valueText * 1000 - offset).toISOString();
           valueText = valueText.replace('T', ' ').replace(/\..*/, '')
         }
+      }
+
+      if (field.type === 'array' && valueText) {
+        valueText = valueText.join(', ');
       }
 
       if (field.type === 'date') {
@@ -854,6 +907,13 @@ export default {
         if (valueText.startsWith('/') && row.url) {
           const url = new URL(row.url);
           valueText = `${url.origin}/${valueText}`;
+        }
+
+        // report images
+        if (valueText.startsWith('./')) {
+          console.log(":", );
+          const url = new URL(this.itemsJsonUrl);
+          valueText = valueText.replace('./', url.origin + '/');
         }
 
         valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${valueText}" title="${valueText}"/>`;
@@ -974,6 +1034,10 @@ export default {
           this.favicon = itemsJson.favicon;
         }
 
+        if (itemsJson.date) {
+          this.date = itemsJson.date;
+        }
+
         // defaultSort
         if (itemsJson.defaultSort && !this.$route.query["sort"]) {
           this.sort = itemsJson.defaultSort;
@@ -1039,6 +1103,13 @@ export default {
       this.sort = this.sortStrToObj(sort);
       this.onTableLoaded();
     });
+
+/*
+    Event.$on("vue-tables.filter", (filter) => {
+      console.log("filter:", filter);
+      // this.onTableLoaded();
+    });
+*/
   },
 
   async mounted() {
