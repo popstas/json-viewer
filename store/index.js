@@ -10,6 +10,7 @@ export const state = () => ({
 
   // constants
   itemsJsonUrl: process.env.JSON_URL || '',
+  itemsJsonCount: 0,
   jsonRaw: '',
   flags: {
     footer: !process.env.NO_FOOTER,
@@ -224,10 +225,11 @@ export const getters = {
       // const func = str.match(/^(len)\(\)\s*/);
       // if (func) v = v.length;
 
-      const res = str.match(/^(===|==|!==|!=|>|>=|<|<=)\s*(.*)$/);
+      const res = str.match(/^([A-Za-z0-9_]*)\s*(===|==|!==|!=|>|>=|<|<=)\s*(.*)$/);
       if(res) {
-        const operator = res[1];
-        let expected = res[2];
+        const field = res[1];
+        const operator = res[2];
+        let expected = res[3];
 
         // console.log('expected: ', expected);
         const dateNow = expected.match(/^\{now\}([\+\-])(\d+)$/);
@@ -237,7 +239,15 @@ export const getters = {
           console.log('expected2: ', expected);
           console.log('new Date(expected): ', new Date(expected));
         }
-        else if(!['==', '==='].includes(operator)) expected = parseFloat(expected);
+        else if(!['==', '==='].includes(operator)) {
+          // string expected value
+          if (expected && !parseFloat(expected)) {
+            expected = res[3];
+          }
+          else {
+            expected = parseFloat(expected);
+          }
+        }
 
         // always not match for empty values (except 0)
         const funcReturn = (val, condition) => {
@@ -277,6 +287,7 @@ export const getters = {
       if (filteredItems.length == 0 && !q.match(/^[a-z0-9_]+$/)/*  && q.indexOf(':') === -1 */) {
         try {
           const query = 'data[*' + q + ']'
+          console.log("jsonQuery:", query);
           const res = jsonQuery(query, {
             data: { data: state.items },
             allowRegexp: true
@@ -334,6 +345,11 @@ export const getters = {
 }; */
 
 export const mutations = {
+  // https://matanya.gitbook.io/vue-tables-2/events
+  /*["table/FILTER"] (state, data) {
+    console.log("filter:", data);
+  },*/
+
   itemsJsonUrl(state, newValue) {
     state.itemsJsonUrl = newValue;
 
@@ -350,6 +366,10 @@ export const mutations = {
     } else {
       state.jsonUrlHistory[state.itemsJsonUrl].used = Date.now();
     }
+  },
+
+  itemsJsonCount(state, newValue) {
+    state.itemsJsonCount = newValue;
   },
 
   jsonRaw(state, newValue) {
@@ -507,7 +527,7 @@ export const actions = {
 
   // фильтрует items на основе q
   filterItems({ commit, state, getters }) {
-    const q = state.q.toLowerCase();
+    const q = state.q; //.toLowerCase();
     const filteredItems = getters.getFilteredItems(q);
 
     commit('filteredItems', filteredItems);

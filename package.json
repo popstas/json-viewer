@@ -57,6 +57,7 @@
     "xlsx": "^0.15.6"
   },
   "devDependencies": {
-    "@nuxtjs/style-resources": "^1.0.0"
+    "@nuxtjs/style-resources": "^1.0.0",
+    "webpack-bundle-analyzer": "^4.8.0"
   }
 }

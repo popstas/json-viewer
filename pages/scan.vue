@@ -37,6 +37,7 @@
 
         <el-button :disabled="!isScanEnabled" :type="isReportSuccess ? 'secondary' : 'primary'" @click="sendTask">Scan</el-button>
         <el-button :disabled="!isScanEnabled" type="secondary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
+        <el-button :disabled="!isScanEnabled" type="secondary" class="scan__screenshot-button" @click="sendTask({maxRequests: 1, screenshot: true})">Screenshot one page</el-button>
         <!-- <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask({preset: 'minimal', maxRequests: 0, lighthouse: false})">Warm</el-button> -->
       </el-col>
 
@@ -54,13 +55,17 @@
             <el-form-item label="Fields preset">
               <el-select v-model="form.preset">
                 <el-option
-                  v-for="preset of ['minimal', 'seo', 'headers', 'parse', 'lighthouse', 'lighthouse-all']" :key="preset"
+                  v-for="preset of ['minimal', 'seo', 'seo-minimal', 'headers', 'parse', 'lighthouse', 'lighthouse-all']" :key="preset"
                   :value="preset"></el-option>
               </el-select>
             </el-form-item>
 
             <el-form-item label="Scan Lighthouse">
               <el-switch v-model="form.lighthouse"></el-switch>
+            </el-form-item>
+
+            <el-form-item label="Screenshot">
+              <el-switch v-model="form.screenshot"></el-switch>
             </el-form-item>
 
             <el-form-item label="Max depth">
@@ -135,6 +140,7 @@
       :class="{'scan__report-link': true, 'el-button': true, 'is-round': true, 'el-button--success': isReportSuccess}"
     >
       Report: {{ $store.getters.shortReportUrl(itemsJsonUrl) }}
+      {{ itemsJsonCount ? ` (${itemsJsonCount})` : ''}}
     </NuxtLink>
     <div class="scan__report-updated" v-if="lastUpdatedHuman && !currentScanPage">{{ lastUpdatedHuman }} ago</div>
 
@@ -436,6 +442,10 @@ const controlsMap = {
     arg: '--lighthouse',
     type: 'boolean',
   },
+  screenshot: {
+    arg: '--screenshot',
+    type: 'boolean',
+  },
   urlList: {
     arg: '--url-list',
     type: 'boolean',
@@ -519,6 +529,9 @@ export default {
 
     itemsJsonUrl(){
       return this.$store.state.itemsJsonUrl;
+    },
+    itemsJsonCount(){
+      return this.$store.state.itemsJsonCount;
     },
 
     url: {
@@ -908,6 +921,10 @@ export default {
           this.canceling = true;
         }
 
+        if (msg.includes('restarting in')) {
+          console.log("waiting for restart:");;
+        }
+
         if (msg.includes('Finish audit')) {
           this.currentScanPage = '';
           this.currentScanPercent = 0;
@@ -952,8 +969,9 @@ export default {
         const viewerUrl = window.location.origin + this.$router.options.base;
         if (data.json) {
           const url = viewerUrl + '?url=' + data.json;
-          this.logPush(`result: <a href="${url}">${url}</a>`);
+          if (!data.isProgress) this.logPush(`result: <a href="${url}">${url}</a>`);
           this.$store.commit('itemsJsonUrl', data.json);
+          if (data.count) this.$store.commit('itemsJsonCount', data.count);
           this.lastUpdated = Date.now();
         }
         if (data.name) {
@@ -964,8 +982,9 @@ export default {
           }
           const jsonUrl = `${baseUrl}/${data.name}`;
           const url = `${viewerUrl}?url=${jsonUrl}`;
-          this.logPush(`result: <a href="${url}">${url}</a>`);
+          if (!data.isProgress) this.logPush(`result: <a href="${url}">${url}</a>`);
           this.$store.commit('itemsJsonUrl', jsonUrl);
+          if (data.count) this.$store.commit('itemsJsonCount', data.count);
           this.lastUpdated = Date.now();
         }
       });

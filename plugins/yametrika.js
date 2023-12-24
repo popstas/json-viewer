@@ -1,4 +1,4 @@
-export default ({ app }) => {
+export default ({ app, store }) => {
 
   // if (process.env.NODE_ENV !== 'production') return;
 
@@ -6,7 +6,9 @@ export default ({ app }) => {
       m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
   (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
 
-  ym(66672205, "init", {
+  const yandexMetrikaId = 66672205; // Extracted ID
+
+  ym(yandexMetrikaId, "init", {
       clickmap: true,
       trackLinks: true,
       accurateTrackBounce: true,
@@ -14,6 +16,8 @@ export default ({ app }) => {
   });
 
   /* app.router.afterEach((to, from) => {
-      ym(66672205, 'hit', to.fullPath);
+      ym(yandexMetrikaId, 'hit', to.fullPath);
   }) */
+
+  store.commit('setYandexMetrikaId', yandexMetrikaId); // Commit extracted ID to Vuex store
 }
