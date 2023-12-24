@@ -529,12 +529,27 @@ header {
       &.align-left { text-align: left; }
       &.align-center { text-align: center; }
       &.align-right { text-align: right; }
-
+      &.accent { font-weight: bold; }
       .float-right { float:right; }
     }
 
     .col-title {
       text-align: right;
+    }
+
+    // first column on mobile
+    @media (max-width: 768px) {
+      td:nth-child(2) {
+        white-space: normal !important;
+        > div{
+          max-width: 300px;
+        }
+      }
+    }
+
+    .col-url > div{
+      max-width: 300px;
+      overflow: hidden;
     }
 
     .col-readability_text > div {
