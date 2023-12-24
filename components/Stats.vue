@@ -102,6 +102,7 @@ export default {
 
       const statFields = {
         average: [
+          'lighthouse_scores_performance',
           'lighthouse_scores_pwa',
           'lighthouse_scores_accessibility',
           'lighthouse_scores_best-practices',
