@@ -44,11 +44,16 @@
       , <NuxtLink :to="rescanUrl" v-if="rescanUrl" :title="rescanUrlTitle" class="report-history__rescan-link">
         rescan
       </NuxtLink>
+      , <NuxtLink :to="rescanFiltered" :title="rescanUrlTitle" class="report-history__rescan-filtered-link">
+        rescan filtered
+      </NuxtLink>
+    </template>
+    <template v-else>
+      , <a @click.prevent="saveUrls" href="/scan?is_urls=1" class="report-history__rescan-filtered-link">
+        rescan urls
+      </a>
     </template>
 
-    , <NuxtLink :to="rescanFiltered" :title="rescanUrlTitle" class="report-history__rescan-filtered-link">
-      rescan filtered
-    </NuxtLink>
   </div>
 </template>
 
@@ -238,6 +243,11 @@ export default {
         delete(history[this.itemsJsonUrl]);
         this.$store.commit('jsonUrlHistory', history);
       }
+    },
+
+    saveUrls() {
+      this.$store.commit('urls', this.$store.state.items.map(item => item.url).join('\n'));
+      this.$router.push('/scan?is_urls=1');
     },
 
     getShareUrl(url) {

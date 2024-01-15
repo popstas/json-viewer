@@ -677,6 +677,10 @@ export default {
         this.form[formName] = this.scanDefaultForm[formName];
       }
 
+      if (this.$route.query['is_urls']) {
+        this.isUrls = true;
+      }
+
       // add params from query
       for (let paramName of ['url', 'urls', 'urls_list', 'args', 'serverUrl', 'preset', 'run']) {
         let val = this.$route.query[paramName];
