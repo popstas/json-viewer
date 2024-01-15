@@ -112,12 +112,17 @@
               <el-input v-model="serverUrl"></el-input>
             </el-form-item>
 
+            <el-form-item label="Partial report to continue (data/reports/...)">
+              <el-input v-model="partialReport"></el-input>
+            </el-form-item>
+
           </Panel>
         </el-collapse>
       </el-form>
 
       <div class="scan__buttons-secondary" v-if="openedPanels.includes('settings')">
         <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
+        <el-button :disabled="!isScanEnabled || (partialReport === '' && !itemsJsonUrl)" type="primary" @click="sendTask({partialReport})">Continue scan</el-button>
         <el-button :disabled="!isScanEnabled" type="primary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
 
         <div class="scan__preset-save-form">
@@ -462,6 +467,10 @@ const controlsMap = {
     arg: '--report-q',
     // type: 'string',
   },
+  partialReport: {
+    arg: '--partial-report',
+    // type: 'string',
+  },
 };
 
 export default {
@@ -494,6 +503,7 @@ export default {
       canceling: false,
       showLog: false,
       autoscan: false,
+      partialReport: '',
     };
   },
 
@@ -851,9 +861,16 @@ export default {
       this.urlsShow = false;
       this.closeSettings();
 
+      if (overrides.partialReport === '') {
+        const url = new URL(this.itemsJsonUrl);
+        const urlArg = url.searchParams.get('url');
+        this.partialReport = urlArg.replace(window.location.origin, 'data');
+        overrides.partialReport = this.partialReport;
+      }
+
       const opts = {
         url: this.url,
-        args: this.buildArgs(true, overrides)
+        args: this.buildArgs(true, overrides),
       };
 
       // hack: remove virtual arg, it used only for report link generate
