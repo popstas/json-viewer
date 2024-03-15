@@ -1,5 +1,5 @@
 // import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer';
 
 module.exports = {
   ssr: false,

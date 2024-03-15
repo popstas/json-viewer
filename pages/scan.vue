@@ -422,8 +422,7 @@ import ScanHistory from "~/components/ScanHistory";
 import firebase from "firebase";
 import _ from "lodash";
 import draggable from 'vuedraggable';
-
-const url = require('url');
+import url from 'url';
 
 const controlsMap = {
   preset: {
