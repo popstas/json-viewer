@@ -414,7 +414,7 @@ export default {
         cellClasses: cellClasses,
         columnsClasses: columnsClasses,
         perPage: Math.min(1000, this.filteredItems.length),
-        perPageValues: [50, 100, 250, 500, 1000, 5000],
+        perPageValues: [50, 100, 250, 500, 1000, 5000, 10000, 20000],
         texts: {
           defaultOption: '',
           filterBy: '',
