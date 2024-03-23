@@ -62,12 +62,13 @@ export const state = () => ({
   connectionId: 0, // current tab id
   lastConnectionId: 0, // current user id
   uid: '', // only for anonymous
-  url: 'https://blog.popstas.ru',
+  url: process.env.SCAN_DEFAULT_URL || 'https://blog.popstas.ru/',
   urls: '',
-  args: '--lang en',
+  args: '',
   serverUrl: process.env.SERVER_URL || false,
   log: [],
   scanPresets: [],
+  onlyDomains: '',
 
   introTourSteps: [ // tolang
     /* {

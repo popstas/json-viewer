@@ -902,7 +902,7 @@ export default {
       }
 
       // show images as images
-      if (typeof valueText === 'string' && (field.type === 'image' || valueText.match(/^http.*\.(jpg|jpeg|png|gif)$/)) && valueText) {
+      if (typeof valueText === 'string' && (field.type === 'image' || field.name.match(/_img$/) || valueText.match(/^http.*\.(jpg|jpeg|png|gif|svg|webp)$/)) && valueText) {
         // relative urls
         if (valueText.startsWith('/') && row.url) {
           const url = new URL(row.url);
@@ -916,7 +916,9 @@ export default {
           valueText = valueText.replace('./', url.origin + '/');
         }
 
-        valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${valueText}" title="${valueText}"/>`;
+        valueText = `<a href="${valueText}" class="image-link" target="_blank">
+          <img alt="error loading image" style="width: 150px; height: auto;" src="${valueText}" title="${valueText}"/>
+        </a>`;
       }
 
       if (field.type === 'boolean') {

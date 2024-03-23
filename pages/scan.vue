@@ -35,9 +35,11 @@
           ></el-autocomplete>
         </span>
 
-        <el-button :disabled="!isScanEnabled" :type="isReportSuccess ? 'secondary' : 'primary'" @click="sendTask">Scan</el-button>
+        <el-tooltip class="item" effect="dark" :disabled="!scanButtonTitle" :content="scanButtonTitle" placement="top">
+          <el-button :disabled="!isScanEnabled" :type="isReportSuccess ? 'secondary' : 'primary'" @click="sendTask">Scan</el-button>
+        </el-tooltip>
         <el-button :disabled="!isScanEnabled" type="secondary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
-        <el-button :disabled="!isScanEnabled" type="secondary" class="scan__screenshot-button" @click="sendTask({maxRequests: 1, screenshot: true})">Screenshot one page</el-button>
+        <el-button v-if="featureScreenshot" :disabled="!isScanEnabled" type="secondary" class="scan__screenshot-button" @click="sendTask({maxRequests: 1, screenshot: true})">Screenshot one page</el-button>
         <!-- <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask({preset: 'minimal', maxRequests: 0, lighthouse: false})">Warm</el-button> -->
       </el-col>
 
@@ -48,9 +50,13 @@
     <el-row style="clear:both">
       <el-form class="scan__form-settings">
         <el-collapse v-model="openedPanels" class="panels">
-          <Panel name="settings" icon="el-icon-setting" title="Settings" :subtitle="!openedPanels.includes('settings') ? argsWithoutDefault : ''" >
+          <Panel name="settings" icon="el-icon-setting" title="Settings" :subtitle="!openedPanels.includes('settings') ? settingsHint : ''" >
 
             <div class="scan__other-args" v-if="openedPanels.includes('settings')" v-html="argsWithoutDefault"></div>
+
+            <el-form-item label="Max requests">
+              <el-input-number v-model="form.maxRequests" :min="0" @keydown.enter.native.prevent="sendTask"></el-input-number>
+            </el-form-item>
 
             <el-form-item label="Fields preset">
               <el-select v-model="form.preset">
@@ -60,20 +66,16 @@
               </el-select>
             </el-form-item>
 
-            <el-form-item label="Scan Lighthouse">
-              <el-switch v-model="form.lighthouse"></el-switch>
-            </el-form-item>
-
-            <el-form-item label="Screenshot">
-              <el-switch v-model="form.screenshot"></el-switch>
-            </el-form-item>
-
             <el-form-item label="Max depth">
               <el-input-number v-model="form.depth" :min="1" :max="100" @keydown.enter.native="sendTask"></el-input-number>
             </el-form-item>
 
-            <el-form-item label="Max requests">
-              <el-input-number v-model="form.maxRequests" :min="0" @keydown.enter.native.prevent="sendTask"></el-input-number>
+            <el-form-item label="Scan Lighthouse">
+              <el-switch v-model="form.lighthouse"></el-switch>
+            </el-form-item>
+
+            <el-form-item v-if="featureScreenshot" label="Screenshot">
+              <el-switch v-model="form.screenshot"></el-switch>
             </el-form-item>
 
             <el-form-item label="Ignore robots.txt">
@@ -105,6 +107,7 @@
             <el-divider></el-divider>
 
             <el-form-item label="Arguments">
+<!--              <el-button type="secondary" @click="args = ">noindex</el-button>-->
               <el-input class="scan__args" v-model="args" @keydown.enter.native="sendTask"></el-input>
             </el-form-item>
 
@@ -121,7 +124,9 @@
       </el-form>
 
       <div class="scan__buttons-secondary" v-if="openedPanels.includes('settings')">
-        <el-button :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
+        <el-tooltip class="item" effect="dark" content=":scanButtonTitle" placement="top">
+          <el-button :title="scanButtonTitle" :disabled="!isScanEnabled" type="primary" @click="sendTask">Scan</el-button>
+        </el-tooltip>
         <el-button :disabled="!isScanEnabled || (partialReport === '' && !itemsJsonUrl)" type="primary" @click="sendTask({partialReport})">Continue scan</el-button>
         <el-button :disabled="!isScanEnabled" type="primary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
 
@@ -162,23 +167,29 @@
 
     <ScanHistory :items="scanHistory"></ScanHistory>
 
+    <el-row class="scan__server-state" v-if="running !== ''">
+      <span><b>Server state:</b></span>
+      <span :class="{warning: serverLoadPercent > 50 && serverLoadPercent <= 70, danger: serverLoadPercent > 70}">server load: {{ serverLoadPercent }}%</span>,
+      <span>running: {{ running }}</span>,
+      <span>pending: {{ pending }}</span>,
+      <span>connections: {{ connections }}</span>,
+    </el-row>
+
     <el-link @click="showLog = !showLog">{{ showLog ? 'hide advanced' : 'show advanced' }}</el-link>
 
-    <div class="scan__advanced" v-if="showLog">
+    <div class="scan__advanced" id="advanced" v-if="showLog">
       <div class="scan__log-container" v-if="log.length > 0">
         <ul class="scan__log" v-chat-scroll="{always: false, smooth: false}">
           <li v-for="(line, index) in log" :key="index" v-html="line"></li>
         </ul>
       </div>
 
-      <el-row class="scan__server-state" v-if="running !== ''">
-        <h3>Server state:</h3>
+      <el-row class="scan__connection-state">
+        <h3>Connection state:</h3>
         <el-col :span="12">
           <ul class="server-state">
-            <li>running: {{ running }}</li>
-            <!-- <li>available: {{ available }}</li> -->
-            <li>pending: {{ pending }}</li>
-            <li>connections: {{ connections }}</li>
+            <li><span style="width: 120px; display: inline-block">connection id:</span> {{ $store.state.connectionId }}</li>
+            <li><span style="width: 120px; display: inline-block">last connection id:</span> {{ $store.state.lastConnectionId }}</li>
           </ul>
         </el-col>
         <el-col :span="12">
@@ -188,20 +199,6 @@
             <li>uptime: {{ uptimeHuman }}</li>
             <li v-if="serverVersion">version: {{ serverVersion }}</li>
             <li>reboots: {{ reboots }}</li>
-          </ul>
-        </el-col>
-      </el-row>
-
-      <el-row class="scan__connection-state">
-        <h3>Connection state:</h3>
-        <el-col :span="12">
-          <ul class="server-state">
-            <li>connection id: {{ $store.state.connectionId }}</li>
-            <li>last connection id: {{ $store.state.lastConnectionId }}</li>
-          </ul>
-        </el-col>
-        <el-col :span="12">
-          <ul class="server-state">
           </ul>
         </el-col>
       </el-row>
@@ -331,8 +328,8 @@
 
   .scan__list {
     text-align: left;
-    max-width: 600px;
-    margin-bottom: 15px;
+    max-width: 800px;
+    margin: 0 auto 15px auto;
   }
 
   .scan__presets-container {
@@ -408,6 +405,13 @@
 
   .scan__server-state {
     margin-top: 30px;
+
+    .danger {
+      color: #ff0000;
+    }
+    .warning {
+      color: #a49439;
+    }
   }
 
   .scan__advanced {
@@ -481,6 +485,7 @@ export default {
       available: '',
       pending: '',
       connections: '',
+      serverLoadPercent: 0,
       scansTotal: '',
       pagesTotal: '',
       scansTotalAll: '',
@@ -503,6 +508,9 @@ export default {
       showLog: false,
       autoscan: false,
       partialReport: '',
+
+      featureScreenshot: false,
+      onlyDomains: '',
     };
   },
 
@@ -520,8 +528,33 @@ export default {
       }
     },
 
-    isScanEnabled() {
+    scanButtonTitle() {
+      if (!this.connected) return 'Scan server is not available';
+      if (this.currentScanPage) return 'Scan in progress';
+      if (!this.isScanAllowed) return `Only ${this.onlyDomains.join(', ')} users are allowed`;
+    },
+
+    isScanAvailable() {
       return this.connected && !this.currentScanPage;
+    },
+
+    isScanAllowed() {
+      let isScanAllowed = false;
+      if (this.onlyDomains) {
+        const user = this.$store.state.user;
+        if (!user || !user?.email) return false;
+        const userDomain = user?.email.split('@')[1];
+        this.onlyDomains.forEach(domain => {
+          if (userDomain === domain) isScanAllowed = true;
+        });
+      } else {
+        isScanAllowed = true;
+      }
+      return isScanAllowed;
+    },
+
+    isScanEnabled() {
+      return this.isScanAvailable && this.isScanAllowed;
     },
 
     scanDefaultForm(){
@@ -570,6 +603,13 @@ export default {
     },
     argsWithoutDefault() {
       return this.buildArgs(false);
+    },
+    settingsHint() {
+      const items = [];
+      if (this.form.maxRequests) items.push(`limit: ${this.form.maxRequests}`);
+      if (this.form.urlList) items.push(`url-list`);
+      // items.push(this.argsWithoutDefault);
+      return items.join(', ');
     },
 
     serverUrl: {
@@ -635,6 +675,18 @@ export default {
 
     currentScanPercent(val) {
       if (val == 0) this.canceling = false;
+    },
+
+    showLog(val) {
+      if (val) this.$nextTick(() => {
+        const offset = this.$el.querySelector('.scan__log').scrollHeight;
+        // TODO: scroll to bottom
+        console.log("offset:", offset);
+        this.$el.scrollTo(0, offset);
+        window.scrollTo(0, offset)
+        // scroll document to offset
+
+      });
     }
   },
 
@@ -643,6 +695,12 @@ export default {
       const log = [...this.log, ...[msg]];
       if (log.length > 10000) log.shift();
       this.$store.commit('log', log);
+    },
+
+    resetScan() {
+      this.currentScanPage = '';
+      this.currentScanPercent = 0;
+      this.currentScanQueue = 0;
     },
 
     showCurrentScan(percentage) {
@@ -921,8 +979,14 @@ export default {
         const res = msg.match(/^(\d+).*\((\d+)\)$/);
         if (res) {
           // console.log('res: ', res);
-          this.currentScanPage = parseInt(res[1]);
-          this.currentScanQueue = this.currentScanPage + parseInt(res[2]);
+          const current = parseInt(res[1]);
+          const queued = parseInt(res[2]);
+          // ignore logs with zero-queue when scan is stopped
+          const isIgnore = this.currentScanPercent === 0 && this.currentScanQueue === 0 && queued === 0;
+          if (isIgnore) return;
+
+          this.currentScanPage = current;
+          this.currentScanQueue = this.currentScanPage + queued;
           if (this.form.maxRequests && this.form.maxRequests < this.currentScanQueue) {
             this.currentScanQueue = this.form.maxRequests;
           }
@@ -946,8 +1010,7 @@ export default {
         }
 
         if (msg.includes('Finish audit')) {
-          this.currentScanPage = '';
-          this.currentScanPercent = 0;
+          this.resetScan();
 
           // open report after scan
           if (this.autoscan) {
@@ -985,11 +1048,16 @@ export default {
 
       // scan result
       this.socket.on("result" + key, (data, cb) => {
+        console.log("result event:", data);
         this.currentScanPercent = 0;
         const viewerUrl = window.location.origin + this.$router.options.base;
         if (data.json) {
           const url = viewerUrl + '?url=' + data.json;
-          if (!data.isProgress) this.logPush(`result: <a href="${url}">${url}</a>`);
+          if (!data.isProgress) {
+            this.logPush(`result: <a href="${url}">${url}</a>`);
+            console.log("reset scan progress:");
+            this.resetScan();
+          }
           this.$store.commit('itemsJsonUrl', data.json);
           if (data.count) this.$store.commit('itemsJsonCount', data.count);
           this.lastUpdated = Date.now();
@@ -1002,7 +1070,10 @@ export default {
           }
           const jsonUrl = `${baseUrl}/${data.name}`;
           const url = `${viewerUrl}?url=${jsonUrl}`;
-          if (!data.isProgress) this.logPush(`result: <a href="${url}">${url}</a>`);
+          if (!data.isProgress) {
+            this.logPush(`result: <a href="${url}">${url}</a>`);
+            this.resetScan();
+          }
           this.$store.commit('itemsJsonUrl', jsonUrl);
           if (data.count) this.$store.commit('itemsJsonCount', data.count);
           this.lastUpdated = Date.now();
@@ -1069,9 +1140,7 @@ export default {
 
     this.socket.on("connect", () => {
       this.connected = true;
-      this.currentScanPage = '';
-      this.currentScanPercent = 0;
-      this.currentScanQueue = 0;
+      this.resetScan();
       this.auth();
 
       if (this.autoscan) {

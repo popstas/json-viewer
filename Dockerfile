@@ -1,4 +1,4 @@
-FROM node:14-alpine AS builder
+FROM node:18-alpine AS builder
 
 RUN apk update && \
     apk upgrade && \
@@ -13,7 +13,7 @@ RUN npm install
 RUN npm run build
 
 # Only copy over the node pieces we need from the above image
-FROM node:14-alpine
+FROM node:18-alpine
 WORKDIR /app
 USER node
 COPY --from=builder /app .
