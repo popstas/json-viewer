@@ -775,7 +775,7 @@ export default {
     // устанавливает поля по массиву имен, сбрасывает предыдущие выбранные поля
     setFields(columnNames) {
       const fields = [];
-      // console.log('fields: ', fields);
+      // console.log('setFields: ', columnNames);
       columnNames = _.uniq(columnNames);
       for(let name of columnNames) {
         const field = this.availableFields.find(field => field.name == name);
@@ -783,6 +783,15 @@ export default {
       }
       // console.log('fields: ', fields);
       this.$store.commit("fields", fields);
+
+      // hack for correct table display just after open report and click "remove all columns"
+      if (fields.length === 1) {
+        this.$store.commit("fields", []);
+        setTimeout(() => {
+          this.$store.commit("fields", fields);
+        }, 10)
+      }
+
       // this.updateUrlQuery();
     },
 
