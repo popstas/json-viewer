@@ -41,7 +41,7 @@
 
           <!-- Тулбар -->
           <Panel title="columns explorer" icon="el-icon-folder-opened" name="columns">
-            <Toolbar @toggleField="toggleField" @setFields="setFields"></Toolbar>
+            <Toolbar @toggleField="toggleField" @setFields="setFields" @setPreset="setPreset"></Toolbar>
           </Panel>
 
           <!-- Выбранные колонки -->
@@ -789,7 +789,8 @@ export default {
         this.$store.commit("fields", []);
         setTimeout(() => {
           this.$store.commit("fields", fields);
-        }, 10)
+          setTimeout(() => this.updateUrlQuery(true), 100);
+        }, 50)
       }
 
       // this.updateUrlQuery();

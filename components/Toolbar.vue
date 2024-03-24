@@ -175,11 +175,11 @@ export default {
 
     // поставить из пресета полей
     setPreset(preset) {
-      this.$emit("setFields", preset.columns);
+      this.$emit("setPreset", preset);
     },
 
-    toggleField(field) {
-      this.$emit("toggleField", field);
+    toggleField(field, add, updateQuery = false) {
+      this.$emit("toggleField", field, add, updateQuery);
     },
 
     // индекс поля в массиве по объекту
