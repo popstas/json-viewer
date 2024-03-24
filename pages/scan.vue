@@ -36,7 +36,7 @@
         </span>
 
         <el-tooltip class="item" effect="dark" :disabled="!scanButtonTitle" :content="scanButtonTitle" placement="top">
-          <el-button :disabled="!isScanEnabled" :type="isReportSuccess ? 'secondary' : 'primary'" @click="sendTask">Scan</el-button>
+          <el-button :disabled="!isScanEnabled" :type="isScanEnabled ? 'primary' : 'secondary'" @click="sendTask">Scan</el-button>
         </el-tooltip>
         <el-button :disabled="!isScanEnabled" type="secondary" class="scan__lighthouse-button" @click="sendTask({maxRequests: 1, lighthouse: true})">Lighthouse one page</el-button>
         <el-button v-if="featureScreenshot" :disabled="!isScanEnabled" type="secondary" class="scan__screenshot-button" @click="sendTask({maxRequests: 1, screenshot: true})">Screenshot one page</el-button>
@@ -701,6 +701,7 @@ export default {
       this.currentScanPage = '';
       this.currentScanPercent = 0;
       this.currentScanQueue = 0;
+      this.canceling = false;
     },
 
     showCurrentScan(percentage) {
@@ -943,6 +944,7 @@ export default {
       }
 
       this.saveHistory();
+      this.currentScanPercent = 0.1;
 
       console.log("scan:", opts);
       this.socket.emit('scan', opts);
@@ -1001,7 +1003,7 @@ export default {
           if (!this.currentScanPage && this.lastUpdated) this.currentScanPercent = 100; // when finished
         }
 
-        if (msg.includes('cancel command')) {
+        if (msg.includes('cancel command') && this.currentScanPercent > 0) {
           this.canceling = true;
         }
 
