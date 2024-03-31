@@ -21,6 +21,7 @@ COPY . .
 
 EXPOSE 5302
 ENV PORT=5302
+ENV NODE_ENV production
 
 # CMD ["npm", "start"]
 CMD npm run dev-clean

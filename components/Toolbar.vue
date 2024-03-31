@@ -2,29 +2,37 @@
   <div class="table-toolbar">
     <!-- columns by tag -->
     <div class="available-fields">
-      <button class="column-presets__button_expand-all column-presets__button column-presets__button_icon" @click="changeGroupOpenedAll">
-        <template v-if="this.$store.state.openGroups">
-          <icon name="minus-square"></icon>&nbsp;<span>collapse all</span>
+      <button class="column-presets__button_expand-all column-presets__button column-presets__button_icon"
+              @click="changeGroupOpenedAll">
+        <template v-if="store.openGroups">
+          <el-icon>
+            <el-icon-minus />
+          </el-icon>&nbsp;<span>collapse all</span>
         </template>
         <template v-else>
-          <icon name="plus-square"></icon>&nbsp;<span>expand all</span>
+          <el-icon>
+            <el-icon-plus />
+          </el-icon>&nbsp;<span>expand all</span>
         </template>
       </button>
 
       <br><br>
       <button
         class="column-presets__button_show-all column-presets__button column-presets__button_icon"
-        @click="setPreset({name: 'none', columns: availableFields.map(f => f.name)});"
-      ><icon name="check-double"></icon>&nbsp;<span>show all columns</span></button>
+        @click="setPreset({name: 'none', columns: store.availableFields.map(f => f.name)});"
+      >
+        <el-icon>
+          <el-icon-select />
+        </el-icon>&nbsp;<span>show all columns</span></button>
 
       <button
         class="column-presets__button column-presets__button_icon"
-        @click="setPreset({name: 'none', columns: [$store.state.defaultField]});"
+        @click="setPreset({name: 'none', columns: [store.defaultField]});"
       >✖ <span>remove all columns</span></button>
 
-      <button v-if="$store.state.columnPresets.default"
-        class="column-presets__button column-presets__button_icon"
-        @click="setPreset($store.state.columnPresets.default);"
+      <button v-if="store.columnPresets.default"
+              class="column-presets__button column-presets__button_icon"
+              @click="setDefaultPreset"
       ><span>default columns</span></button>
 
       <!-- <button
@@ -37,35 +45,34 @@
       <!-- one group -->
       <FieldGroup
         :group="group"
-        :opened="fieldGroupsOpened[group.name] || $store.state.openGroups"
+        :opened="dd.fieldGroupsOpened[group.name] || store.openGroups"
         @changeGroupOpened="changeGroupOpened(group)"
         @toggleField="toggleField"
         @setPreset="setPreset"
         v-for="group in fieldGroups"
         :key="group.name"
-        v-if="group.fields.length > 0"
       ></FieldGroup>
 
       <el-autocomplete
         class="field-search field-add-input"
-        ref="input"
+        ref="inputRef"
         placeholder="add column"
-        v-model="fieldQuery"
+        v-model="dd.fieldQuery"
         title="Field search"
         :fetch-suggestions="fieldComplete"
         valueKey="name"
         :clearable="true"
         @select="fieldSelect"
       >
-        <template slot-scope="slotProps">
-          <span class="query-input__field-name">{{ slotProps.item.name }}</span>
-          <span class="query-input__field-label">{{ slotProps.item.comment }}</span>
+        <template #default="{ item }">
+          <span class="query-input__field-name">{{ item.name }}</span>
+          <span class="query-input__field-label">{{ item.comment }}</span>
         </template>
       </el-autocomplete>
     </div>
 
     <div class="total">
-      total: {{ filteredItems.length }}
+      total: {{ store.filteredItems.length }}
     </div>
 
 
@@ -80,153 +87,118 @@
     display: none;
   }
 }
+
 .el-tag {
   margin: 0 5px;
 }
 </style>
 
-<script>
-import FieldGroup from "~/components/FieldGroup";
-import "vue-awesome/icons/check-double";
-import "vue-awesome/icons/plus-square";
-import "vue-awesome/icons/minus-square";
+<script setup>
+const emit = defineEmits(["toggleField", "setPreset"]);
+const store = useStore();
 
-export default {
-  components: {
-    FieldGroup,
-  },
-  data() {
-    return {
-      fieldGroupsOpened: {},
-      completionProcess: false,
-      fieldQuery: ""
-    };
-  },
+const dd = reactive({
+  fieldGroupsOpened: {},
+  completionProcess: false,
+  fieldQuery: "",
+});
 
-  computed: {
-    tests() {
-      return this.$store.state.tests;
-    },
+const inputRef = ref(null);
 
-    fields() {
-      return this.$store.state.fields;
-    },
-
-    availableFields() {
-      return this.$store.state.availableFields;
-    },
-
-    allFields() {
-      return this.$store.state.allFields;
-    },
-
-    filteredItems() {
-      return this.$store.state.filteredItems;
-    },
-
-    // раскладывает поля по группам, с дублированием
-    fieldGroups() {
-      let groups = { unnamed: { name: "[без группы]", fields: [] } };
-      for (let i in this.availableFields) {
-        const field = this.availableFields[i];
-        const info = this.tests[field.name];
-        if (!info || !info.groups) {
-          groups.unnamed.fields.push(field);
-          continue;
-        }
-
-        const groupsList = Array.isArray(info.groups)
-          ? info.groups
-          : [info.groups];
-
-        for (let g in groupsList) {
-          let groupName = groupsList[g];
-          if (!(groupName in groups)) {
-            groups[groupName] = { name: groupName, fields: [] };
-          }
-          groups[groupName].fields.push(field);
-        }
-      }
-      // console.log('groups: ', groups);
-      return groups;
+// раскладывает поля по группам, с дублированием
+const fieldGroups = computed(() => {
+  let groups = { unnamed: { name: "[ungrouped]", fields: [] } };
+  for (let i in store.availableFields) {
+    const field = store.availableFields[i];
+    const info = store.tests[field.name];
+    if (!info || !info.groups) {
+      groups.unnamed.fields.push(field);
+      continue;
     }
-  },
 
-  methods: {
-    // сворачивает/разворачивает одну группу
-    changeGroupOpened(group) {
-      this.fieldGroupsOpened[group.name] =
-        group.name in this.fieldGroupsOpened
-          ? !this.fieldGroupsOpened[group.name]
-          : true;
-      this.$forceUpdate();
-    },
+    const groupsList = Array.isArray(info.groups)
+      ? info.groups
+      : [info.groups];
 
-    // сворачивает/разворачивает все группы
-    changeGroupOpenedAll() {
-      let to = !this.$store.state.openGroups;
-      this.$store.commit('openGroups', to);
-
-      Object.keys(this.fieldGroups).forEach(groupName => {
-        this.fieldGroupsOpened[groupName] = to;
-      });
-      this.$forceUpdate();
-    },
-
-    // поставить из пресета полей
-    setPreset(preset) {
-      this.$emit("setPreset", preset);
-    },
-
-    toggleField(field, add, updateQuery = false) {
-      this.$emit("toggleField", field, add, updateQuery);
-    },
-
-    // индекс поля в массиве по объекту
-    fieldIndex(field) {
-      return this.fields.findIndex(column => {
-        return field && column.name == field.name;
-      });
-    },
-
-    // автодополнение названия поля
-    fieldComplete(q, cb) {
-      if (!q || this.completionProcess) return cb([]);
-
-      this.completionProcess = true;
-      setTimeout(() => {
-        this.completionProcess = false;
-      }, 500);
-
-      // field name completion
-      const fields =
-        this.$store.state.availableFields.length > 0
-          ? this.$store.state.availableFields
-          : this.allFields;
-      const matchFields = fields.filter(
-        filter =>
-          filter.name.includes(q) ||
-          filter.comment && filter.comment.toLowerCase().includes(q.toLowerCase())
-      );
-      const sortedFields = matchFields.sort((a, b) =>
-        a.name > b.name ? 1 : b.name > a.name ? -1 : 0
-      );
-      cb(sortedFields);
-    },
-
-    // выбор автодополнения
-    fieldSelect(field) {
-      this.$refs.input.focus();
-      this.fieldQuery = "";
-
-      // const field = this.allFields.find(field => field.name == q);
-      if (field) this.toggleField(field);
-
-      // без этого сразу фильтрует при вводе имени
-      setTimeout(() => {
-        this.completionProcess = false;
-      }, 500);
+    for (let g in groupsList) {
+      let groupName = groupsList[g];
+      if (!(groupName in groups)) {
+        groups[groupName] = { name: groupName, fields: [] };
+      }
+      groups[groupName].fields.push(field);
     }
   }
-};
+  return groups;
+});
+
+// сворачивает/разворачивает одну группу
+function changeGroupOpened(group) {
+  dd.fieldGroupsOpened[group.name] =
+    group.name in dd.fieldGroupsOpened
+      ? !dd.fieldGroupsOpened[group.name]
+      : true;
+}
+
+// сворачивает/разворачивает все группы
+function changeGroupOpenedAll() {
+  let to = !store.openGroups;
+  store.$patch({ openGroups: to });
+
+  Object.keys(fieldGroups.value).forEach(groupName => {
+    dd.fieldGroupsOpened[groupName] = to;
+  });
+}
+
+// поставить из пресета полей
+function setPreset(preset) {
+  emit("setPreset", preset);
+}
+
+function setDefaultPreset() {
+  // changeGroupOpened(group); TODO2: collapse columns explorer
+  setPreset(store.columnPresets.default);
+}
+
+function toggleField(field, add = false, updateQuery = false) {
+  emit("toggleField", field, add, updateQuery);
+}
+
+// автодополнение названия поля
+function fieldComplete(q, cb) {
+  if (!q || dd.completionProcess) return cb([]);
+
+  dd.completionProcess = true;
+  setTimeout(() => {
+    dd.completionProcess = false;
+  }, 500);
+
+  // field name completion
+  const fields =
+    store.availableFields.length > 0
+      ? store.availableFields
+      : store.allFields;
+  const matchFields = fields.filter(
+    filter =>
+      filter.name.includes(q) ||
+      filter.comment && filter.comment.toLowerCase().includes(q.toLowerCase()),
+  );
+  const sortedFields = matchFields.sort((a, b) =>
+    a.name > b.name ? 1 : b.name > a.name ? -1 : 0,
+  );
+  cb(sortedFields);
+}
+
+// выбор автодополнения
+function fieldSelect(field) {
+  inputRef.value.focus();
+  dd.fieldQuery = "";
+
+  // const field = allFields.value.find(field => field.name == q);
+  if (field) toggleField(field);
+
+  // без этого сразу фильтрует при вводе имени
+  setTimeout(() => {
+    dd.completionProcess = false;
+  }, 500);
+}
 </script>

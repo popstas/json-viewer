@@ -1,12 +1,14 @@
 <template>
-  <div class="item-details">
-    <button v-if="$store.state.flags.compare" class="item-compare" @click="toggleCompare">{{ isInCompare ? 'Add to compare' : 'Remove from compare'}}</button>
+  <div class="item-details" ref="detailsRef">
+    <button v-if="store.flags.compare" class="item-compare" @click="toggleCompare">
+      {{ isInCompare ? "Add to compare" : "Remove from compare" }}
+    </button>
     <a
       v-if="item.url && lastGroup"
       class="item-details__title"
       :href="item.url"
       target="_blank"
-      >{{ item.url }}</a
+    >{{ item.url }}</a
     >
 
     <!-- navigation -->
@@ -16,10 +18,10 @@
           'item-details__groups-link_active': group.name === lastGroup,
           'item-details__groups-link': true
         }"
-        :href="$nuxt.$route.fullPath.replace(/#.*/, '') + '#' + item[$store.state.defaultField] + '-' + group.name"
+        :href="route.fullPath.replace(/#.*/, '') + '#' + item[store.defaultField] + '-' + group.name"
         v-for="group in groups"
         :key="group.name"
-        >{{ group.name }}</a
+      >{{ group.name }}</a
       >
     </div>
 
@@ -32,7 +34,7 @@
       v-for="group in groups"
       :data-group="group.name"
       :key="group.name"
-      :id="item[$store.state.defaultField] + '-' + group.name"
+      :id="item[store.defaultField] + '-' + group.name"
     >
       <div class="item-details__group-name">{{ group.name }}</div>
       <ul class="item-details__group-fields">
@@ -43,20 +45,28 @@
           :class="field.validateClass"
         >
           <span class="item-details__label">{{
-            field.comment || field.name
-          }}</span>
-          <span
-            class="item-details__value"
-            v-html="field.valueText || field.value"
+              field.comment || field.name
+            }}</span>
+          <el-scrollbar max-height="400px" v-if="field.name === 'readability_text'">
+            <span
+              class="item-details__value"
+              v-html="field.valueText || field.value"
+            ></span>
+          </el-scrollbar>
+          <span v-else
+                class="item-details__value"
+                v-html="field.valueText || field.value"
           ></span>
 
           <FilterPresetButton
-            v-if="itemsLength > 1"
+            v-if="store.items.length > 1"
             class="field-preset"
             :preset="{ q: field.name + '=' + field.value }"
-            append
+            :append="true"
           >
-            <icon name="filter" scale="0.6"></icon>
+            <el-icon :size="10">
+              <el-icon-filter />
+            </el-icon>
           </FilterPresetButton>
         </li>
       </ul>
@@ -70,206 +80,163 @@
 }
 </style>
 
-<script>
-import FilterPresetButton from "~/components/FilterPresetButton";
-import "vue-awesome/icons/filter";
+<script setup>
+const props = defineProps({
+  item: Object,
+});
+const emit = defineEmits(["hideTable"]);
+const store = useStore();
+const route = useRoute();
 
 const groupsDefaultOrder = [
   // site-discovery
-  'site_main',
-  'meta',
+  "site_main",
+  "meta",
 
   // site-audit-seo
-  'metatags',
-  'readability',
-  'yake',
-  'perf',
-  'content',
+  "metatags",
+  "readability",
+  "yake",
+  "perf",
+  "content",
 ];
 
+const observer = ref(null);
+const lastGroup = ref("");
+const isInCompare = ref(false);
 
-export default {
-  components: { FilterPresetButton },
-  props: ["item"],
-  data() {
-    return {
-      observer: null,
-      lastGroup: '',
-      isInCompare : false,
+const detailsRef = ref(null);
+
+watch(lastGroup, (val) => {
+  emit("hideTable", val !== "");
+});
+
+const id = computed(() => {
+  return store.itemsJsonUrl + "_" + props.item.url;
+});
+
+const groups = computed(() => {
+  let groups = { unnamed: { name: "", fields: [] } };
+  for (let colName in props.item) {
+    let val = props.item[colName];
+    if (typeof val === "object") continue;
+    if (val === "") continue;
+
+    const field = store.tests[colName];
+    if (!field || !field.groups) {
+      continue;
     }
-  },
+    field.value = val;
 
-  watch: {
-    lastGroup(val) {
-      this.$emit('hideTable', val !== '');
-    }
-  },
+    const groupsList = Array.isArray(field.groups)
+      ? field.groups
+      : [field.groups];
 
-  computed: {
-    id() {
-      return this.$store.state.itemsJsonUrl + '_' + this.url;
-    },
+    field.validateClass = store.getColumnValidateClass(val, field.validate);
 
-    tests() {
-      return this.$store.state.tests;
-    },
-    itemsLength() {
-      return this.$store.state.items.length;
-    },
+    let valueText;
 
-    groups() {
-      // console.log('$nuxt.$route: ', $nuxt.$route);
-      let groups = { unnamed: { name: "", fields: [] } };
-      for (let colName in this.item) {
-        let val = this.item[colName];
-        if (typeof val === "object") continue;
-        if (val === "") continue;
-
-        const field = this.tests[colName];
-        if (!field || !field.groups) {
-          // groups.unnamed.fields.push(val);
-          continue;
-        }
-        field.value = val;
-
-        const groupsList = Array.isArray(field.groups)
-          ? field.groups
-          : [field.groups];
-
-        field.validateClass = this.getColumnValidateClass(val, field.validate);
-
-        // console.log(colName + ' validateClass: ', field.validateClass);
-
-        let valueText;
-
-        if (colName.match(/url/i)) {
-          valueText = `<a href="${val}" target="_blank">${val}</a>`;
-        }
-
-        if (field.type == "boolean") {
-          valueText = parseInt(val) ? "yes" : "no"; // tolang
-        }
-
-        if (
-          typeof val === "string" &&
-          (field.type === "image" ||
-            val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) &&
-          val
-        ) {
-          // const src = val.replace(/^\//, this.tests.url);
-          valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
-        }
-
-        field.valueText = valueText;
-
-        // add to groups
-        for (let g in groupsList) {
-          // console.log('g: ', g);
-          let groupName = groupsList[g];
-          if (!(groupName in groups)) {
-            groups[groupName] = { name: groupName, fields: [] };
-          }
-
-          const f = { ...field };
-
-          // hide field duplicates
-          if (g != 0) f.validateClass += " secondary group-" + groupName;
-
-          groups[groupName].fields.push(f);
-        }
-      }
-
-      // sort
-      const groupsSorted = {};
-
-      // first from hardcoded order
-      for (let groupName of groupsDefaultOrder) {
-        if (groups[groupName]) groupsSorted[groupName] = groups[groupName];
-      }
-      // console.log('groupsSorted: ', groupsSorted);
-
-      // then other groups
-      for (let groupName in groups) {
-        // console.log('groupName: ', groupName);
-        if (!groupsSorted[groupName]) groupsSorted[groupName] = groups[groupName];
-      }
-
-      // console.log('groups: ', groups);
-      // console.log('groupsSorted: ', groupsSorted);
-
-      return groupsSorted;
-    },
-  },
-
-  methods: {
-    // выдает класс валидации по значению и правилам валидации
-    getColumnValidateClass(value, validateRules) {
-      return this.$store.getters.getColumnValidateClass(value, validateRules);
-    },
-
-    onElementObserved(entries) {
-      let lastTarget;
-      console.log('');
-      entries.forEach(({ target, isIntersecting}) => {
-        // console.log('target.dataset.group: ', target.dataset.group);
-
-        // hide all groups
-        if (target === this.$el && !isIntersecting) {
-          this.lastGroup = '';
-          return;
-        }
-
-        if (!isIntersecting) return;
-        // console.log('target: ', target);
-        lastTarget = target;
-        // this.observer.unobserve(target);
-      });
-
-      if (lastTarget) {
-        this.lastGroup = lastTarget.dataset.group;
-        // console.log('lastTarget: ', lastTarget);
-      }
-    },
-
-    toggleCompare() {
-      const isRemove = !this.isInCompare;
-      this.isInCompare = !this.isInCompare;
-      const item = {
-        id: this.id,
-        reportUrl: this.$store.state.itemsJsonUrl,
-        item: this.item
-      };
-      console.log('isRemove: ', isRemove);
-      this.$store.dispatch('addToCompare', {item, isRemove});
-    },
-
-  },
-
-  mounted() {
-    // item details table of contents observe
-    this.observer = new IntersectionObserver(
-      this.onElementObserved/* ,
-      {
-        root: this.$el,
-        threshold: 1.0,
-      } */
-    );
-    const groups = this.$el.querySelectorAll('.item-details__group');
-    // console.log('groups: ', groups);
-    this.observer.observe(this.$el);
-    for(let group of groups) {
-      this.observer.observe(group);
+    if (colName.match(/url/i)) {
+      valueText = `<a href="${val}" target="_blank">${val}</a>`;
     }
 
-    if (this.$store.state.flags.compare) {
-      console.log('compareList: ', this.$store.state.compareList);
-      this.isInCompare = !!this.$store.state.compareList.findIndex(i => i && i.id == this.id);
+    if (field.type === "boolean") {
+      valueText = parseInt(val) ? "yes" : "no"; // tolang
     }
-  },
 
-  beforeDestroy() {
-    this.observer.disconnect();
-    this.$emit('hideTable', false);
-  },
-};
+    if (
+      typeof val === "string" &&
+      (field.type === "image" ||
+        val.match(/^http.*\.(jpg|jpeg|png|gif)$/)) &&
+      val
+    ) {
+      valueText = `<img alt="error loading image" style="width: 150px; height: auto;" src="${val}" title="${val}"/>`;
+    }
+
+    field.valueText = valueText;
+
+    for (let g in groupsList) {
+      let groupName = groupsList[g];
+      if (!(groupName in groups)) {
+        groups[groupName] = { name: groupName, fields: [] };
+      }
+
+      // causes recursive updates when 2 ItemDetails opened
+      // const f = { ...field };
+      // if (g !== 0) field.validateClass += " secondary group-" + groupName;
+      // groups[groupName].fields.push(f);
+
+      groups[groupName].fields.push(field);
+    }
+  }
+
+  const groupsSorted = {};
+
+  // first from hardcoded order
+  for (let groupName of groupsDefaultOrder) {
+    if (groups[groupName]) groupsSorted[groupName] = groups[groupName];
+  }
+
+  // then other groups
+  for (let groupName in groups) {
+    if (!groupsSorted[groupName]) groupsSorted[groupName] = groups[groupName];
+  }
+
+  return groupsSorted;
+});
+
+onMounted(() => {
+  // item details table of contents observe
+  observer.value = new IntersectionObserver(
+    onElementObserved,
+    /*{
+      root: detailsRef.value,
+      threshold: 1.0,
+    }*/
+  );
+  const groups = detailsRef.value.querySelectorAll(".item-details__group");
+  observer.value.observe(detailsRef.value);
+  for (let group of groups) {
+    observer.value.observe(group);
+  }
+
+  if (store.flags.compare) {
+    isInCompare.value = !!store.compareList.findIndex(i => i && i.id === id.value);
+  }
+});
+
+onBeforeUnmount(() => {
+  observer.value.disconnect();
+  emit("hideTable", false);
+});
+
+function onElementObserved(entries) {
+  let lastTarget;
+  entries.forEach(({ target, isIntersecting }) => {
+    // hide all groups
+    if (target === detailsRef.value && !isIntersecting) {
+      lastGroup.value = "";
+      return;
+    }
+
+    if (!isIntersecting) return;
+    lastTarget = target;
+    // observer.unobserve(target);
+  });
+
+  if (lastTarget) {
+    lastGroup.value = lastTarget.dataset.group;
+  }
+}
+
+function toggleCompare() {
+  const isRemove = !isInCompare.value;
+  isInCompare.value = !isInCompare.value;
+  const item = {
+    id: id.value,
+    reportUrl: store.itemsJsonUrl,
+    item: props.item,
+  };
+  store.addToCompare({ item, isRemove });
+}
 </script>

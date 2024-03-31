@@ -14,53 +14,34 @@
 
 <style lang="scss">
 .scan__history-container ul {
-  max-height: 50vh;
+  //max-height: 50vh;
+  max-height: 280px;
   overflow-y: auto;
 }
 </style>
 
-<script>
+<script setup>
+const props = defineProps({
+  items: Array,
+});
 
+const store = useStore();
 
-export default {
-  props: ['items'],
-  data() {
-    return {
-    };
-  },
+const itemsReversed = computed(() => [...props.items].reverse());
 
-  computed: {
-    itemsReversed() {
-      return [...this.items].reverse();
-    }
-  },
+function removePreset(date) {
+  let presets = [...props.items];
+  presets = presets.filter(preset => preset.date !== date);
+  store.$patch({ scanHistory: presets });
+}
 
-  watch: {
-  },
+function presetUrl(preset) {
+  return `/scan?url=${preset.url}&args=${preset.args}&preset=${preset.name}`;
+}
 
-  methods: {
-    removePreset(date) {
-      console.log('remove history: ', date);
-      let presets = [...this.items]
-      presets = presets.filter(preset => preset.date !== date);
-      this.$store.commit('scanHistory', presets);
-    },
-
-    presetUrl(preset) {
-      // console.log('preset: ', preset);
-      return `/scan?url=${preset.url}&args=${preset.args}&preset=${preset.name}`;
-    },
-
-    time2date(time) {
-      const tzoffset = (new Date()).getTimezoneOffset() * 60000;
-      const d = new Date(time - tzoffset);
-      const str = d.toISOString().substring(0,19).replace('T', ' ');
-      return str;
-    }
-  },
-
-  async mounted() {
-  },
-
-};
+function time2date(time) {
+  const tzoffset = (new Date()).getTimezoneOffset() * 60000;
+  const d = new Date(time - tzoffset);
+  return d.toISOString().substring(0, 19).replace("T", " ");
+}
 </script>

@@ -1,82 +1,79 @@
 <template>
-  <div class="field-group" :id="'filter-' + group.name">
+  <div class="field-group" :id="'filter-' + group.name" v-if="group.fields.length > 0">
     <!-- group header -->
     <div class="field-group__header">
       <input
         type="checkbox"
         :checked="groupChecked"
-        @click="setPreset({name: 'all', columns: [...[$store.state.defaultField],...group.fields.map(f => f.name)]});"
+        @click="setPreset({name: 'all', columns: [...[store.defaultField],...group.fields.map(f => f.name)]});"
         :title="'Columns:\n' + group.fields.map(f => f.comment).join('\n')"
       >
 
       <el-dropdown>
         <span class="el-dropdown-link" @click="changeGroupOpened">
           <span class="field-group__name">{{ group.name }}</span>
-          <i class="el-icon-arrow-down el-icon--right"></i>
+          <el-icon><el-icon-arrow-down /></el-icon>
         </span>
-        <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item
-            v-for="preset in columnPresets"
-            :key="'columnPreset' + preset.name"
-            v-if="isGroupNameInPreset"
-          >
-            <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
-          </el-dropdown-item>
-          <el-dropdown-item
-            v-for="preset in filterPresets"
-            :key="preset.name"
-            v-if="isGroupNameInPreset"
-          >
-            <FilterPresetButton :preset="preset"></FilterPresetButton>
-          </el-dropdown-item>
-          <el-dropdown-item v-for="field in group.fields" :key="field.name">
-            <ColumnField
-              :field="field"
-              :checked="$store.getters.fieldExists(field)"
-              @click="$emit('toggleField', field, false, true)"
-              :class="{ active: $store.getters.fieldExists(field) }"
-            ></ColumnField>
-          </el-dropdown-item>
-        </el-dropdown-menu>
+        <template #dropdown>
+          <el-dropdown-menu>
+            <el-dropdown-item
+              v-for="preset in columnPresets"
+              :key="'columnPreset' + preset.name"
+            >
+              <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
+            </el-dropdown-item>
+            <el-dropdown-item
+              v-for="preset in filterPresets"
+              :key="preset.name"
+            >
+              <FilterPresetButton :preset="preset"></FilterPresetButton>
+            </el-dropdown-item>
+            <el-dropdown-item v-for="field in group.fields" :key="field.name">
+              <ColumnField
+                :field="field"
+                :checked="store.fieldExists(field)"
+                @click="emit('toggleField', field, false, true)"
+                :class="{ active: store.fieldExists(field) }"
+              ></ColumnField>
+            </el-dropdown-item>
+          </el-dropdown-menu>
+        </template>
       </el-dropdown>
     </div>
 
     <!-- selected-fields -->
-    <div class="field-group__selected-fields">
+    <div class="field-group__selected-fields" v-if="!opened">
       <ColumnField
         :field="field"
-        :checked="$store.getters.fieldExists(field)"
-        v-for="field in group.fields"
+        :checked="store.fieldExists(field)"
+        v-for="field in groupExistsFields"
         :key="field.name"
-        @click="$emit('toggleField', field, false, true)"
-        :class="{ active: $store.getters.fieldExists(field) }"
-        v-if="$store.getters.fieldExists(field) && !opened"
+        @click="emit('toggleField', field, false, true)"
+        :class="{ active: store.fieldExists(field) }"
       ></ColumnField>
     </div>
 
     <!-- group content -->
-    <div :class="{'field-group__content': true, collapse: !opened}">
-      <span
-        v-for="preset in columnPresets"
-        :key="'columnPreset' + preset.name"
-        v-if="isGroupNameInPreset"
-      >
-        <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
-      </span>
+    <div :class="{'field-group__content': true, hidden: !opened}">
+      <!--      <span
+              v-for="preset in columnPresets"
+              :key="'columnPreset' + preset.name"
+            >
+              <ColumnPresetButton :preset="preset" @click="setPreset(preset);"></ColumnPresetButton>
+            </span>
 
-      <span
-        v-for="preset in filterPresets"
-        :key="preset.name"
-        v-if="isGroupNameInPreset"
-      >
-        <FilterPresetButton :preset="preset"></FilterPresetButton>
-      </span>
+            <span
+              v-for="preset in filterPresets"
+              :key="preset.name"
+            >
+              <FilterPresetButton :preset="preset"></FilterPresetButton>
+            </span>-->
 
       <ColumnField
         :field="field"
-        :checked="$store.getters.fieldExists(field)"
-        @click="$emit('toggleField', field, false, true)"
-        :class="{ 'available-fields__field': true, active: $store.getters.fieldExists(field) }"
+        :checked="store.fieldExists(field)"
+        @click="emit('toggleField', field, false, true)"
+        :class="{ 'available-fields__field': true, active: store.fieldExists(field) }"
         v-for="field in group.fields"
         :key="'content' + field.name"
       ></ColumnField>
@@ -84,46 +81,50 @@
   </div>
 </template>
 
-<script>
-import FilterPresetButton from "~/components/FilterPresetButton";
-import ColumnPresetButton from "~/components/ColumnPresetButton";
-import ColumnField from "~/components/ColumnField";
+<style lang="scss">
+.field-group__content.hidden {
+  display: none;
+}
+</style>
 
-export default {
-  components: { FilterPresetButton, ColumnPresetButton, ColumnField },
-  props: ["group", "opened"],
-  data() {
-    return {};
-  },
+<script setup>
+const props = defineProps({
+  group: Object,
+  opened: Boolean,
+});
+const emit = defineEmits(["toggleField", "setPreset", "changeGroupOpened"]);
+const store = useStore();
 
-  computed: {
-    isGroupNameInPreset() {
-      return this.preset && this.preset.groups && this.preset.groups.indexOf(this.group.name) !== -1;
-    },
+const columnPresets = computed(() => {
+  const presets = Object.entries(store.columnPresets).filter(([name, preset]) => isPresetInGroup(preset));
+  return Object.fromEntries(presets);
+});
+const filterPresets = computed(() => {
+  const presets = Object.entries(store.filterPresets).filter(([name, preset]) => isPresetInGroup(preset));
+  return Object.fromEntries(presets);
+});
 
-    columnPresets() {
-      return this.$store.state.columnPresets;
-    },
-    filterPresets() {
-      return this.$store.state.filterPresets;
-    },
-    groupChecked() {
-      let checked = true;
-      this.group.fields.forEach(field => {
-        if (!this.$store.getters.fieldExists(field)) checked = false;
-      });
-      return checked;
-    }
-  },
+const groupChecked = computed(() => {
+  let checked = true;
+  props.group.fields.forEach(field => {
+    if (!store.fieldExists(field)) checked = false;
+  });
+  return checked;
+});
 
-  methods: {
-    setPreset(preset) {
-      this.$emit("setPreset", preset);
-    },
+const groupExistsFields = computed(() => {
+  return props.group.fields.filter(field => store.fieldExists(field));
+});
 
-    changeGroupOpened() {
-      this.$emit("changeGroupOpened");
-    },
-  }
-};
+function isPresetInGroup(preset) {
+  return preset.groups?.indexOf(props.group.name) !== -1;
+}
+
+function setPreset(preset) {
+  emit("setPreset", preset);
+}
+
+function changeGroupOpened() {
+  emit("changeGroupOpened");
+}
 </script>

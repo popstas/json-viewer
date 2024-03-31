@@ -1,105 +1,75 @@
-// import MonacoWebpackPlugin from 'monaco-editor-webpack-plugin';
-import {BundleAnalyzerPlugin} from 'webpack-bundle-analyzer';
+import { defineNuxtConfig } from "nuxt/config";
 
-module.exports = {
+export default defineNuxtConfig({
   ssr: false,
 
   modules: [
-    'semantic-ui-vue/nuxt',
-    '@nuxtjs/axios',
-    '@nuxtjs/pwa',
-    'nuxt-socket-io',
-    '@nuxtjs/style-resources',
+    "@element-plus/nuxt",
+    "nuxt-socket-io",
+    "@pinia/nuxt",
+    "@pinia-plugin-persistedstate/nuxt",
+    // '@nuxtjs/i18n',
   ],
 
   css: [
-    'element-ui/lib/theme-chalk/index.css'
-  ],
-
-  styleResources: {
-    scss: [
-        '~/pages/index.scss',
-    ]
-  },
-
-  plugins: [
-    '@/plugins/element-ui',
-    '@/plugins/localStorage',
-    '@/plugins/vue-awesome',
-    '@/plugins/vue-chat-scroll',
-    '@/plugins/vue-tour',
-    { src: '@/plugins/vue-tables', ssr: false },
-    { src: '@/plugins/yametrika', ssr: false },
+    "element-plus/dist/index.css",
   ],
 
   router: {
-    base: '/'
+    base: "/",
   },
 
-  env: {
-    JSON_URL: process.env.JSON_URL,
-    SERVER_URL: process.env.SERVER_URL,
-    SCAN_DEFAULT_MAX_REQUESTS: parseInt(process.env.SCAN_DEFAULT_MAX_REQUESTS),
-    NO_FOOTER: process.env.NO_FOOTER,
-    NO_LOGIN: process.env.NO_LOGIN,
-    NO_FILTERS: process.env.NO_FILTERS,
-    NO_TOUR: process.env.NO_TOUR,
-    NO_NAVIGATION: process.env.NO_NAVIGATION,
+  runtimeConfig: {
+    public: {
+      jsonUrl: "",
+      serverUrl: "http://localhost:5301",
+      scanDefaultMaxRequests: 0,
+      noFooter: false,
+      noLogin: false,
+      noFilters: false,
+      noTour: true, // TODO2: vue-tour
+      noNavigation: false,
+    },
   },
 
   io: {
     sockets: [{
-      name: 'main',
-      url: process.env.SERVER_URL || 'http://localhost:5301'
-    }]
+      name: "main",
+      url: process.env.NUXT_PUBLIC_SERVER_URL || "http://localhost:5301",
+    }],
   },
 
   /*
   ** Headers of the page
   */
-  pwa: {
+  /*pwa: {
     meta: {
       name: 'json-viewer',
       ogHost: process.env.FRONTEND_URL || '/',
       ogImage: '/og_image.png',
       favicon: false,
     }
-  },
+  },*/
 
-  head: {
-    link: [
-      { rel: 'icon', type: 'image/x-icon', href: process.env.FAVICON || '/favicon.ico' },
-      { rel: 'stylesheet', href: 'https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css' }
-    ]
+  app: {
+    head: {
+      link: [
+        { rel: "icon", type: "image/x-icon", href: process.env.FAVICON || "/favicon.ico" },
+        {
+          rel: "stylesheet",
+          href: "https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css",
+          crossorigin: "anonymous",
+        },
+        // { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css', crossorigin: 'anonymous' }
+      ],
+    },
   },
+  /*
+  * <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  * */
   /*
   ** Customize the progress bar color
   */
-  loading: { color: '#3B8070' },
-  /*
-  ** Build configuration
-  */
-  build: {
-    plugins: [
-      new BundleAnalyzerPlugin(),
-    ],
-    /*plugins: [
-      new MonacoWebpackPlugin({
-        languages: ['json']
-      }),
-    ]*/
-    /*
-    ** Run ESLint on save
-    */
-    /* extend (config, { isDev, isClient }) {
-      if (isDev && isClient) {
-        config.module.rules.push({
-          enforce: 'pre',
-          test: /\.(js|vue)$/,
-          loader: 'eslint-loader',
-          exclude: /(node_modules)/
-        })
-      }
-    } */
-  }
-}
+  loading: { color: "#3B8070" },
+});

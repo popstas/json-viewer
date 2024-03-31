@@ -10,26 +10,25 @@
 }
 </style>
 
-<script>
-import firebase from "firebase";
+<script setup>
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 import * as firebaseui from "firebaseui";
 import "firebaseui/dist/firebaseui.css";
-export default {
-  name: "Login",
-  data() {
-    return {};
-  },
-  mounted() {
-    let ui = firebaseui.auth.AuthUI.getInstance();
-    if (!ui) {
-      ui = new firebaseui.auth.AuthUI(firebase.auth());
-    }
-    var uiConfig = {
-      signInSuccessUrl: this.$router.options.base, // This redirect can be achived by route using callback.
-      signInFlow: "popup",
-      signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID]
-    };
-    ui.start("#firebaseui-auth-container", uiConfig);
+
+const store = useStore();
+// const router = useRouter();
+const auth = getAuth(store.firebaseApp);
+
+onMounted(() => {
+  let ui = firebaseui.auth.AuthUI.getInstance();
+  if (!ui) {
+    ui = new firebaseui.auth.AuthUI(auth);
   }
-};
+  const uiConfig = {
+    signInSuccessUrl: location.origin, // router.options.base // This redirect can be achived by route using callback.
+    signInFlow: "popup",
+    signInOptions: [GoogleAuthProvider.PROVIDER_ID],
+  };
+  ui.start("#firebaseui-auth-container", uiConfig);
+});
 </script>

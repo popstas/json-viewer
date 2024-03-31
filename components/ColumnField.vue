@@ -1,13 +1,14 @@
 <template>
   <div
-    class="available-fields__field"
-    ref="component"
+    :class="{'available-fields__field': true, clicked }"
     :title="title"
   >
     <input type="checkbox" :checked="checked" @click="click">
     <label @click="click">{{ field.comment || field.title }}</label>
     <FilterPresetButton class="field-preset" :preset="{ q: field.name + '=' }" append>
-      <icon name="filter" scale="0.6"></icon>
+      <el-icon :size="10">
+        <el-icon-filter />
+      </el-icon>
     </FilterPresetButton>
   </div>
 </template>
@@ -18,6 +19,7 @@
     background: #ffffaa;
   }
 }
+
 .field-preset {
   &.filter-presets__button {
     font-size: 10px;
@@ -31,29 +33,25 @@
 }
 </style>
 
-<script>
-import FilterPresetButton from "~/components/FilterPresetButton";
-import "vue-awesome/icons/filter";
+<script setup>
+const props = defineProps({
+  field: Object,
+  checked: Boolean,
+});
+const emit = defineEmits(["click"]);
 
-export default {
-  components: { FilterPresetButton },
-  props: ["field", "checked"],
-  methods: {
-    click() {
-      this.$refs.component.classList.add("clicked");
-      // timeout for instant redraw
-      setTimeout(() => {
-        this.$emit("click", this.field);
-      }, 10);
-    }
-  },
-  computed: {
-    title() {
-      return this.field.name
-      + (this.field.comment ? ` \n\n${this.field.comment}` : '')
-      + (this.field.command ? ` \n\n${this.field.command}` : '')
-      + (this.field.description ? ` \n\n${this.field.description}` : '')
-    }
-  }
-};
+const clicked = ref(false);
+
+const title = computed(() => {
+  return props.field.name
+    + (props.field.comment ? ` \n\n${props.field.comment}` : "")
+    + (props.field.command ? ` \n\n${props.field.command}` : "")
+    + (props.field.description ? ` \n\n${props.field.description}` : "");
+});
+
+function click() {
+  // clicked.value = true;
+  emit("click", props.field);
+}
+
 </script>

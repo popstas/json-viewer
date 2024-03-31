@@ -1,59 +1,60 @@
 <template>
-  <div class="report-history" v-if="jsonUrlHistoryCount > 0">
-    <el-select class="report-history__sort" v-model="currentJsonSort" size="mini">
+  <div class="report-history" v-if="store.jsonUrlHistory.length > 0">
+    <el-select class="report-history__sort" v-model="currentJsonSort" size="small">
       <el-option value="url" label="sort by name">name</el-option>
       <el-option value="added" label="sort by date">date</el-option>
       <el-option value="used" label="sort by last used">last used</el-option>
     </el-select>
 
-    <el-select size="mini" class="report-history__select" filterable placeholder="Report URL" v-model="itemsJsonUrl">
+    <el-select size="small" class="report-history__select" filterable placeholder="Report URL" v-model="itemsJsonUrl">
       <el-option class="report-history__option"
-        v-for="option in options" :key="option.url"
-        :value="option.url" :label="$store.getters.shortReportUrl(option.url)">
-        <a @click.prevent="" class="report-history__value-name" :href="getShareUrl(option.url)">{{ $store.getters.shortReportUrl(option.url) }}</a>
+                 v-for="option in options" :key="option.url"
+                 :value="option.url" :label="store.shortReportUrl(option.url)">
+        <a @click.prevent="" class="report-history__value-name" :href="getShareUrl(option.url)">
+          {{ store.shortReportUrl(option.url) }}{{ option.count ? ` (${option.count})` : "" }}
+        </a>
         <span class="report-history__value-date">{{ new Date(option.added).toLocaleString() }}</span>
       </el-option>
     </el-select>
 
-    <button :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}" @click="removeCurrentFromHistory" title="Remove current report from history">&cross;</button>
+    <button :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}" @click="removeCurrentFromHistory"
+            title="Remove current report from history">&cross;
+    </button>
 
     <button
-      :class="{'input-clear': true, hidden: !isCurrentJsonInHistory}"
-      @click="itemsJsonUrl = 'input'" title="Convert JSON to table">input</button>
-    <textarea
-      v-if="itemsJsonUrl === 'input'"
-      class="jsonRaw"
-      language="json"
-      :options="{
-        //validate: true,
-        minimap: {
-          enabled: false
-        },
-      }"
-      @editorWillMount="editorMounted"
-      v-model="jsonRaw">
-    </textarea >
+      :class="{'input-clear': true/*, hidden: !isCurrentJsonInHistory*/}"
+      @click="itemsJsonUrl = 'input'" title="Convert JSON to table">input
+    </button>
+    ,
 
     <a :href="getShareUrl(itemsJsonUrl)" target="_blank">share</a> ,
     <a :href="itemsJsonUrl" target="_blank">json</a>
-    <template v-if="$router.options.base == '/'">
+    <!--<template v-if="router.options.history.base === ''">
       , <a  :href="shareProdUrl" target="_blank">prod</a>
-    </template>
+    </template>-->
 
     <template v-if="rescanUrl">
-      , <NuxtLink :to="rescanUrl" v-if="rescanUrl" :title="rescanUrlTitle" class="report-history__rescan-link">
-        rescan
-      </NuxtLink>
-      , <NuxtLink :to="rescanFiltered" :title="rescanUrlTitle" class="report-history__rescan-filtered-link">
+      ,
+      <NuxtLink :to="rescanUrl" :title="rescanUrlTitle" class="report-history__rescan-link">rescan</NuxtLink>
+      , <a @click.prevent="saveUrls" :href="rescanFiltered" class="report-history__rescan-filtered-link">
+      rescan filtered
+    </a>
+      <!--<NuxtLink :to="rescanFiltered" v-if="rescanUrl" :title="rescanUrlTitle" class="report-history__rescan-filtered-link">
         rescan filtered
-      </NuxtLink>
+      </NuxtLink>-->
     </template>
     <template v-else>
       , <a @click.prevent="saveUrls" href="/scan?is_urls=1" class="report-history__rescan-filtered-link">
-        rescan urls
-      </a>
+      rescan urls
+    </a>
     </template>
 
+    <div class="jsonRaw-wrapper" v-if="itemsJsonUrl === 'input'">
+      <textarea
+        class="jsonRaw"
+        v-model="jsonRaw">
+      </textarea>
+    </div>
   </div>
 </template>
 
@@ -62,8 +63,9 @@
   //display: inline-block;
 
   &__sort {
+    display: inline-block;
     width: 128px;
-    margin: 4px 3px 0 0;
+    margin: 0 3px 0 0;
 
     input {
       padding-left: 5px;
@@ -77,12 +79,14 @@
   }
 
   &__select {
+    display: inline-block;
     min-width: 300px;
-    @media (min-width:600px) {
+    max-width: 600px;
+    @media (min-width: 600px) {
       min-width: 500px;
     }
 
-    input{
+    input {
       padding-left: 5px;
     }
   }
@@ -99,7 +103,7 @@
     float: right;
     color: #8492a6;
     font-size: 13px;
-    @media (max-width: 640px){
+    @media (max-width: 640px) {
       display: none;
     }
   }
@@ -109,8 +113,12 @@
     border: none;
   }
 
+  .jsonRaw-wrapper {
+    text-align: center;
+  }
+
   .jsonRaw {
-    margin: 10px 0;
+    margin: 10px auto;
     height: 50vh;
     width: 50vw;
   }
@@ -118,160 +126,105 @@
 
 </style>
 
-<script>
-import FilterPresetButton from "~/components/FilterPresetButton";
-import "vue-awesome/icons/filter";
-// import MonacoEditor from 'vue-monaco'
+<script setup>
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
 
-export default {
-  // components: { MonacoEditor },
+const props = defineProps({
+  tableRef: Object,
+});
 
-  computed: {
-    itemsJsonUrl: {
-      get() {
-        return this.$store.state.itemsJsonUrl;
-      },
-      set(val) {
-        this.$store.commit('itemsJsonUrl', val);
-      }
-    },
+const itemsJsonUrl = computed({
+  get: () => store.itemsJsonUrl,
+  set: val => store.setItemsJsonUrl({ url: val }),
+});
 
-    currentJsonSort: {
-      get() {
-        return this.$store.state.currentJsonSort;
-      },
-      set(val) {
-        this.$store.commit('currentJsonSort', val);
-      }
-    },
+const currentJsonSort = computed({
+  get: () => store.currentJsonSort,
+  set: val => store.$patch({ currentJsonSort: val }),
+});
 
-    jsonRaw: {
-      get() {
-        return this.$store.state.jsonRaw;
-      },
-      set(val) {
-        this.$store.commit('jsonRaw', val);
-      }
-    },
+const jsonRaw = computed({
+  get: () => store.jsonRaw,
+  set: val => store.$patch({ jsonRaw: val }),
+});
 
-    options() {
-      const opts = [];
-      for (let url in this.jsonUrlHistory) {
-        const data = this.jsonUrlHistory[url];
-        opts.push({
-          url: url,
-          used: data.used,
-          added: data.added,
-        });
-      }
-      const byField = this.currentJsonSort;
-      const orderDesc = ['added', 'used'].includes(byField);
-      return opts.sort((a, b) => {
-        let val = 0;
-        if (a[byField] === b[byField]) val = 0;
-        else val = a[byField] > b[byField] ? 1 : -1;
-        if (orderDesc) val *= -1; // inverse;
-        return val;
-      });
-    },
+const isCurrentJsonInHistory = computed(() => {
+  return store.jsonUrlHistory.some(item => item.url === itemsJsonUrl.value);
+});
 
-    jsonUrlHistory() {
-      return this.$store.state.jsonUrlHistory;
-    },
+/*const shareProdUrl = computed(() => {
+  return `https://viasite.github.io/json-viewer/?url=${itemsJsonUrl.value}`;
+});*/
 
-    jsonUrlHistoryCount() {
-      return Object.entries(this.jsonUrlHistory).length;
-    },
+const rescanUrl = computed(() => {
+  const scanOptions = store.scanOptions;
+  let args = scanOptions.args;
+  if (!args) return "";
+  args = args.join(" ").trim();
 
-    isCurrentJsonInHistory() {
-      return this.jsonUrlHistory[this.itemsJsonUrl] !== undefined;
-    },
+  if (route.query["q"]) args += ` --report-q ${route.query["q"]}`;
+  if (route.query["fields"]) args += ` --report-fields ${route.query["fields"]}`;
 
-    shareProdUrl() {
-      // console.log('this.$router: ', this.$router);
-      return `https://viasite.github.io/json-viewer/?url=${this.itemsJsonUrl}`;
-    },
+  return `/scan?url=${scanOptions.url}&args=${args}&run=1`;
+});
 
-    rescanUrl() {
-      const scanOptions = this.$store.state.scanOptions;
-      let args = scanOptions.args;
-      if (!args) return '';
-      args = args.join(' ').trim();
+const rescanFiltered = computed(() => {
+  const scanOptions = store.scanOptions;
+  let args = scanOptions.args;
+  if (!args) return "";
+  // if (args[0] === '--urls') args = args.slice(2); // save it in saveUrls(), not used
+  args = args.join(" ").trim();
 
-      if (this.$route.query["q"]) args += ` --report-q ${this.$route.query["q"]}`;
-      if (this.$route.query["fields"]) args += ` --report-fields ${this.$route.query["fields"]}`;
-      // console.log('args: ', args);
+  if (route.query["q"]) args += ` --report-q ${route.query["q"]}`;
+  if (route.query["fields"]) args += ` --report-fields ${route.query["fields"]}`;
 
-      return `/scan?url=${scanOptions.url}&args=${args}&run=1`;
-    },
+  return `/scan?url=${scanOptions.url}&args=${args}`; // &run=1
+});
 
-    rescanFiltered() {
-      const scanOptions = this.$store.state.scanOptions;
-      let args = scanOptions.args;
-      if (!args) return '';
-      args = args.join(' ').trim();
+function saveUrls() {
+  const urls = props.tableRef.allFilteredData.map(item => item.url);
+  store.$patch({ urls: urls.join("\n") });
+  router.push(`${rescanFiltered.value}&is_urls=1`);
+}
 
-      if (this.$route.query["q"]) args += ` --report-q ${this.$route.query["q"]}`;
-      if (this.$route.query["fields"]) args += ` --report-fields ${this.$route.query["fields"]}`;
-      // console.log('args: ', args);
+const rescanUrlTitle = computed(() => {
+  const t = store.scanOptions.time;
+  const mins = t ? Number(t / 60).toFixed(1) : "";
+  return store.scanOptions.args?.join(" ").trim() + (mins ? `\n${mins} mins` : "");
+});
 
-      // TODO:
-      const urls = [];
-      for (const item of this.$store.state.filteredItems) {
+const options = computed(() => {
+  const opts = store.jsonUrlHistory.map(item => {
+    return {
+      url: item.url,
+      count: item.count,
+      added: item.added,
+      used: item.used,
+    };
+  });
+  const byField = currentJsonSort.value;
+  const orderDesc = ["added", "used"].includes(byField);
+  return opts.sort((a, b) => {
+    let val;
+    if (a[byField] === b[byField]) val = 0;
+    else val = a[byField] > b[byField] ? 1 : -1;
+    if (orderDesc) val *= -1; // inverse;
+    return val;
+  });
+});
 
-      }
+function removeCurrentFromHistory() {
+  const history = [...store.jsonUrlHistory];
+  const index = history.findIndex(i => i.url === itemsJsonUrl.value);
+  if (index > -1) {
+    history.splice(index, 1);
+    store.$patch({ jsonUrlHistory: history });
+  }
+}
 
-      return `/scan?url=${scanOptions.url}&args=${args}&run=1`;
-    },
-
-    // TODO:
-    storeFiltered() {
-      this.$store.state.filteredItems;
-    },
-
-    rescanUrlTitle() {
-      const t = this.$store.state.scanOptions.time;
-      const mins = t ? Number(t / 60).toFixed(1) : '';
-      return this.$store.state.scanOptions.args?.join(' ').trim() + (mins ? `\n${mins} mins` : '');
-    },
-  },
-
-  methods: {
-    removeCurrentFromHistory() {
-      const history = {...this.jsonUrlHistory};
-      if(history[this.itemsJsonUrl]) {
-        delete(history[this.itemsJsonUrl]);
-        this.$store.commit('jsonUrlHistory', history);
-      }
-    },
-
-    saveUrls() {
-      this.$store.commit('urls', this.$store.state.items.map(item => item.url).join('\n'));
-      this.$router.push('/scan?is_urls=1');
-    },
-
-    getShareUrl(url) {
-      return this.$router.options.base + `?url=${url}`;
-    },
-
-    editorMounted(monaco) {
-      /*window.MonacoEnvironment = {
-        getWorkerUrl: function (workerId, label) {
-          return `data:text/javascript;charset=utf-8,${encodeURIComponent(`
-              self.MonacoEnvironment = { baseUrl: '${window.location.origin}/' };
-              importScripts('${window.location.origin}/vs/base/worker/workerMain.js');
-          `)}`;
-        }
-      };*/
-
-      // console.log("monaco:", monaco);
-
-      // monaco.trigger('anyString', 'editor.action.formatDocument');
-
-      /*monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
-        validate: true,
-      });*/
-    },
-  },
-};
+function getShareUrl(url) {
+  return router.options.history.base + `?url=${url}`;
+}
 </script>
