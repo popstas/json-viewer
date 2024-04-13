@@ -1,6 +1,6 @@
 {
   "name": "json-viewer",
-  "version": "6.0.0",
+  "version": "7.0.0",
   "description": "Web service for SEO site audit: crawl site, Lighthouse all pages, view public reports in browser. 100+ metrics for each page.",
   "author": "Stanislav Popov <popstas@gmail.com>",
   "type": "module",

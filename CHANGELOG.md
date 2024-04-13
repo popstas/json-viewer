@@ -1,3 +1,28 @@
+# [7.0.0](https://github.com/viasite/site-audit-seo-viewer/compare/v6.0.0...v7.0.0) (2024-04-13)
+
+
+### Bug Fixes
+
+* add lighthouse_scores_performance to Stats ([505f562](https://github.com/viasite/site-audit-seo-viewer/commit/505f56269572a926f33d1f30cee8ecb2d066d994))
+* better scan start/stop indication ([f375ad9](https://github.com/viasite/site-audit-seo-viewer/commit/f375ad997bdff14e71c4a7c5d64b93cac2be4596))
+* change url when change fields list ([6ba3e4a](https://github.com/viasite/site-audit-seo-viewer/commit/6ba3e4aad3f88a9d0bcaf4e0e03cb16ad9b5e9f3))
+* extend perPageValues, add 10k, 20k ([af94c97](https://github.com/viasite/site-audit-seo-viewer/commit/af94c97dea82855ea82ffc0fec296d57e46d7958))
+* fix empty table when click "remove all columns" just after page open ([d92dd1f](https://github.com/viasite/site-audit-seo-viewer/commit/d92dd1fa2fa6e2b221cc542e26d6b92d9e3f3bb7))
+* limit url column to 300px ([489ee95](https://github.com/viasite/site-audit-seo-viewer/commit/489ee957b21031219f9d978a13603fcce4f4fa4e))
+
+
+### Features
+
+* featureScreenshot, onlyDomains, serverLoadPercent, node 14 -> 18, SCAN_DEFAULT_URL, fix: better finish scan, better scan form ([82b0190](https://github.com/viasite/site-audit-seo-viewer/commit/82b0190f848395d8b52192b051bab7aa83b32873))
+* **report:** add accent validate, clean xlsx export, better fields formatting: numbers, dates, arrays, show scan date ([556f35e](https://github.com/viasite/site-audit-seo-viewer/commit/556f35ee63e338d32da23fc52b798891a127b657))
+* **report:** rescan all urls in report ([8545e9a](https://github.com/viasite/site-audit-seo-viewer/commit/8545e9a07e41f29346c6a7227fa1ca3fdf56b061))
+* **scan:** add items count, add Screenshot one page, update reports in while scanning ([1a221b1](https://github.com/viasite/site-audit-seo-viewer/commit/1a221b1eea999465cb52559b7c48eeca35a27492))
+* **scan:** continue from partial report ([1ae59cd](https://github.com/viasite/site-audit-seo-viewer/commit/1ae59cd3c131bd7619899e4b95382fc3c4b3d0d2))
+* rescanFiltered, remove monaco ([b25904b](https://github.com/viasite/site-audit-seo-viewer/commit/b25904bffa235424d0e179d6913be7bba4558ef6))
+* urls_list: parse urls from json url. fix: limit urls in GET args ([a1cc681](https://github.com/viasite/site-audit-seo-viewer/commit/a1cc681198d52e48878cdfd66a85c9ee74801962))
+
+
+
 # [6.0.0](https://github.com/viasite/site-audit-seo-viewer/compare/v5.2.0...v6.0.0) (2022-05-21)
 
 
