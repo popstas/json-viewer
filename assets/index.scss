@@ -611,7 +611,7 @@ ul {
       }
     }
 
-    .col-url > div {
+    .col-url.col-default > div {
       max-width: 300px;
       overflow: hidden;
     }
@@ -663,6 +663,6 @@ ul {
 }
 
 .advanced-button {
-  border: none;
+  border: none !important;
   float: right;
 }

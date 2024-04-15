@@ -107,8 +107,21 @@
           </button>
         </div>
 
+        <div v-if="liteMode" class="lite-mode-warning">
+          Table has more than {{ liteModeFrom }} rows, using lite mode.
+          <el-button @click="switchToFullMode">Full mode</el-button>
+        </div>
+
+        <TableLite v-if="liteMode"
+                   ref="tableRef"
+                   :headings="headings"
+                   :data="filteredItems"
+                   :showTableFilters="store.flags.navigation && !dd.hideTableFilters"
+        />
+
+
         <v-client-table
-          v-if="filteredItems.length > 0 && fields.length > 0"
+          v-if="filteredItems.length > 0 && fields.length > 0 && !liteMode"
           :columns="columns"
           :data="filteredItems"
           :options="tableOptions"
@@ -142,7 +155,7 @@
             :key="colName"
             v-slot:[colName]="{ row }"
           >
-            <div v-html="getColumnValue(row, colName)"></div>
+            <div v-html="store.getColumnValue(row, colName)"></div>
           </template>
         </v-client-table>
       </div>
@@ -157,6 +170,7 @@ import axios from "axios";
 import _ from "lodash";
 import { utils, writeFile } from "xlsx";
 import { storeToRefs } from "pinia";
+import TableLite from "../components/TableLite.vue";
 // import { EventBus as TableEventBus } from "v-tables-3";
 
 // TODO2: reduce table loads
@@ -206,6 +220,10 @@ const introTourSteps = computed(() => {
     return step;
   });
 });
+
+const forceFullMode = ref(false);
+const liteModeFrom = ref(1000);
+const liteMode = computed(() => !forceFullMode.value && filteredItems.value.length > liteModeFrom.value);
 
 const displayMode = computed({
   get: () => store.displayMode,
@@ -588,6 +606,12 @@ function onHideTable(val) {
   dd.hideTable = val;
 }
 
+function switchToFullMode() {
+  forceFullMode.value = true;
+  dd.jsonLoading = true;
+  setTimeout(() => { dd.jsonLoading = false }, 500);
+}
+
 function buildXlsx() {
   return new Promise((resolve) => {
     dd.hideTableFilters = true;
@@ -693,12 +717,6 @@ function onTableLoaded() {
   }
 }
 
-// переключить поле по имени
-function toggleFieldByName(name) {
-  const field = availableFields.value.find(field => field.name === name);
-  toggleField(field);
-}
-
 // включить поле по имени
 function addFieldByName(name) {
   const field = availableFields.value.find(field => field.name === name);
@@ -754,105 +772,6 @@ function ago(ms) {
   if (hours && days < 2) parts.push(`${hours}h`);
   if (mins && !days) parts.push(`${mins}m`);
   return parts.join(" ");
-}
-
-// обёртка над шаблоном колонки
-function getColumnValue(row, colName) {
-  // достает значение colName из row, со вложенностью
-  // https://stackoverflow.com/a/6394168/1716010
-  let valueText = colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
-  if (["", undefined, null].includes(valueText)) return valueText; // только null видел
-
-  const field = fields.value.find(f => f.name === colName); // TODO2: without find
-
-  // шаблоны полей задаются здесь
-
-  if (field.href) {
-    let href = row[field.href] || row.href;
-    valueText = `<a href="${href}" target="_blank">${valueText}</a>`;
-  }
-
-  if (["integer", "number"].includes(field.type) && valueText) {
-    valueText = new Intl.NumberFormat().format(valueText);
-  }
-
-  if (field.type === "timestamp" && valueText) {
-    if (field.format === "ago") {
-      valueText = ago(valueText);
-    } else {
-      const offset = new Date().getTimezoneOffset() * 60000;
-      valueText = new Date(valueText * 1000 - offset).toISOString();
-      valueText = valueText.replace("T", " ").replace(/\..*/, "");
-    }
-  }
-
-  if (field.type === "array" && valueText) {
-    valueText = valueText.join(", ");
-  }
-
-  if (field.type === "date") {
-    const d = new Date(valueText);
-    valueText = d.toISOString();
-    valueText = valueText.replace("T", " ").replace(/\..*/, "");
-    if (d.getTime() === 0) valueText = "-";
-  }
-
-  if (field.type === "email" && valueText) {
-    valueText = `<a href="mailto:${valueText}" target="_blank">${valueText}</a>`;
-  }
-
-  if (field.type === "phone" && valueText) {
-    valueText = `<a href="tel:${valueText}">${valueText}</a>`;
-  }
-
-  if (field.name === "domain" && valueText) {
-    valueText = `<a href="https://${valueText}" target="_blank">${valueText}</a>`;
-  }
-
-  if (colName.match(/url/i) || field.type === "url") {
-    valueText = `<a href="${valueText}" target="_blank">${valueText}</a>`;
-  }
-
-  if (colName === "favicon") {
-    valueText = valueText.replace(/^\//, row.url);
-    valueText = `<img alt="" style="width:16px;height:16px" src="${valueText}"/>`;
-  }
-
-  if (colName === "domain_idn") {
-    let icon = row.favicon ? row.favicon.replace(/^\//, row.url) : "";
-    icon = icon ? `<img alt="" style="width:16px;height:16px" src="${icon}"/>` : "";
-    valueText = `<a href="${row.url}" target="_blank">${icon} ${valueText}</a>`;
-    if (row.ssh_command) {
-      const href = "ssh://" + row.ssh_command.replace("ssh ", "");
-      valueText += `<a href="${href}" class="ssh-link float-right" title="Open SSH">ssh</a>`;
-    }
-  }
-
-  // show images as images
-  if (typeof valueText === "string" && (field.type === "image" || field.name.match(/_img$/) || valueText.match(/^http.*\.(jpg|jpeg|png|gif|svg|webp)$/)) && valueText) {
-    // relative urls
-    if (valueText.startsWith("/") && row.url) {
-      const url = new URL(row.url);
-      valueText = `${url.origin}/${valueText}`;
-    }
-
-    // report images
-    if (valueText.startsWith("./")) {
-      const url = new URL(itemsJsonUrl.value);
-      valueText = valueText.replace("./", url.origin + "/");
-    }
-
-    valueText = `<a href="${valueText}" class="image-link" target="_blank">
-          <img alt="error loading image" style="width: 150px; height: auto;" src="${valueText}" title="${valueText}"/>
-        </a>`;
-  }
-
-  if (field.type === "boolean") {
-    if (["true", true].includes(valueText)) valueText = 1;
-    valueText = parseInt(valueText) ? "Yes" : "No"; // tolang
-  }
-
-  return valueText;
 }
 
 function arraysEqual(a, b) {

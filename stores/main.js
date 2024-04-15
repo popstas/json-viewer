@@ -235,6 +235,105 @@ export const useStore = defineStore("main", {
       return () => false;
     },
 
+    // returns column rendered value
+    getColumnValue(row, colName) {
+      // достает значение colName из row, со вложенностью
+      // https://stackoverflow.com/a/6394168/1716010
+      let valueText = colName.split(".").reduce((o, i) => (o ? o[i] : ""), row);
+      if (["", undefined, null].includes(valueText)) return valueText; // только null видел
+
+      const field = this.fields.find(f => f.name === colName); // TODO2: without find
+
+      // шаблоны полей задаются здесь
+
+      if (field.href) {
+        let href = row[field.href] || row.href;
+        valueText = `<a href="${href}" target="_blank">${valueText}</a>`;
+      }
+
+      if (["integer", "number"].includes(field.type) && valueText) {
+        valueText = new Intl.NumberFormat().format(valueText);
+      }
+
+      if (field.type === "timestamp" && valueText) {
+        if (field.format === "ago") {
+          valueText = ago(valueText);
+        } else {
+          const offset = new Date().getTimezoneOffset() * 60000;
+          valueText = new Date(valueText * 1000 - offset).toISOString();
+          valueText = valueText.replace("T", " ").replace(/\..*/, "");
+        }
+      }
+
+      if (field.type === "array" && valueText) {
+        valueText = valueText.join(", ");
+      }
+
+      if (field.type === "date") {
+        const d = new Date(valueText);
+        valueText = d.toISOString();
+        valueText = valueText.replace("T", " ").replace(/\..*/, "");
+        if (d.getTime() === 0) valueText = "-";
+      }
+
+      if (field.type === "email" && valueText) {
+        valueText = `<a href="mailto:${valueText}" target="_blank">${valueText}</a>`;
+      }
+
+      if (field.type === "phone" && valueText) {
+        valueText = `<a href="tel:${valueText}">${valueText}</a>`;
+      }
+
+      if (field.name === "domain" && valueText) {
+        valueText = `<a href="https://${valueText}" target="_blank">${valueText}</a>`;
+      }
+
+      if (colName.match(/url/i) || field.type === "url") {
+        valueText = `<a href="${valueText}" target="_blank">${valueText}</a>`;
+      }
+
+      if (colName === "favicon") {
+        valueText = valueText.replace(/^\//, row.url);
+        valueText = `<img alt="" style="width:16px;height:16px" src="${valueText}"/>`;
+      }
+
+      if (colName === "domain_idn") {
+        let icon = row.favicon ? row.favicon.replace(/^\//, row.url) : "";
+        icon = icon ? `<img alt="" style="width:16px;height:16px" src="${icon}"/>` : "";
+        valueText = `<a href="${row.url}" target="_blank">${icon} ${valueText}</a>`;
+        if (row.ssh_command) {
+          const href = "ssh://" + row.ssh_command.replace("ssh ", "");
+          valueText += `<a href="${href}" class="ssh-link float-right" title="Open SSH">ssh</a>`;
+        }
+      }
+
+      // show images as images
+      if (typeof valueText === "string" && (field.type === "image" || field.name.match(/_img$/) || valueText.match(/^http.*\.(jpg|jpeg|png|gif|svg|webp)$/)) && valueText) {
+        // relative urls
+        if (valueText.startsWith("/") && row.url) {
+          const url = new URL(row.url);
+          valueText = `${url.origin}/${valueText}`;
+        }
+
+        // report images
+        if (valueText.startsWith("./")) {
+          const url = new URL(this.itemsJsonUrl);
+          valueText = valueText.replace("./", url.origin + "/");
+        }
+
+        valueText = `<a href="${valueText}" class="image-link" target="_blank">
+              <img alt="error loading image" style="width: 150px; height: auto;" src="${valueText}" title="${valueText}"/>
+            </a>`;
+      }
+
+      if (field.type === "boolean") {
+        if (["true", true].includes(valueText)) valueText = 1;
+        valueText = parseInt(valueText) ? "Yes" : "No"; // tolang
+      }
+
+      return valueText;
+    },
+
     // validate in ItemDetails
     getColumnValidateClass(value, validateRules) {
       const tests = {};
