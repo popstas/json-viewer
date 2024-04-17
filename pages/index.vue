@@ -107,12 +107,13 @@
           </button>
         </div>
 
-        <div v-if="liteMode" class="lite-mode-warning">
-          Table has more than {{ liteModeFrom }} rows, using lite mode.
-          <el-button @click="switchToFullMode">Full mode</el-button>
+        <div v-if="filteredItems.length >= 500" class="lite-mode-warning">
+          <span v-if="filteredItems.length >= liteModeFrom">Table has more than {{ liteModeFrom }} rows,</span>
+          using {{ dd.liteMode ? "lite" : "full" }} mode.
+          <el-button @click="switchToFullMode(dd.liteMode)">{{ dd.liteMode ? "Full" : "Lite" }} mode</el-button>
         </div>
 
-        <TableLite v-if="liteMode"
+        <TableLite v-if="dd.liteMode"
                    ref="tableRef"
                    :headings="headings"
                    :data="filteredItems"
@@ -121,7 +122,7 @@
 
 
         <v-client-table
-          v-if="filteredItems.length > 0 && fields.length > 0 && !liteMode"
+          v-if="filteredItems.length > 0 && fields.length > 0 && !dd.liteMode"
           :columns="columns"
           :data="filteredItems"
           :options="tableOptions"
@@ -190,9 +191,9 @@ const dd = reactive({
   sort: {},
   hideTable: false,
   reportName: "",
-  favicon: process.env.FAVICON || "/favicon.ico",
   date: false,
   hideTableFilters: false, // for buildXlsx
+  liteMode: false,
 });
 
 const {
@@ -221,9 +222,7 @@ const introTourSteps = computed(() => {
   });
 });
 
-const forceFullMode = ref(false);
 const liteModeFrom = ref(1000);
-const liteMode = computed(() => !forceFullMode.value && filteredItems.value.length > liteModeFrom.value);
 
 const displayMode = computed({
   get: () => store.displayMode,
@@ -606,8 +605,8 @@ function onHideTable(val) {
   dd.hideTable = val;
 }
 
-function switchToFullMode() {
-  forceFullMode.value = true;
+function switchToFullMode(current = false) {
+  dd.liteMode = !current;
   dd.jsonLoading = true;
   setTimeout(() => { dd.jsonLoading = false }, 500);
 }
@@ -866,10 +865,11 @@ async function changeJsonUrl(itemsJsonUrl, forceDefaultColumns) {
     store.$patch({ scanOptions: itemsJson.scan || {} });
     store.setItems(itemsJson.items || []);
     dd.reportName = itemsJson.name || "";
+    dd.liteMode = filteredItems.value.length >= liteModeFrom.value;
 
     // favicon
     if (itemsJson.favicon) {
-      dd.favicon = itemsJson.favicon;
+      store.$patch({favicon: itemsJson.favicon});
     }
 
     if (itemsJson.date) {
@@ -953,12 +953,13 @@ onMounted(async () => {
 });
 
 useHead({
-  title: pageTitle.value,
+  title: pageTitle,
+  titleTemplate: "%s - json-viewer",
   link: [{
     hid: "icon",
     rel: "icon",
     type: "image/x-icon",
-    href: dd.favicon,
+    href: store.favicon,
   }],
 });
 </script>

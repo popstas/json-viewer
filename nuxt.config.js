@@ -23,6 +23,7 @@ export default defineNuxtConfig({
     public: {
       jsonUrl: "",
       serverUrl: "http://localhost:5301",
+      favicon: "/favicon.ico",
       scanDefaultMaxRequests: 0,
       noFooter: false,
       noLogin: false,
@@ -54,7 +55,7 @@ export default defineNuxtConfig({
   app: {
     head: {
       link: [
-        { rel: "icon", type: "image/x-icon", href: process.env.FAVICON || "/favicon.ico" },
+        { rel: "icon", type: "image/x-icon", href: process.env.NUXT_PUBLIC_FAVICON || "/favicon.ico" },
         {
           rel: "stylesheet",
           href: "https://cdn.jsdelivr.net/npm/bootstrap@3.4.1/dist/css/bootstrap.min.css",

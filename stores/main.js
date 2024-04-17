@@ -10,7 +10,8 @@ export const useStore = defineStore("main", {
     filteredItems: [],
 
     // constants
-    itemsJsonUrl: useRuntimeConfig().public.jsonUrl || "",
+    itemsJsonUrl: useRuntimeConfig().public.jsonUrl,
+    favicon: useRuntimeConfig().public.favicon,
     itemsJsonCount: 0,
     jsonRaw: "",
     flags: {

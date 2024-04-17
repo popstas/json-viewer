@@ -11,7 +11,7 @@
     "dev-popstas": "cross-env NUXT_PUBLIC_SERVER_URL=http://popstas-server:5301 HOST=0.0.0.0 PORT=5302 nuxt dev",
     "dev-popstas-prod": "cross-env NUXT_PUBLIC_SCAN_DEFAULT_MAX_REQUESTS=10 FRONTEND_URL=https://json-viewer.popstas.ru NUXT_PUBLIC_SERVER_URL=https://site-audit-server.popstas.ru HOST=0.0.0.0 PORT=5302 nuxt dev",
     "dev-popstas-prod-stable": "cross-env NUXT_PUBLIC_SCAN_DEFAULT_MAX_REQUESTS=10 FRONTEND_URL=https://json-viewer.popstas.ru NUXT_PUBLIC_SERVER_URL=https://site-audit-server-stable.popstas.ru HOST=0.0.0.0 PORT=5302 nuxt dev",
-    "dev-no-interface": "cross-env NUXT_PUBLIC_NO_NAVIGATION=1 NUXT_PUBLIC_NO_LOGIN=1 NUXT_PUBLIC_NO_FOOTER=1 NUXT_PUBLIC_NO_FILTERS=1 NUXT_PUBLIC_NO_TOUR=1 NUXT_PUBLIC_SERVER_URL=\"\" HOST=0.0.0.0 PORT=5302 nuxt dev",
+    "dev-no-interface": "cross-env NUXT_PUBLIC_NO_NAVIGATION=1 NUXT_PUBLIC_NO_LOGIN=1 NUXT_PUBLIC_NO_FOOTER=1 NUXT_PUBLIC_NO_FILTERS=1 NUXT_PUBLIC_NO_TOUR=1 NUXT_PUBLIC_SERVER_URL=\"\" NUXT_PUBLIC_FAVICON=https://blog.popstas.ru/favicon.png HOST=0.0.0.0 PORT=5302 nuxt dev",
     "dev-clean": "nuxt dev",
     "build": "nuxt build",
     "deploy-prod": "bash scripts/deploy.sh",
