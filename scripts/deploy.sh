@@ -10,6 +10,7 @@ npm run generate
 
 cd dist
 git init
+echo "json-viewer.popstas.pro" > CNAME
 git add -A
 git commit -m "deploy"
 git remote add origin git@github.com:popstas/json-viewer.git

@@ -4,7 +4,7 @@
   "description": "Web service for SEO site audit: crawl site, Lighthouse all pages, view public reports in browser. 100+ metrics for each page.",
   "author": "Stanislav Popov <popstas@gmail.com>",
   "type": "module",
-  "homepage": "https://github.com/viasite/json-viewer",
+  "homepage": "https://github.com/popstas/json-viewer",
   "private": true,
   "scripts": {
     "dev": "cross-env NUXT_PUBLIC_SERVER_URL=http://localhost:5301 HOST=0.0.0.0 PORT=5302 nuxt dev",
