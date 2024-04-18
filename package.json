@@ -45,7 +45,7 @@
     "v-tables-3": "^0.4.7",
     "vue-style-loader": "^4.1.2",
     "vuedraggable": "^2.24.3",
-    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.1/xlsx-0.20.1.tgz"
+    "xlsx": "https://cdn.sheetjs.com/xlsx-0.20.2/xlsx-0.20.2.tgz"
   },
   "devDependencies": {
     "@element-plus/icons-vue": "^2.3.1",
