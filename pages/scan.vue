@@ -69,9 +69,12 @@
               </el-form-item>
 
               <el-form-item label="Max requests">
-                <el-input-number v-model="dd.form.maxRequests" :min="0"
+                <el-input-number v-model="dd.form.maxRequests" :min="0" :max="dd.serverMaxRequests > 0 ? dd.serverMaxRequests : undefined"
                                  @keydown.enter.native.prevent="sendTask"></el-input-number>
-                <el-button text @click="dd.form.maxRequests = 0" v-if="dd.form.maxRequests > 0">no limit</el-button>
+                <el-button text @click="dd.form.maxRequests = dd.serverMaxRequests" v-if="dd.form.maxRequests !== dd.serverMaxRequests && dd.serverMaxRequests !== -1 && dd.form.maxRequests > 0">
+                  max ({{ dd.serverMaxRequests ? dd.serverMaxRequests : "no limit" }})
+                </el-button>
+
               </el-form-item>
 
               <el-form-item label="Fields preset">
@@ -616,6 +619,8 @@ const dd = reactive({
   pagesTotalAll: "",
   uptime: "",
   serverVersion: "",
+  serverMaxConcurrency: 0,
+  serverMaxRequests: -1,
   reboots: "",
   isNeedAuth: true,
   openedPanels: [],
@@ -1144,8 +1149,12 @@ function submitEvents(key) {
 
     // map to data
     for (let name in serverState) {
-      if (dd[name] !== undefined) dd[name] = serverState[name];
+      if ([undefined, "maxConcurrency", "maxRequests"].includes(dd[name])) continue;
+      dd[name] = serverState[name];
     }
+
+    dd.serverMaxConcurrency = parseInt(serverState.maxConcurrency) ? parseInt(serverState.maxConcurrency) : 0;
+    dd.serverMaxRequests = parseInt(serverState.maxRequests) ? parseInt(serverState.maxRequests) : 0;
   });
 
   // scan result
